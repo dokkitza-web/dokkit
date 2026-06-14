@@ -15,6 +15,12 @@ type ProductRow = {
   package_tier: string | null;
   price_cents: number;
   is_live: boolean;
+  product_files:
+    | {
+        id: string;
+        is_active: boolean;
+      }[]
+    | null;
   industries:
     | {
         name: string;
@@ -45,7 +51,7 @@ export default async function AdminProductsPage() {
   const { data: products, error } = await supabase
     .from("products")
     .select(
-      "id,slug,name,product_type,package_tier,price_cents,is_live,industries(name)",
+      "id,slug,name,product_type,package_tier,price_cents,is_live,industries(name),product_files(id,is_active)",
     )
     .order("product_type", { ascending: true })
     .order("name", { ascending: true });
@@ -82,6 +88,7 @@ export default async function AdminProductsPage() {
                   <th className="px-4 py-3">Industry</th>
                   <th className="px-4 py-3">Tier</th>
                   <th className="px-4 py-3">Price</th>
+                  <th className="px-4 py-3">Files</th>
                   <th className="px-4 py-3">Status</th>
                 </tr>
               </thead>
@@ -107,6 +114,11 @@ export default async function AdminProductsPage() {
                     </td>
                     <td className="px-4 py-3 font-semibold text-[#147d64]">
                       {formatPrice(product.price_cents)}
+                    </td>
+                    <td className="px-4 py-3 text-[#53615b]">
+                      {product.product_files?.filter((file) => file.is_active)
+                        .length ?? 0}{" "}
+                      active / {product.product_files?.length ?? 0} total
                     </td>
                     <td className="px-4 py-3">
                       <span className="rounded-full bg-[#eef5f2] px-3 py-1 text-xs font-semibold text-[#147d64]">

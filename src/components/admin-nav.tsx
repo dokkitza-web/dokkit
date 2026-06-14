@@ -4,6 +4,7 @@ import { signOutAdmin } from "@/app/admin/actions";
 const adminLinks = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/products", label: "Products" },
+  { href: "/admin/files", label: "Files" },
 ];
 
 export function AdminNav({ email }: { email: string }) {

@@ -12,6 +12,7 @@ const countCards = [
   { table: "products", label: "Products" },
   { table: "orders", label: "Orders" },
   { table: "customers", label: "Customers" },
+  { table: "product_files", label: "Product files" },
   { table: "payments", label: "Payments" },
   { table: "email_logs", label: "Email logs" },
 ];
@@ -85,7 +86,7 @@ export default async function AdminDashboardPage() {
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           {[
             "Product editing and pricing",
-            "Package file upload and versioning",
+            "Download file QA and version cleanup",
             "Order management",
             "PayFast payment status tracking",
             "Secure download links",
