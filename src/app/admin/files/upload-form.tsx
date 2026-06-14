@@ -126,10 +126,11 @@ export function AdminFileUploadForm({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setMessage(null);
     setError(null);
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const file = formData.get("file");
 
     if (!(file instanceof File) || !file.name) {
@@ -210,7 +211,7 @@ export function AdminFileUploadForm({
         return;
       }
 
-      event.currentTarget.reset();
+      form.reset();
       setVersionLabel("v1");
       setIsActive(true);
       setMessage(
