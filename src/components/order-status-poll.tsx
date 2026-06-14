@@ -3,17 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { formatPrice } from "@/data/catalogue";
+import { DownloadFileButton } from "@/components/download-file-button";
 
 type OrderStatusResponse = {
   orderNumber: string;
   status: "pending_payment" | "paid" | "failed" | "cancelled" | "refunded";
   totalCents: number;
   paidAt: string | null;
+  downloadsUnlocked: boolean;
   items: {
     name: string;
     slug: string;
     quantity: number;
     totalCents: number;
+    files: {
+      id: string;
+      kind: string;
+      versionLabel: string;
+      checksum: string | null;
+      createdAt: string;
+    }[];
   }[];
 };
 
@@ -21,7 +30,7 @@ function getStatusCopy(status: OrderStatusResponse["status"]) {
   if (status === "paid") {
     return {
       title: "Payment verified",
-      body: "PayFast has confirmed the payment. Secure downloads are the next module to unlock.",
+      body: "PayFast has confirmed the payment. Your secure downloads are available below when files are attached to this order.",
       tone: "success",
     };
   }
@@ -49,7 +58,13 @@ function getStatusCopy(status: OrderStatusResponse["status"]) {
   };
 }
 
-export function OrderStatusPoll({ orderNumber }: { orderNumber: string }) {
+export function OrderStatusPoll({
+  orderNumber,
+  accessToken,
+}: {
+  orderNumber: string;
+  accessToken: string;
+}) {
   const [order, setOrder] = useState<OrderStatusResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,8 +73,14 @@ export function OrderStatusPoll({ orderNumber }: { orderNumber: string }) {
 
     async function loadStatus() {
       try {
+        const query = new URLSearchParams({ order: orderNumber });
+
+        if (accessToken) {
+          query.set("access", accessToken);
+        }
+
         const response = await fetch(
-          `/api/orders/status?order=${encodeURIComponent(orderNumber)}`,
+          `/api/orders/status?${query.toString()}`,
         );
         const payload = await response.json();
 
@@ -88,7 +109,7 @@ export function OrderStatusPoll({ orderNumber }: { orderNumber: string }) {
       isMounted = false;
       window.clearInterval(interval);
     };
-  }, [orderNumber]);
+  }, [accessToken, orderNumber]);
 
   if (error) {
     return (
@@ -107,6 +128,10 @@ export function OrderStatusPoll({ orderNumber }: { orderNumber: string }) {
   }
 
   const statusCopy = getStatusCopy(order.status);
+  const downloadCount = order.items.reduce(
+    (total, item) => total + item.files.length,
+    0,
+  );
 
   return (
     <div className="mt-5 rounded-lg border border-[#dfe7e2] bg-[#f7f9f8] p-5">
@@ -132,14 +157,60 @@ export function OrderStatusPoll({ orderNumber }: { orderNumber: string }) {
           <dd className="mt-1 font-semibold">{order.paidAt ?? "-"}</dd>
         </div>
       </dl>
-      {order.status === "paid" ? (
+      {order.status === "paid" && !order.downloadsUnlocked ? (
+        <div className="mt-5 rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm leading-6 text-amber-800">
+          This order is paid, but this page is missing its secure access token.
+          Use the original checkout return link, or wait for the secure download
+          email once email delivery is connected.
+        </div>
+      ) : null}
+      {order.status === "paid" && order.downloadsUnlocked ? (
+        <div className="mt-5 rounded-lg border border-[#dfe7e2] bg-white p-4">
+          <p className="text-sm font-semibold text-[#15201c]">
+            Secure downloads
+          </p>
+          {downloadCount ? (
+            <div className="mt-4 space-y-4">
+              {order.items.map((item) => (
+                <div
+                  key={item.slug}
+                  className="rounded-md border border-[#eef2ef] p-4"
+                >
+                  <p className="text-sm font-semibold text-[#15201c]">
+                    {item.name}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-3">
+                    {item.files.map((file) => (
+                      <DownloadFileButton
+                        key={file.id}
+                        orderNumber={order.orderNumber}
+                        accessToken={accessToken}
+                        productFileId={file.id}
+                        fileKind={file.kind}
+                        versionLabel={file.versionLabel}
+                      />
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm leading-6 text-[#53615b]">
+              No files are attached to this paid product yet. Once product files
+              are uploaded to the private Supabase bucket, they will appear here
+              automatically.
+            </p>
+          )}
+        </div>
+      ) : null}
+      {order.status === "paid" ? null : (
         <Link
           href="/industries"
           className="mt-5 inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
         >
           Continue
         </Link>
-      ) : null}
+      )}
     </div>
   );
 }
