@@ -2,8 +2,10 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
   createDownloadAccessToken,
+  encryptDownloadAccessToken,
   hashDownloadToken,
 } from "@/lib/downloads";
+import { sendOrderConfirmationEmail } from "@/lib/emails";
 import { createPayFastPayment } from "@/lib/payfast";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
@@ -155,6 +157,8 @@ export async function POST(request: Request) {
       total_cents: subtotalCents,
       currency: "ZAR",
       payfast_m_payment_id: orderNumber,
+      download_access_token_ciphertext:
+        encryptDownloadAccessToken(orderAccessToken),
       download_access_token_hash: hashDownloadToken(orderAccessToken),
       download_access_token_created_at: new Date().toISOString(),
     })
@@ -201,6 +205,21 @@ export async function POST(request: Request) {
   if (paymentError) {
     return NextResponse.json({ error: paymentError.message }, { status: 500 });
   }
+
+  await sendOrderConfirmationEmail({
+    supabase,
+    orderId: order.id,
+    customerId: customerRow.id,
+    orderNumber,
+    to: cleanEmail,
+    totalCents: subtotalCents,
+    accessToken: orderAccessToken,
+    items: normalisedItems.map((item) => ({
+      name: item.product.name,
+      quantity: item.quantity,
+      totalCents: item.totalCents,
+    })),
+  });
 
   const payment = createPayFastPayment({
     orderNumber,

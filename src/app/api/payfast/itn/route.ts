@@ -1,11 +1,32 @@
 import crypto from "node:crypto";
 import dns from "node:dns/promises";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
+import { decryptDownloadAccessToken } from "@/lib/downloads";
+import { sendDownloadReadyEmail } from "@/lib/emails";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
 
 type PayFastData = Record<string, string>;
+
+type VerifiedOrderRow = {
+  id: string;
+  order_number: string;
+  total_cents: number;
+  status: string;
+  email: string;
+  customer_id: string | null;
+  download_access_token_ciphertext: string | null;
+};
+
+type OrderEmailItemRow = {
+  quantity: number;
+  total_cents: number;
+  product_snapshot: {
+    name?: string;
+  };
+};
 
 function encodePayFastValue(value: string) {
   return encodeURIComponent(value.trim()).replace(/%20/g, "+");
@@ -141,6 +162,42 @@ async function logItn({
   });
 }
 
+async function sendDownloadEmailForOrder({
+  supabase,
+  order,
+}: {
+  supabase: SupabaseClient;
+  order: VerifiedOrderRow;
+}) {
+  const accessToken = decryptDownloadAccessToken(
+    order.download_access_token_ciphertext,
+  );
+
+  if (!accessToken) {
+    return;
+  }
+
+  const { data: orderItems } = await supabase
+    .from("order_items")
+    .select("quantity,total_cents,product_snapshot")
+    .eq("order_id", order.id);
+
+  await sendDownloadReadyEmail({
+    supabase,
+    orderId: order.id,
+    customerId: order.customer_id,
+    orderNumber: order.order_number,
+    to: order.email,
+    totalCents: order.total_cents,
+    accessToken,
+    items: ((orderItems ?? []) as OrderEmailItemRow[]).map((item) => ({
+      name: item.product_snapshot?.name ?? "DokKit product",
+      quantity: item.quantity,
+      totalCents: item.total_cents,
+    })),
+  });
+}
+
 export async function POST(request: Request) {
   const rawBody = await request.text();
   const searchParams = new URLSearchParams(rawBody);
@@ -158,7 +215,9 @@ export async function POST(request: Request) {
     const supabase = createSupabaseServiceClient();
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("id,order_number,total_cents,status")
+      .select(
+        "id,order_number,total_cents,status,email,customer_id,download_access_token_ciphertext",
+      )
       .eq("order_number", orderNumber)
       .single();
 
@@ -228,7 +287,14 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
+    const verifiedOrder = order as VerifiedOrderRow;
+
     if (order.status === "paid" || payment?.status === "verified") {
+      await sendDownloadEmailForOrder({
+        supabase,
+        order: verifiedOrder,
+      });
+
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
@@ -253,6 +319,14 @@ export async function POST(request: Request) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", order.id);
+
+    await sendDownloadEmailForOrder({
+      supabase,
+      order: {
+        ...verifiedOrder,
+        status: "paid",
+      },
+    });
 
     return NextResponse.json({ received: true }, { status: 200 });
   } catch (error) {
