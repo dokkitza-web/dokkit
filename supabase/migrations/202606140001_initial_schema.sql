@@ -232,6 +232,26 @@ alter table public.coupons enable row level security;
 alter table public.settings enable row level security;
 alter table public.audit_logs enable row level security;
 
+drop policy if exists "Public can read live industries" on public.industries;
+drop policy if exists "Public can read live package tiers" on public.package_tiers;
+drop policy if exists "Public can read live products" on public.products;
+drop policy if exists "Admins manage admin users" on public.admin_users;
+drop policy if exists "Admins manage industries" on public.industries;
+drop policy if exists "Admins manage package tiers" on public.package_tiers;
+drop policy if exists "Admins manage products" on public.products;
+drop policy if exists "Admins manage product files" on public.product_files;
+drop policy if exists "Admins manage customers" on public.customers;
+drop policy if exists "Admins manage orders" on public.orders;
+drop policy if exists "Admins manage order items" on public.order_items;
+drop policy if exists "Admins manage payments" on public.payments;
+drop policy if exists "Admins manage PayFast ITN logs" on public.payfast_itn_logs;
+drop policy if exists "Admins manage download links" on public.download_links;
+drop policy if exists "Admins manage download events" on public.download_events;
+drop policy if exists "Admins manage email logs" on public.email_logs;
+drop policy if exists "Admins manage coupons" on public.coupons;
+drop policy if exists "Admins manage settings" on public.settings;
+drop policy if exists "Admins read audit logs" on public.audit_logs;
+
 create policy "Public can read live industries"
   on public.industries for select
   using (is_live = true or public.is_admin());
@@ -349,6 +369,9 @@ on conflict (id) do update set
   public = excluded.public,
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Public can view public assets" on storage.objects;
+drop policy if exists "Admins manage storage objects" on storage.objects;
 
 create policy "Public can view public assets"
   on storage.objects for select
