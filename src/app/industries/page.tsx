@@ -1,12 +1,16 @@
 import Link from "next/link";
-import { industries } from "@/data/catalogue";
+import { getCatalogueIndustries } from "@/lib/supabase/catalogue";
 
 export const metadata = {
   title: "Industries | DokKit",
   description: "Browse DokKit document template packages by industry.",
 };
 
-export default function IndustriesPage() {
+export const revalidate = 300;
+
+export default async function IndustriesPage() {
+  const industries = await getCatalogueIndustries();
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
       <div className="max-w-3xl">

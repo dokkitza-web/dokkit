@@ -1,11 +1,16 @@
-import { formatPrice, packageTiers } from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
+import { getCataloguePackageTiers } from "@/lib/supabase/catalogue";
 
 export const metadata = {
   title: "Package comparison | DokKit",
   description: "Compare DokKit Starter, Professional, and Complete packages.",
 };
 
-export default function PackagesPage() {
+export const revalidate = 300;
+
+export default async function PackagesPage() {
+  const packageTiers = await getCataloguePackageTiers();
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
       <div className="max-w-3xl">

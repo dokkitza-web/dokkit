@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { formatPrice } from "@/data/catalogue";
 import {
-  formatPrice,
-  getIndustryBySlug,
-  industries,
-  packageTiers,
-} from "@/data/catalogue";
+  getCatalogueIndustries,
+  getCatalogueIndustryBySlug,
+  getCataloguePackageTiers,
+} from "@/lib/supabase/catalogue";
 
-export function generateStaticParams() {
+export const revalidate = 300;
+
+export async function generateStaticParams() {
+  const industries = await getCatalogueIndustries();
+
   return industries.map((industry) => ({ slug: industry.slug }));
 }
 
@@ -17,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
+  const industry = await getCatalogueIndustryBySlug(slug);
 
   if (!industry) {
     return {
@@ -37,7 +41,10 @@ export default async function IndustryDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const industry = getIndustryBySlug(slug);
+  const [industry, packageTiers] = await Promise.all([
+    getCatalogueIndustryBySlug(slug),
+    getCataloguePackageTiers(),
+  ]);
 
   if (!industry) {
     notFound();

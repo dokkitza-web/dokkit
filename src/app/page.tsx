@@ -1,12 +1,21 @@
 import Link from "next/link";
+import { formatPrice } from "@/data/catalogue";
 import {
-  featuredIndustries,
-  formatPrice,
-  packageTiers,
-  singleDocuments,
-} from "@/data/catalogue";
+  getCatalogueIndustries,
+  getCataloguePackageTiers,
+  getCatalogueSingleDocuments,
+} from "@/lib/supabase/catalogue";
 
-export default function Home() {
+export const revalidate = 300;
+
+export default async function Home() {
+  const [industries, packageTiers, singleDocuments] = await Promise.all([
+    getCatalogueIndustries(),
+    getCataloguePackageTiers(),
+    getCatalogueSingleDocuments(),
+  ]);
+  const featuredIndustries = industries.slice(0, 6);
+
   return (
     <>
       <section className="border-b border-[#dfe7e2] bg-white">

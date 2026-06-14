@@ -1,11 +1,16 @@
-import { formatPrice, singleDocuments } from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
+import { getCatalogueSingleDocuments } from "@/lib/supabase/catalogue";
 
 export const metadata = {
   title: "Single documents | DokKit",
   description: "Browse DokKit single document upsells and standalone templates.",
 };
 
-export default function SingleDocumentsPage() {
+export const revalidate = 300;
+
+export default async function SingleDocumentsPage() {
+  const singleDocuments = await getCatalogueSingleDocuments();
+
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
       <div className="max-w-3xl">
