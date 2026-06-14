@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { formatPrice } from "@/data/catalogue";
 import {
   getCatalogueIndustries,
@@ -100,6 +101,17 @@ export default async function IndustryDetailPage({
                 <span className="rounded-md bg-[#eef5f2] px-3 py-2">
                   {tier.pdfCount} PDFs
                 </span>
+              </div>
+              <div className="mt-5">
+                <AddToCartButton
+                  item={{
+                    slug: `${industry.slug}-${tier.key}`,
+                    name: `${industry.name} ${tier.name} Package`,
+                    priceCents: tier.priceCents,
+                    category: "industry_package",
+                    description: tier.summary,
+                  }}
+                />
               </div>
             </article>
           ))}

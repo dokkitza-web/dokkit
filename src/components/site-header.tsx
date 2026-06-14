@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CartLink } from "@/components/cart-link";
 
 const navigation = [
   { href: "/industries", label: "Industries" },
@@ -23,12 +24,7 @@ export function SiteHeader() {
             </Link>
           ))}
         </nav>
-        <Link
-          href="/industries"
-          className="rounded-md border border-[#b9c8c0] px-4 py-2 text-sm font-semibold text-[#15201c] transition hover:border-[#147d64]"
-        >
-          Browse
-        </Link>
+        <CartLink />
       </div>
     </header>
   );

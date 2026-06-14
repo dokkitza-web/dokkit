@@ -1,3 +1,4 @@
+import { AddToCartButton } from "@/components/add-to-cart-button";
 import { formatPrice } from "@/data/catalogue";
 import { getCatalogueSingleDocuments } from "@/lib/supabase/catalogue";
 
@@ -43,6 +44,17 @@ export default async function SingleDocumentsPage() {
             <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-[#147d64]">
               {document.fileFormats.join(" + ")}
             </p>
+            <div className="mt-5">
+              <AddToCartButton
+                item={{
+                  slug: document.slug,
+                  name: document.name,
+                  priceCents: document.priceCents,
+                  category: "single_document",
+                  description: document.description,
+                }}
+              />
+            </div>
           </article>
         ))}
       </div>
