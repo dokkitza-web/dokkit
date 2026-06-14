@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { OrderStatusPoll } from "@/components/order-status-poll";
 
 export const metadata = {
   title: "Payment returned | DokKit",
@@ -26,9 +27,7 @@ export default async function CheckoutSuccessPage({
           payment notification confirms the order.
         </p>
         {order ? (
-          <p className="mt-4 rounded-md bg-[#f7f9f8] px-4 py-3 text-sm font-semibold">
-            Order: {order}
-          </p>
+          <OrderStatusPoll orderNumber={order} />
         ) : null}
         <Link
           href="/industries"

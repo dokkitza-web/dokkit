@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CancelOrderStatus } from "@/components/cancel-order-status";
 
 export const metadata = {
   title: "Payment cancelled | DokKit",
@@ -25,9 +26,7 @@ export default async function CheckoutCancelledPage({
           You can return to the catalogue and start checkout again.
         </p>
         {order ? (
-          <p className="mt-4 rounded-md bg-[#f7f9f8] px-4 py-3 text-sm font-semibold">
-            Order: {order}
-          </p>
+          <CancelOrderStatus orderNumber={order} />
         ) : null}
         <Link
           href="/industries"
