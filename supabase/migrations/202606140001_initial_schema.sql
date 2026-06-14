@@ -362,7 +362,7 @@ create policy "Admins read audit logs"
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values
   ('public-assets', 'public-assets', true, 10485760, array['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml']),
-  ('product-files', 'product-files', false, 104857600, array['application/zip', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']),
+  ('product-files', 'product-files', false, 104857600, array['application/zip', 'application/x-zip-compressed', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']),
   ('admin-uploads', 'admin-uploads', false, 104857600, null),
   ('generated-zips', 'generated-zips', false, 104857600, array['application/zip'])
 on conflict (id) do update set

@@ -16,28 +16,30 @@ type FileKind = "zip" | "docx" | "xlsx" | "pdf";
 
 const fileKindConfig: Record<
   FileKind,
-  { accept: string; contentType: string; label: string }
+  { accept: string; contentTypes: string[]; label: string }
 > = {
   zip: {
     accept: ".zip",
-    contentType: "application/zip",
+    contentTypes: ["application/zip", "application/x-zip-compressed"],
     label: "ZIP package",
   },
   docx: {
     accept: ".docx",
-    contentType:
+    contentTypes: [
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ],
     label: "DOCX template",
   },
   xlsx: {
     accept: ".xlsx",
-    contentType:
+    contentTypes: [
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    ],
     label: "XLSX workbook",
   },
   pdf: {
     accept: ".pdf",
-    contentType: "application/pdf",
+    contentTypes: ["application/pdf"],
     label: "PDF reference",
   },
 };
@@ -152,6 +154,11 @@ export function AdminFileUploadForm({
       return;
     }
 
+    const allowedContentTypes = fileKindConfig[fileKind].contentTypes;
+    const contentType = allowedContentTypes.includes(file.type)
+      ? file.type
+      : allowedContentTypes[0];
+
     setIsUploading(true);
 
     try {
@@ -177,7 +184,7 @@ export function AdminFileUploadForm({
         .from("product-files")
         .upload(storagePath, file, {
           cacheControl: "3600",
-          contentType: fileKindConfig[fileKind].contentType,
+          contentType,
           upsert: false,
         });
 
