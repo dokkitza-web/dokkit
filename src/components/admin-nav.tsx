@@ -3,6 +3,7 @@ import { signOutAdmin } from "@/app/admin/actions";
 
 const adminLinks = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/orders", label: "Orders" },
   { href: "/admin/products", label: "Products" },
   { href: "/admin/files", label: "Files" },
 ];

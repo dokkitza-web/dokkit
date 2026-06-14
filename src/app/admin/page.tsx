@@ -87,22 +87,28 @@ export default async function AdminDashboardPage() {
           {[
             "Product editing and pricing",
             "Download file QA and version cleanup",
-            "Order management",
-            "PayFast payment status tracking",
-            "Secure download links",
-            "Email delivery logs",
+            "Refund and cancellation workflows",
+            "Customer account access",
           ].map((item) => (
             <div key={item} className="rounded-md bg-[#f7f9f8] px-4 py-3 text-sm">
               {item}
             </div>
           ))}
         </div>
-        <Link
-          href="/admin/products"
-          className="mt-6 inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
-        >
-          Review products
-        </Link>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <Link
+            href="/admin/orders"
+            className="inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
+          >
+            Review orders
+          </Link>
+          <Link
+            href="/admin/products"
+            className="inline-flex rounded-md border border-[#dfe7e2] px-5 py-3 text-sm font-semibold text-[#15201c] transition hover:border-[#147d64]"
+          >
+            Review products
+          </Link>
+        </div>
       </div>
     </section>
   );
