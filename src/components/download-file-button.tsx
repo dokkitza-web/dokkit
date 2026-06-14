@@ -50,7 +50,7 @@ export function DownloadFileButton({
         return;
       }
 
-      window.open(payload.downloadUrl, "_blank", "noopener,noreferrer");
+      window.location.assign(payload.downloadUrl);
     } catch {
       setError("Could not create a secure download link.");
     } finally {
