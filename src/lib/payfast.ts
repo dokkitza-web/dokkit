@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { getSiteUrl } from "@/lib/site-url";
 
 type PayFastFields = Record<string, string>;
 
@@ -47,7 +48,7 @@ export function createPayFastPayment({
   const merchantKey = process.env.PAYFAST_MERCHANT_KEY;
   const processUrl =
     process.env.PAYFAST_PROCESS_URL || "https://sandbox.payfast.co.za/eng/process";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const siteUrl = getSiteUrl();
 
   if (!merchantId || !merchantKey) {
     return {

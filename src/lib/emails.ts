@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { formatPrice } from "@/data/catalogue";
+import { getSiteUrl } from "@/lib/site-url";
 
 type EmailOrderItem = {
   name: string;
@@ -24,10 +25,6 @@ type ResendResponse = {
   name?: string;
   error?: string;
 };
-
-function getSiteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-}
 
 function escapeHtml(value: string) {
   return value
