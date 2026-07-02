@@ -1,0 +1,7 @@
+.env*
+.next/
+.vercel/.env*
+node_modules/
+.localappdata/
+.appdata/
+*.docx

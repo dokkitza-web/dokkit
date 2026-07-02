@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DokKit
 
-## Getting Started
+DokKit is a catalogue-based South African digital product platform for
+downloadable and editable small-business document template packages.
 
-First, run the development server:
+## Current foundation
+
+- Next.js App Router with TypeScript and Tailwind.
+- Public catalogue pages for industries, packages, and single documents.
+- Seed catalogue data for 15 launch industries.
+- Supabase schema, storage buckets, RLS policies, and seed SQL.
+- Environment variable template for Supabase, PayFast, and Resend.
+
+## Getting started
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Main public pages:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `/`
+- `/industries`
+- `/packages`
+- `/single-documents`
 
-## Learn More
+## Supabase setup
 
-To learn more about Next.js, take a look at the following resources:
+Run the SQL files in this order in a new Supabase project:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. `supabase/migrations/202606140001_initial_schema.sql`
+2. `supabase/seed.sql`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Then create your owner account through Supabase Auth and insert the user id
+into `public.admin_users`.
 
-## Deploy on Vercel
+## Environment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Copy `.env.example` to `.env.local` and fill in the live project values.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Useful scripts
+
+```bash
+npm run dev
+npm run lint
+npm run build
+```
+
+## Reset uploaded template packs
+
+Add the live Supabase values to `.env.local`, including
+`NEXT_PUBLIC_SUPABASE_URL` (or `SUPABASE_URL`) and
+`SUPABASE_SERVICE_ROLE_KEY` (or `SUPABASE_SECRET_KEY`).
+
+Preview the template-pack reset:
+
+```bash
+npm run supabase:reset-template-packs
+```
+
+Run the reset:
+
+```bash
+npm run supabase:reset-template-packs -- --execute
+```
+
+By default this resets `industry_package` products by deleting linked storage
+files and `product_files` rows, then marking those products not live. Add
+`--include-single-documents` to include single document products, `--delete-products`
+to remove product rows, and `--purge-pack-buckets` to empty the private pack
+storage buckets as well.
+
+## Rebuild launch packs
+
+The first rebuild is scoped to the two ready Complete packs:
+
+- Beauty Salons and Spas
+- Catering and Baking
+
+In a fresh Supabase project, run these SQL files in order:
+
+1. `supabase/migrations/202606140001_initial_schema.sql`
+2. `supabase/rebuild_business_template_packs.sql`
+
+Package the local pack folders into upload-ready ZIP files:
+
+```bash
+npm run packs:package
+```
+
+Add the new Supabase values to `.env.local`, then dry-run the upload:
+
+```bash
+npm run supabase:upload-template-packs
+```
+
+If the dry run is correct, upload and activate the files:
+
+```bash
+npm run supabase:upload-template-packs -- --execute
+```
+
+## Day-one notes
+
+See `docs/today-setup.md` for GitHub, Supabase, and environment setup steps.

@@ -1,0 +1,35 @@
+{
+  "versionLabel": "v1",
+  "storageBucket": "product-files",
+  "outputDir": ".localappdata/product-packs",
+  "packs": [
+    {
+      "slug": "beauty-salons-and-spas-complete",
+      "industrySlug": "beauty-salons-and-spas",
+      "name": "Beauty Salons and Spas Complete Package",
+      "description": "A full editable business document library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers.",
+      "packageTier": "complete",
+      "priceCents": 119900,
+      "documentCount": 34,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/READY/DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1",
+      "archiveName": "DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1.zip",
+      "storagePath": "product-packs/beauty-salons-and-spas/complete/v1/DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1.zip"
+    },
+    {
+      "slug": "catering-and-baking-complete",
+      "industrySlug": "catering-and-baking",
+      "name": "Catering and Baking Complete Package",
+      "description": "A full editable business document library for caterers, bakers, cake makers, meal prep businesses, and event food service providers.",
+      "packageTier": "complete",
+      "priceCents": 119900,
+      "documentCount": 34,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/READY/DokKit_Catering_and_Baking_Complete_Pack_v1",
+      "archiveName": "DokKit_Catering_and_Baking_Complete_Pack_v1.zip",
+      "storagePath": "product-packs/catering-and-baking/complete/v1/DokKit_Catering_and_Baking_Complete_Pack_v1.zip"
+    }
+  ]
+}
