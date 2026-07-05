@@ -99,7 +99,9 @@ export default async function IndustryDetailPage({
                   {tier.workbookCount} XLSX
                 </span>
                 <span className="rounded-md bg-[#eef5f2] px-3 py-2">
-                  {tier.pdfCount} PDFs
+                  {tier.pdfCount > 0
+                    ? `${tier.pdfCount} PDFs`
+                    : "PDFs coming soon"}
                 </span>
               </div>
               <div className="mt-5">

@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "packs:package": "python tools/package_template_packs.py",
+    "supabase:upload-template-packs": "node tools/upload_template_packs.mjs",
+    "supabase:reset-template-packs": "node tools/reset_supabase_template_packs.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

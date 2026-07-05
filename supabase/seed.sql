@@ -10,9 +10,9 @@ insert into public.package_tiers (
   is_live
 )
 values
-  ('starter', 'Starter', 'A practical admin launch pack for new or informal operators who need the basics fast.', 24900, 10, 3, 10, 1, true),
-  ('professional', 'Professional', 'A stronger operating pack for businesses that quote often, onboard customers, and track work.', 59900, 24, 7, 24, 2, true),
-  ('complete', 'Complete', 'A full document library for owners who want a complete admin system from first enquiry to delivery.', 119900, 45, 12, 45, 3, true)
+  ('starter', 'Starter', 'A practical admin launch pack for new or informal operators who need the basics fast.', 24900, 11, 1, 0, 1, true),
+  ('professional', 'Professional', 'A stronger operating pack for businesses that quote often, onboard customers, and track work.', 59900, 20, 1, 0, 2, true),
+  ('complete', 'Complete', 'A full document library for owners who want a complete admin system from first enquiry to delivery.', 119900, 34, 1, 0, 3, true)
 on conflict (tier_key) do update set
   name = excluded.name,
   summary = excluded.summary,

@@ -38,9 +38,9 @@ export const packageTiers: PackageTier[] = [
     summary:
       "A practical admin launch pack for new or informal operators who need the basics fast.",
     bestFor: "Best for solo owners who need to look professional this week.",
-    documentCount: 10,
-    workbookCount: 3,
-    pdfCount: 10,
+    documentCount: 11,
+    workbookCount: 1,
+    pdfCount: 0,
     includes: [
       "Quotation template",
       "Invoice workbook",
@@ -59,9 +59,9 @@ export const packageTiers: PackageTier[] = [
     summary:
       "A stronger operating pack for businesses that quote often, onboard customers, and track work.",
     bestFor: "Best for growing service businesses with repeat customers.",
-    documentCount: 24,
-    workbookCount: 7,
-    pdfCount: 24,
+    documentCount: 20,
+    workbookCount: 1,
+    pdfCount: 0,
     includes: [
       "Everything in Starter",
       "CRM tracker",
@@ -80,9 +80,9 @@ export const packageTiers: PackageTier[] = [
     summary:
       "A full document library for owners who want a complete admin system from first enquiry to delivery.",
     bestFor: "Best for serious operators who want a fuller back-office kit.",
-    documentCount: 45,
-    workbookCount: 12,
-    pdfCount: 45,
+    documentCount: 34,
+    workbookCount: 1,
+    pdfCount: 0,
     includes: [
       "Everything in Professional",
       "Advanced reporting workbook",
