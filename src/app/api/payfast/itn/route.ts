@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { decryptDownloadAccessToken } from "@/lib/downloads";
+import { createOrderAccessToken } from "@/lib/downloads";
 import { sendDownloadReadyEmail } from "@/lib/emails";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
@@ -17,7 +17,6 @@ type VerifiedOrderRow = {
   status: string;
   email: string;
   customer_id: string | null;
-  download_access_token_ciphertext: string | null;
 };
 
 type OrderEmailItemRow = {
@@ -169,13 +168,7 @@ async function sendDownloadEmailForOrder({
   supabase: SupabaseClient;
   order: VerifiedOrderRow;
 }) {
-  const accessToken = decryptDownloadAccessToken(
-    order.download_access_token_ciphertext,
-  );
-
-  if (!accessToken) {
-    return;
-  }
+  const accessToken = createOrderAccessToken(order.order_number);
 
   const { data: orderItems } = await supabase
     .from("order_items")
@@ -215,9 +208,7 @@ export async function POST(request: Request) {
     const supabase = createSupabaseServiceClient();
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select(
-        "id,order_number,total_cents,status,email,customer_id,download_access_token_ciphertext",
-      )
+      .select("id,order_number,total_cents,status,email,customer_id")
       .eq("order_number", orderNumber)
       .single();
 

@@ -4,7 +4,7 @@ import {
   DOWNLOAD_LINK_TTL_SECONDS,
   createDownloadAccessToken,
   hashDownloadToken,
-  verifyDownloadAccessToken,
+  verifyOrderAccessToken,
 } from "@/lib/downloads";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
   const supabase = createSupabaseServiceClient();
   const { data: order, error: orderError } = await supabase
     .from("orders")
-    .select("id,order_number,status,download_access_token_hash")
+    .select("id,order_number,status")
     .eq("order_number", orderNumber)
     .single();
 
@@ -56,9 +56,9 @@ export async function POST(request: Request) {
   }
 
   if (
-    !verifyDownloadAccessToken({
+    !verifyOrderAccessToken({
+      orderNumber: order.order_number,
       suppliedToken: accessToken,
-      storedHash: order.download_access_token_hash,
     })
   ) {
     return NextResponse.json(

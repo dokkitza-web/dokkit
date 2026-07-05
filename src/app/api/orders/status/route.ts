@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { verifyDownloadAccessToken } from "@/lib/downloads";
+import { verifyOrderAccessToken } from "@/lib/downloads";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -44,9 +44,7 @@ export async function GET(request: Request) {
   const supabase = createSupabaseServiceClient();
   const { data: order, error: orderError } = await supabase
     .from("orders")
-    .select(
-      "id,order_number,status,total_cents,paid_at,created_at,download_access_token_hash",
-    )
+    .select("id,order_number,status,total_cents,paid_at,created_at")
     .eq("order_number", parsedQuery.data.order)
     .single();
 
@@ -66,9 +64,9 @@ export async function GET(request: Request) {
   const orderItems = (items ?? []) as OrderItemRow[];
   const downloadsUnlocked =
     order.status === "paid" &&
-    verifyDownloadAccessToken({
+    verifyOrderAccessToken({
+      orderNumber: order.order_number,
       suppliedToken: parsedQuery.data.access,
-      storedHash: order.download_access_token_hash,
     });
   const productIds = [
     ...new Set(

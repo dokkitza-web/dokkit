@@ -1,9 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
-  createDownloadAccessToken,
-  encryptDownloadAccessToken,
-  hashDownloadToken,
+  createOrderAccessToken,
 } from "@/lib/downloads";
 import { sendOrderConfirmationEmail } from "@/lib/emails";
 import { createPayFastPayment } from "@/lib/payfast";
@@ -124,7 +122,7 @@ export async function POST(request: Request) {
     0,
   );
   const orderNumber = createOrderNumber();
-  const orderAccessToken = createDownloadAccessToken();
+  const orderAccessToken = createOrderAccessToken(orderNumber);
   const cleanEmail = customer.email.toLowerCase().trim();
 
   const { data: customerRow, error: customerError } = await supabase
@@ -157,10 +155,6 @@ export async function POST(request: Request) {
       total_cents: subtotalCents,
       currency: "ZAR",
       payfast_m_payment_id: orderNumber,
-      download_access_token_ciphertext:
-        encryptDownloadAccessToken(orderAccessToken),
-      download_access_token_hash: hashDownloadToken(orderAccessToken),
-      download_access_token_created_at: new Date().toISOString(),
     })
     .select("id,order_number,total_cents")
     .single();

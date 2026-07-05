@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 export const DOWNLOAD_LINK_TTL_SECONDS = 10 * 60;
 export const SUPABASE_SIGNED_URL_TTL_SECONDS = 60;
 
-function getEncryptionKey() {
+function getDownloadTokenSecret() {
   const secret =
     process.env.DOWNLOAD_TOKEN_ENCRYPTION_KEY ??
     process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -14,7 +14,46 @@ function getEncryptionKey() {
     );
   }
 
-  return crypto.createHash("sha256").update(secret).digest();
+  return secret;
+}
+
+function getEncryptionKey() {
+  return crypto.createHash("sha256").update(getDownloadTokenSecret()).digest();
+}
+
+function timingSafeStringEqual(left: string, right: string) {
+  const leftBuffer = Buffer.from(left);
+  const rightBuffer = Buffer.from(right);
+
+  if (leftBuffer.length !== rightBuffer.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+export function createOrderAccessToken(orderNumber: string) {
+  return crypto
+    .createHmac("sha256", getDownloadTokenSecret())
+    .update(orderNumber)
+    .digest("base64url");
+}
+
+export function verifyOrderAccessToken({
+  orderNumber,
+  suppliedToken,
+}: {
+  orderNumber: string;
+  suppliedToken?: string | null;
+}) {
+  if (!suppliedToken) {
+    return false;
+  }
+
+  return timingSafeStringEqual(
+    suppliedToken,
+    createOrderAccessToken(orderNumber),
+  );
 }
 
 export function createDownloadAccessToken() {
