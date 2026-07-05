@@ -38,7 +38,7 @@ export const packageTiers: PackageTier[] = [
     summary:
       "A practical starter pack for owners who need quoting, invoicing, and client basics fast.",
     bestFor: "Best for solo owners who need to look professional this week.",
-    documentCount: 10,
+    documentCount: 11,
     workbookCount: 1,
     pdfCount: 0,
     includes: [
@@ -59,7 +59,7 @@ export const packageTiers: PackageTier[] = [
     summary:
       "A stronger operating pack for businesses that quote often, onboard customers, and track recurring work.",
     bestFor: "Best for growing service businesses with repeat customers.",
-    documentCount: 19,
+    documentCount: 20,
     workbookCount: 1,
     pdfCount: 0,
     includes: [
@@ -80,7 +80,7 @@ export const packageTiers: PackageTier[] = [
     summary:
       "A full document library for owners who want a complete admin system from first enquiry to delivery.",
     bestFor: "Best for serious operators who want a fuller back-office kit.",
-    documentCount: 33,
+    documentCount: 34,
     workbookCount: 1,
     pdfCount: 0,
     includes: [
