@@ -29,8 +29,9 @@ export default async function Home() {
               track, and deliver professionally.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#53615b]">
-              DokKit packages include editable DOCX templates, XLSX workbooks,
-              and PDF reference versions for practical small-business admin.
+              DokKit packages include editable DOCX templates and XLSX
+              workbooks for practical small-business admin. PDF reference
+              versions are coming soon.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -57,7 +58,7 @@ export default async function Home() {
                   ["15", "launch industries"],
                   ["45", "industry packages"],
                   ["20", "single upsells"],
-                  ["3", "file formats"],
+                  ["2", "core file formats"],
                 ].map(([value, label]) => (
                   <div key={label} className="border-l-2 border-[#147d64] pl-4">
                     <dt className="text-3xl font-semibold text-[#101816]">
@@ -75,7 +76,9 @@ export default async function Home() {
               <div className="mt-4 grid gap-3 text-sm text-[#53615b] sm:grid-cols-3">
                 <span className="rounded-md bg-[#eef5f2] px-3 py-2">DOCX</span>
                 <span className="rounded-md bg-[#eef5f2] px-3 py-2">XLSX</span>
-                <span className="rounded-md bg-[#eef5f2] px-3 py-2">PDF</span>
+                <span className="rounded-md bg-[#eef5f2] px-3 py-2">
+                  PDF soon
+                </span>
               </div>
             </div>
           </div>
@@ -140,8 +143,8 @@ export default async function Home() {
                   {formatPrice(tier.priceCents)}
                 </p>
                 <p className="mt-2 text-sm text-[#53615b]">
-                  {tier.documentCount} documents, {tier.workbookCount} workbooks,
-                  {tier.pdfCount} PDFs
+                  {tier.documentCount} documents, {tier.workbookCount} workbook,
+                  PDFs coming soon
                 </p>
               </article>
             ))}

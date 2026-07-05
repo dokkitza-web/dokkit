@@ -1,0 +1,91 @@
+{
+  "versionLabel": "v1",
+  "storageBucket": "product-files",
+  "outputDir": ".localappdata/product-packs",
+  "packs": [
+    {
+      "slug": "beauty-salons-and-spas-starter",
+      "industrySlug": "beauty-salons-and-spas",
+      "name": "Beauty Salons and Spas Starter Package",
+      "description": "A focused editable starter library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers who need the core admin basics.",
+      "packageTier": "starter",
+      "priceCents": 24900,
+      "documentCount": 11,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Beauty_Salons_and_Spas_Starter_Pack_v1",
+      "archiveName": "DokKit_Beauty_Salons_and_Spas_Starter_Pack_v1.zip",
+      "storagePath": "product-packs/beauty-salons-and-spas/starter/v1/DokKit_Beauty_Salons_and_Spas_Starter_Pack_v1.zip"
+    },
+    {
+      "slug": "beauty-salons-and-spas-professional",
+      "industrySlug": "beauty-salons-and-spas",
+      "name": "Beauty Salons and Spas Professional Package",
+      "description": "A stronger editable operating library for beauty businesses that quote often, record treatment details, manage staff worksheets, track stock, and collect customer feedback.",
+      "packageTier": "professional",
+      "priceCents": 59900,
+      "documentCount": 20,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Beauty_Salons_and_Spas_Professional_Pack_v1",
+      "archiveName": "DokKit_Beauty_Salons_and_Spas_Professional_Pack_v1.zip",
+      "storagePath": "product-packs/beauty-salons-and-spas/professional/v1/DokKit_Beauty_Salons_and_Spas_Professional_Pack_v1.zip"
+    },
+    {
+      "slug": "beauty-salons-and-spas-complete",
+      "industrySlug": "beauty-salons-and-spas",
+      "name": "Beauty Salons and Spas Complete Package",
+      "description": "A full editable business document library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers.",
+      "packageTier": "complete",
+      "priceCents": 119900,
+      "documentCount": 34,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1",
+      "archiveName": "DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1.zip",
+      "storagePath": "product-packs/beauty-salons-and-spas/complete/v1/DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1.zip"
+    },
+    {
+      "slug": "catering-and-baking-starter",
+      "industrySlug": "catering-and-baking",
+      "name": "Catering and Baking Starter Package",
+      "description": "A focused editable starter library for caterers, bakers, cake makers, meal prep businesses, and event food service providers who need core order and admin templates.",
+      "packageTier": "starter",
+      "priceCents": 24900,
+      "documentCount": 11,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Catering_and_Baking_Starter_Pack_v1",
+      "archiveName": "DokKit_Catering_and_Baking_Starter_Pack_v1.zip",
+      "storagePath": "product-packs/catering-and-baking/starter/v1/DokKit_Catering_and_Baking_Starter_Pack_v1.zip"
+    },
+    {
+      "slug": "catering-and-baking-professional",
+      "industrySlug": "catering-and-baking",
+      "name": "Catering and Baking Professional Package",
+      "description": "A stronger editable operating library for food businesses that quote events, capture allergens, manage staff worksheets, track stock, and collect customer feedback.",
+      "packageTier": "professional",
+      "priceCents": 59900,
+      "documentCount": 20,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Catering_and_Baking_Professional_Pack_v1",
+      "archiveName": "DokKit_Catering_and_Baking_Professional_Pack_v1.zip",
+      "storagePath": "product-packs/catering-and-baking/professional/v1/DokKit_Catering_and_Baking_Professional_Pack_v1.zip"
+    },
+    {
+      "slug": "catering-and-baking-complete",
+      "industrySlug": "catering-and-baking",
+      "name": "Catering and Baking Complete Package",
+      "description": "A full editable business document library for caterers, bakers, cake makers, meal prep businesses, and event food service providers.",
+      "packageTier": "complete",
+      "priceCents": 119900,
+      "documentCount": 34,
+      "workbookCount": 1,
+      "pdfCount": 0,
+      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Catering_and_Baking_Complete_Pack_v1",
+      "archiveName": "DokKit_Catering_and_Baking_Complete_Pack_v1.zip",
+      "storagePath": "product-packs/catering-and-baking/complete/v1/DokKit_Catering_and_Baking_Complete_Pack_v1.zip"
+    }
+  ]
+}
