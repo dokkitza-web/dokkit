@@ -1,10 +1,11 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { formatPrice } from "@/data/catalogue";
+import { formatFileFormats, formatPrice } from "@/data/catalogue";
 import { getCatalogueSingleDocuments } from "@/lib/supabase/catalogue";
 
 export const metadata = {
   title: "Single documents | DokKit",
-  description: "Browse DokKit single document upsells and standalone templates.",
+  description:
+    "Browse individual DokKit Word templates and Excel workbooks for small-business admin.",
 };
 
 export const revalidate = 300;
@@ -55,8 +56,8 @@ export default async function SingleDocumentsPage() {
             <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
               {document.description}
             </p>
-            <p className="mt-5 text-xs font-black uppercase tracking-[0.16em] text-[#ff6a00]">
-              {document.fileFormats.join(" + ")} / PDF coming soon
+            <p className="mt-5 text-xs font-black tracking-[0.08em] text-[#ff6a00]">
+              {formatFileFormats(document.fileFormats)} / PDF coming soon
             </p>
             <div className="mt-5">
               <AddToCartButton

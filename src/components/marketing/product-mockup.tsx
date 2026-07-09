@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-const formatBadges = ["DOCX templates", "XLSX trackers", "Business packs"];
+const formatBadges = ["Word templates", "Excel trackers", "Business packs"];
 
 export function ProductMockup() {
   return (
@@ -51,7 +51,7 @@ export function DocumentPreviewCard({
           sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 90vw"
           className="object-cover object-top transition duration-300 group-hover:scale-[1.03]"
         />
-        <span className="absolute left-3 top-3 rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white shadow-sm">
+        <span className="absolute left-3 top-3 rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black tracking-[0.08em] text-white shadow-sm">
           {format}
         </span>
       </div>

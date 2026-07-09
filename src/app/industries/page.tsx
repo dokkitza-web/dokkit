@@ -3,7 +3,8 @@ import { getCatalogueIndustries } from "@/lib/supabase/catalogue";
 
 export const metadata = {
   title: "Industries | DokKit",
-  description: "Browse DokKit document template packages by industry.",
+  description:
+    "Browse DokKit Word template and Excel workbook packages by industry.",
 };
 
 export const revalidate = 300;
@@ -23,7 +24,7 @@ export default async function IndustriesPage() {
         </h1>
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
           Each industry has Starter, Professional, and Complete options with
-          editable DOCX documents and XLSX workbooks. PDF versions are coming
+          editable Word documents and Excel workbooks. PDF versions are coming
           soon.
         </p>
       </div>

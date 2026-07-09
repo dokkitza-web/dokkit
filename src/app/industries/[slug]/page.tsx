@@ -107,10 +107,10 @@ export default async function IndustryDetailPage({
                 }`}
               >
                 <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
-                  {product.documentCount} DOCX
+                  {product.documentCount} Word documents
                 </span>
                 <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
-                  {product.workbookCount} XLSX
+                  {product.workbookCount} Excel workbook
                 </span>
                 <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
                   PDF coming soon

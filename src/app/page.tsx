@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { formatDocumentRange, formatPrice } from "@/data/catalogue";
+import {
+  formatDocumentRange,
+  formatFileFormats,
+  formatPrice,
+} from "@/data/catalogue";
 import {
   DocumentPreviewCard,
   ProductMockup,
@@ -28,49 +32,49 @@ const documentPreviews = [
   {
     title: "Client Treatment Intake Form",
     industry: "Beauty Salons and Spas",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/beauty-client-intake.png",
   },
   {
     title: "Catering and Baking Quotation",
     industry: "Catering and Baking",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/catering-quotation.png",
   },
   {
     title: "Cleaning Services Invoice",
     industry: "Cleaning Services",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/cleaning-invoice.png",
   },
   {
     title: "Construction Risk Assessment",
     industry: "Construction Subcontractors",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/construction-risk-assessment.png",
   },
   {
     title: "Project Proposal Template",
     industry: "Freelancers and Consultants",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/freelancer-proposal.png",
   },
   {
     title: "Garden Service Site Intake Form",
     industry: "Landscaping and Garden Services",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/landscaping-site-intake.png",
   },
   {
     title: "Security Site Risk Assessment",
     industry: "Safety and Security",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/security-site-risk.png",
   },
   {
     title: "Proof of Delivery and Handover Form",
     industry: "Transport and Delivery Services",
-    format: "DOCX",
+    format: "Word",
     imageSrc: "/images/previews/transport-proof-of-delivery.png",
   },
 ];
@@ -90,7 +94,7 @@ const benefits = [
   },
   {
     title: "Editable in Word and Excel",
-    copy: "DOCX templates and XLSX workbooks are designed for practical editing and reuse.",
+    copy: "Word templates and Excel workbooks are designed for practical editing and reuse.",
   },
   {
     title: "Built for South Africa",
@@ -104,7 +108,7 @@ const benefits = [
 
 const trustItems = [
   "Built for South African small businesses",
-  "Editable DOCX and XLSX templates",
+  "Editable Word and Excel templates",
   "Professional document structure",
   "Instant digital delivery after verified PayFast payment",
   "Secure checkout with PayFast",
@@ -119,7 +123,7 @@ const faqs = [
   {
     question: "Can I edit the templates?",
     answer:
-      "Yes. DokKit focuses on editable DOCX templates and XLSX workbooks so you can customise them for your business.",
+      "Yes. DokKit focuses on editable Word templates and Excel workbooks so you can customise them for your business.",
   },
   {
     question: "Are these industry-specific?",
@@ -163,7 +167,7 @@ export default async function Home() {
               Professional business templates built for small businesses.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#5f5f66]">
-              DokKit gives you editable DOCX templates and XLSX workbooks for
+              DokKit gives you editable Word templates and Excel workbooks for
               quoting, invoicing, tracking, onboarding, operations, and everyday
               business admin.
             </p>
@@ -184,7 +188,7 @@ export default async function Home() {
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
               {[
                 [industries.length.toString(), "ready industries"],
-                ["DOCX", "editable templates"],
+                ["Word", "editable templates"],
                 ["PayFast", "secure checkout"],
               ].map(([value, label]) => (
                 <div key={label} className="rounded-3xl bg-white p-5 shadow-sm">
@@ -382,8 +386,8 @@ export default async function Home() {
                     tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
                   }`}
                 >
-                  {formatDocumentRange(tier.key)} DOCX, {tier.workbookCount}{" "}
-                  XLSX / PDF coming soon
+                  {formatDocumentRange(tier.key)} Word documents,{" "}
+                  {tier.workbookCount} Excel workbook / PDF coming soon
                 </p>
                 <ul className="mt-7 grid gap-3 text-sm font-bold">
                   {tier.includes.slice(0, 4).map((item) => (
@@ -457,8 +461,9 @@ export default async function Home() {
                 >
                   <div>
                     <p className="font-black text-[#111111]">{document.name}</p>
-                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.14em] text-[#ff6a00]">
-                      {document.fileFormats.join(" + ")} / PDF coming soon
+                    <p className="mt-1 text-xs font-bold tracking-[0.08em] text-[#ff6a00]">
+                      {formatFileFormats(document.fileFormats)} / PDF coming
+                      soon
                     </p>
                   </div>
                   <p className="text-sm font-black text-[#111111]">

@@ -4,18 +4,31 @@ import { SiteHeader } from "@/components/site-header";
 import { getSiteUrlObject } from "@/lib/site-url";
 import "./globals.css";
 
+const siteTitle =
+  "DokKit | Word and Excel templates for South African small businesses";
+const siteDescription =
+  "Editable Word templates and Excel workbooks for South African small businesses, including industry-specific packs for quotes, invoices, forms, trackers and admin.";
+
 export const metadata: Metadata = {
   metadataBase: getSiteUrlObject(),
-  title: "DokKit | South African business document template packages",
-  description:
-    "Downloadable and editable business document template packages for South African small businesses.",
+  title: siteTitle,
+  description: siteDescription,
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/dokkit-icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/dokkit-icon-96.png", sizes: "96x96", type: "image/png" },
+      { url: "/dokkit-icon-192.png", sizes: "192x192", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: ["/favicon.ico"],
+  },
   openGraph: {
-    title: "DokKit | South African business document template packages",
-    description:
-      "Downloadable and editable business document template packages for South African small businesses.",
+    title: siteTitle,
+    description: siteDescription,
     url: "/",
     siteName: "DokKit",
     type: "website",

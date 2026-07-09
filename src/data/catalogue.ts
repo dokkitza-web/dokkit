@@ -583,6 +583,18 @@ export function formatDocumentRange(tierKey: PackageTierKey) {
   return range.min === range.max ? `${range.min}` : `${range.min}-${range.max}`;
 }
 
+export function formatFileFormats(fileFormats: string[]) {
+  const labels: Record<string, string> = {
+    DOCX: "Word",
+    XLSX: "Excel",
+    PDF: "PDF",
+  };
+
+  return fileFormats
+    .map((format) => labels[format.toUpperCase()] ?? format)
+    .join(" + ");
+}
+
 export const singleDocuments: SingleDocument[] = [
   {
     slug: "quotation-template",

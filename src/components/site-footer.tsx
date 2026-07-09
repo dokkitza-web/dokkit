@@ -30,12 +30,12 @@ export function SiteFooter() {
               support@dokkit.co.za
             </Link>
           </p>
-          <div className="mt-5 flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.14em] text-white/70">
+          <div className="mt-5 flex flex-wrap gap-2 text-xs font-black tracking-[0.08em] text-white/70">
             <span className="rounded-full border border-white/15 px-3 py-1.5">
-              DOCX
+              Word
             </span>
             <span className="rounded-full border border-white/15 px-3 py-1.5">
-              XLSX
+              Excel
             </span>
             <span className="rounded-full border border-white/15 px-3 py-1.5">
               PayFast checkout

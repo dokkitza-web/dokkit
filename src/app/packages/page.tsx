@@ -4,7 +4,8 @@ import { getCataloguePackageTiers } from "@/lib/supabase/catalogue";
 
 export const metadata = {
   title: "Package comparison | DokKit",
-  description: "Compare DokKit Starter, Professional, and Complete packages.",
+  description:
+    "Compare DokKit Starter, Professional, and Complete Word and Excel template packages.",
 };
 
 export const revalidate = 300;
@@ -23,7 +24,7 @@ export default async function PackagesPage() {
         </h1>
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
           Choose one clear package level across the ready industry packs.
-          Exact DOCX counts vary by industry and are shown on each industry
+          Exact Word document counts vary by industry and are shown on each industry
           page.
         </p>
       </div>
@@ -59,8 +60,8 @@ export default async function PackagesPage() {
                 tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
               }`}
             >
-              {formatDocumentRange(tier.key)} DOCX, {tier.workbookCount} XLSX /
-              PDF coming soon
+              {formatDocumentRange(tier.key)} Word documents,{" "}
+              {tier.workbookCount} Excel workbook / PDF coming soon
             </p>
             <p
               className={`mt-2 text-sm ${
