@@ -1,4 +1,4 @@
-import { AdminNav } from "@/components/admin-nav";
+import { AdminShell } from "@/components/admin-shell";
 import { formatPrice } from "@/data/catalogue";
 import { requireAdmin } from "@/lib/supabase/admin";
 
@@ -107,7 +107,7 @@ function formatDate(value?: string | null) {
 
 function getStatusClass(status: string) {
   if (status === "paid" || status === "verified" || status === "sent") {
-    return "bg-[#eef5f2] text-[#147d64]";
+    return "bg-[#fff4eb] text-[#ff6a00]";
   }
 
   if (status === "pending_payment" || status === "initiated" || status === "queued") {
@@ -215,47 +215,39 @@ export default async function AdminOrdersPage() {
   );
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-      <AdminNav email={user.email ?? "Admin user"} />
-
-      <div className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#147d64]">
-          Order operations
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Orders</h1>
-        <p className="mt-4 max-w-3xl text-sm leading-6 text-[#53615b]">
-          Review recent orders, payment verification, email delivery, and secure
-          download activity from one owner-only screen.
-        </p>
-      </div>
-
+    <AdminShell
+      email={user.email ?? "Admin user"}
+      eyebrow="Order operations"
+      title="Orders"
+      description="Review recent orders, PayFast verification, email delivery, and secure download activity from one owner-only screen."
+    >
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <article className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-[#53615b]">Recent orders</p>
-          <p className="mt-3 text-3xl font-semibold">{summary.total}</p>
+        <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
+          <p className="text-sm font-bold text-[#5f5f66]">Recent orders</p>
+          <p className="mt-3 text-3xl font-black">{summary.total}</p>
         </article>
-        <article className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-[#53615b]">Paid</p>
-          <p className="mt-3 text-3xl font-semibold text-[#147d64]">
+        <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
+          <p className="text-sm font-bold text-[#5f5f66]">Paid</p>
+          <p className="mt-3 text-3xl font-black text-[#ff6a00]">
             {summary.paid}
           </p>
         </article>
-        <article className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-[#53615b]">Pending</p>
-          <p className="mt-3 text-3xl font-semibold text-amber-700">
+        <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
+          <p className="text-sm font-bold text-[#5f5f66]">Pending</p>
+          <p className="mt-3 text-3xl font-black text-amber-700">
             {summary.pending}
           </p>
         </article>
-        <article className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm">
-          <p className="text-sm font-medium text-[#53615b]">Paid revenue</p>
-          <p className="mt-3 text-3xl font-semibold">
+        <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
+          <p className="text-sm font-bold text-[#5f5f66]">Paid revenue</p>
+          <p className="mt-3 text-3xl font-black">
             {formatPrice(summary.revenueCents)}
           </p>
         </article>
       </div>
 
       {ordersError ? (
-        <div className="rounded-lg border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
           {ordersError.message}
         </div>
       ) : orderRows.length ? (
@@ -273,7 +265,7 @@ export default async function AdminOrdersPage() {
             return (
               <article
                 key={order.id}
-                className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm"
+                className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm"
               >
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div>
@@ -287,38 +279,38 @@ export default async function AdminOrdersPage() {
                         {order.status}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-[#53615b]">
+                    <p className="mt-2 text-sm text-[#5f5f66]">
                       Created {formatDate(order.created_at)} | Paid{" "}
                       {formatDate(order.paid_at)}
                     </p>
                   </div>
                   <div className="text-left lg:text-right">
-                    <p className="text-sm text-[#53615b]">Total</p>
-                    <p className="mt-1 text-2xl font-semibold text-[#147d64]">
+                    <p className="text-sm text-[#5f5f66]">Total</p>
+                    <p className="mt-1 text-2xl font-black text-[#ff6a00]">
                       {formatPrice(order.total_cents)}
                     </p>
-                    <p className="mt-1 text-xs text-[#53615b]">
+                    <p className="mt-1 text-xs text-[#5f5f66]">
                       {order.currency}
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-[1.1fr_1fr_1fr]">
-                  <div className="rounded-md bg-[#f7f9f8] p-4">
-                    <p className="text-sm font-semibold">Customer</p>
-                    <p className="mt-2 text-sm text-[#15201c]">
+                  <div className="rounded-2xl bg-[#f6f4f1] p-4">
+                    <p className="text-sm font-black">Customer</p>
+                    <p className="mt-2 text-sm text-[#111111]">
                       {customer?.full_name ?? "Name not captured"}
                     </p>
-                    <p className="mt-1 text-sm text-[#53615b]">{order.email}</p>
+                    <p className="mt-1 text-sm text-[#5f5f66]">{order.email}</p>
                     {customer?.phone ? (
-                      <p className="mt-1 text-sm text-[#53615b]">
+                      <p className="mt-1 text-sm text-[#5f5f66]">
                         {customer.phone}
                       </p>
                     ) : null}
                   </div>
 
-                  <div className="rounded-md bg-[#f7f9f8] p-4">
-                    <p className="text-sm font-semibold">Payment</p>
+                  <div className="rounded-2xl bg-[#f6f4f1] p-4">
+                    <p className="text-sm font-black">Payment</p>
                     {payment ? (
                       <>
                         <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -327,43 +319,43 @@ export default async function AdminOrdersPage() {
                           >
                             {payment.status}
                           </span>
-                          <span className="text-xs text-[#53615b]">
+                          <span className="text-xs text-[#5f5f66]">
                             {payment.provider}
                           </span>
                         </div>
-                        <p className="mt-2 text-xs text-[#53615b]">
+                        <p className="mt-2 text-xs text-[#5f5f66]">
                           Verified: {formatDate(payment.verified_at)}
                         </p>
                         {payment.provider_payment_id ? (
-                          <p className="mt-1 break-all text-xs text-[#53615b]">
+                          <p className="mt-1 break-all text-xs text-[#5f5f66]">
                             PayFast ID: {payment.provider_payment_id}
                           </p>
                         ) : null}
                       </>
                     ) : (
-                      <p className="mt-2 text-sm text-[#53615b]">
+                      <p className="mt-2 text-sm text-[#5f5f66]">
                         No payment row found.
                       </p>
                     )}
                   </div>
 
-                  <div className="rounded-md bg-[#f7f9f8] p-4">
-                    <p className="text-sm font-semibold">Activity</p>
-                    <p className="mt-2 text-sm text-[#53615b]">
+                  <div className="rounded-2xl bg-[#f6f4f1] p-4">
+                    <p className="text-sm font-black">Activity</p>
+                    <p className="mt-2 text-sm text-[#5f5f66]">
                       Emails: {emails.length}
                     </p>
-                    <p className="mt-1 text-sm text-[#53615b]">
+                    <p className="mt-1 text-sm text-[#5f5f66]">
                       Downloads: {downloads.length}
                     </p>
-                    <p className="mt-1 text-sm text-[#53615b]">
+                    <p className="mt-1 text-sm text-[#5f5f66]">
                       Latest ITN: {latestItn?.status_text ?? "-"}
                     </p>
                   </div>
                 </div>
 
                 <div className="mt-5 grid gap-4 lg:grid-cols-2">
-                  <div className="rounded-md border border-[#eef2ef] p-4">
-                    <p className="text-sm font-semibold">Purchased products</p>
+                  <div className="rounded-2xl border border-black/10 p-4">
+                    <p className="text-sm font-black">Purchased products</p>
                     <div className="mt-3 grid gap-3">
                       {items.length ? (
                         items.map((item) => (
@@ -375,7 +367,7 @@ export default async function AdminOrdersPage() {
                               <p className="font-medium">
                                 {item.product_snapshot.name ?? "DokKit product"}
                               </p>
-                              <p className="mt-1 text-xs text-[#53615b]">
+                              <p className="mt-1 text-xs text-[#5f5f66]">
                                 Qty {item.quantity}
                                 {item.product_snapshot.package_tier
                                   ? ` | ${item.product_snapshot.package_tier}`
@@ -388,15 +380,15 @@ export default async function AdminOrdersPage() {
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-[#53615b]">
+                        <p className="text-sm text-[#5f5f66]">
                           No order items found.
                         </p>
                       )}
                     </div>
                   </div>
 
-                  <div className="rounded-md border border-[#eef2ef] p-4">
-                    <p className="text-sm font-semibold">Email delivery</p>
+                  <div className="rounded-2xl border border-black/10 p-4">
+                    <p className="text-sm font-black">Email delivery</p>
                     <div className="mt-3 grid gap-3">
                       {emails.length ? (
                         emails.map((email) => (
@@ -414,7 +406,7 @@ export default async function AdminOrdersPage() {
                                 {email.template_key}
                               </span>
                             </div>
-                            <p className="mt-1 text-xs text-[#53615b]">
+                            <p className="mt-1 text-xs text-[#5f5f66]">
                               To {email.recipient} | Sent{" "}
                               {formatDate(email.sent_at)}
                             </p>
@@ -426,7 +418,7 @@ export default async function AdminOrdersPage() {
                           </div>
                         ))
                       ) : (
-                        <p className="text-sm text-[#53615b]">
+                        <p className="text-sm text-[#5f5f66]">
                           No email logs found.
                         </p>
                       )}
@@ -438,10 +430,10 @@ export default async function AdminOrdersPage() {
           })}
         </div>
       ) : (
-        <div className="rounded-lg border border-[#dfe7e2] bg-white p-6 text-sm text-[#53615b] shadow-sm">
+        <div className="rounded-[1.5rem] border border-black/10 bg-white p-6 text-sm text-[#5f5f66] shadow-sm">
           No orders yet.
         </div>
       )}
-    </section>
+    </AdminShell>
   );
 }

@@ -40,7 +40,7 @@ export function AdminLoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 grid gap-5">
-      <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+      <label className="grid gap-2 text-sm font-bold text-[#111111]">
         Email address
         <input
           type="email"
@@ -48,11 +48,11 @@ export function AdminLoginForm() {
           onChange={(event) => setEmail(event.target.value)}
           required
           autoComplete="email"
-          className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+          className="rounded-2xl border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
         />
       </label>
 
-      <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+      <label className="grid gap-2 text-sm font-bold text-[#111111]">
         Password
         <input
           type="password"
@@ -60,12 +60,12 @@ export function AdminLoginForm() {
           onChange={(event) => setPassword(event.target.value)}
           required
           autoComplete="current-password"
-          className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+          className="rounded-2xl border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
         />
       </label>
 
       {error ? (
-        <p className="rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </p>
       ) : null}
@@ -73,7 +73,7 @@ export function AdminLoginForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#0f604d] disabled:cursor-not-allowed disabled:opacity-70"
+        className="rounded-full bg-[#ff6a00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#ff6a00]/20 transition hover:bg-[#d95400] disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
       </button>

@@ -1,8 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f9f8;
-  --foreground: #15201c;
+  --background: #fffaf5;
+  --foreground: #111111;
+  --brand-orange: #ff6a00;
+  --brand-orange-dark: #d95400;
+  --brand-orange-soft: #fff0e3;
+  --brand-black: #111111;
+  --brand-muted: #5f5f66;
+  --brand-line: #ece7df;
 }
 
 @theme inline {
@@ -19,6 +25,28 @@ body {
 }
 
 ::selection {
-  background: #c8eadf;
-  color: #101816;
+  background: #ffd8bd;
+  color: #111111;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  outline-color: var(--brand-orange);
+}
+
+.premium-card {
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 50px rgba(17, 17, 17, 0.08);
+}
+
+.orange-glow {
+  box-shadow: 0 18px 60px rgba(255, 106, 0, 0.22);
 }

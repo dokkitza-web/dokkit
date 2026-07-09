@@ -77,6 +77,14 @@ function orderByKnownSingleDocuments(a: SingleDocument, b: SingleDocument) {
   return a.name.localeCompare(b.name);
 }
 
+function getLaunchFormats(formats?: string[]) {
+  const editableFormats = (formats?.length ? formats : ["DOCX"]).filter(
+    (format) => format.toUpperCase() !== "PDF",
+  );
+
+  return editableFormats.length ? editableFormats : ["DOCX"];
+}
+
 export async function getCatalogueIndustries(): Promise<Industry[]> {
   const supabase = createCatalogueClient();
 
@@ -179,7 +187,7 @@ export async function getCatalogueSingleDocuments(): Promise<SingleDocument[]> {
       name: row.name,
       description: row.description,
       priceCents: row.price_cents,
-      fileFormats: row.metadata?.formats?.length ? row.metadata.formats : ["PDF"],
+      fileFormats: getLaunchFormats(row.metadata?.formats),
     }))
     .sort(orderByKnownSingleDocuments);
 }

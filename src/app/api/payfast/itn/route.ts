@@ -3,7 +3,10 @@ import dns from "node:dns/promises";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 import { createOrderAccessToken } from "@/lib/downloads";
-import { sendDownloadReadyEmail } from "@/lib/emails";
+import {
+  sendAdminPaidOrderNotificationEmail,
+  sendDownloadReadyEmail,
+} from "@/lib/emails";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -174,6 +177,11 @@ async function sendDownloadEmailForOrder({
     .from("order_items")
     .select("quantity,total_cents,product_snapshot")
     .eq("order_id", order.id);
+  const emailItems = ((orderItems ?? []) as OrderEmailItemRow[]).map((item) => ({
+    name: item.product_snapshot?.name ?? "DokKit product",
+    quantity: item.quantity,
+    totalCents: item.total_cents,
+  }));
 
   await sendDownloadReadyEmail({
     supabase,
@@ -183,11 +191,17 @@ async function sendDownloadEmailForOrder({
     to: order.email,
     totalCents: order.total_cents,
     accessToken,
-    items: ((orderItems ?? []) as OrderEmailItemRow[]).map((item) => ({
-      name: item.product_snapshot?.name ?? "DokKit product",
-      quantity: item.quantity,
-      totalCents: item.total_cents,
-    })),
+    items: emailItems,
+  });
+
+  await sendAdminPaidOrderNotificationEmail({
+    supabase,
+    orderId: order.id,
+    customerId: order.customer_id,
+    orderNumber: order.order_number,
+    customerEmail: order.email,
+    totalCents: order.total_cents,
+    items: emailItems,
   });
 }
 

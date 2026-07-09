@@ -61,7 +61,7 @@ export function AddToCartButton({
     <button
       type="button"
       onClick={addToCart}
-      className={`rounded-md bg-[#147d64] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0f604d] ${className}`}
+      className={`rounded-full bg-[#ff6a00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#ff6a00]/20 transition hover:bg-[#d95400] ${className}`}
     >
       {wasAdded ? "Added" : "Add to cart"}
     </button>

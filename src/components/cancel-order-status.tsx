@@ -48,7 +48,7 @@ export function CancelOrderStatus({ orderNumber }: { orderNumber: string }) {
   }, [orderNumber]);
 
   return (
-    <p className="mt-4 rounded-md bg-[#f7f9f8] px-4 py-3 text-sm font-semibold">
+    <p className="mt-4 rounded-md bg-[#f6f4f1] px-4 py-3 text-sm font-semibold">
       {message}
     </p>
   );

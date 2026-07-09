@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
+import { PayfastLogo } from "@/components/payfast-logo";
 import { formatPrice } from "@/data/catalogue";
 import {
   CART_STORAGE_KEY,
@@ -114,16 +115,16 @@ export function CheckoutPage() {
   if (!cart.length && !pendingOrder) {
     return (
       <section className="mx-auto max-w-3xl px-6 py-14 lg:px-8">
-        <div className="rounded-lg border border-[#dfe7e2] bg-white p-8 shadow-sm">
+        <div className="rounded-lg border border-[#ece7df] bg-white p-8 shadow-sm">
           <h1 className="text-3xl font-semibold tracking-tight">
             Checkout needs a cart
           </h1>
-          <p className="mt-3 text-sm leading-6 text-[#53615b]">
+          <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
             Add at least one DokKit product before checkout.
           </p>
           <Link
             href="/industries"
-            className="mt-6 inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
+            className="mt-6 inline-flex rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
           >
             Browse industries
           </Link>
@@ -135,11 +136,11 @@ export function CheckoutPage() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
       <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#147d64]">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ff6a00]">
           Secure checkout
         </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight">Checkout</h1>
-        <p className="mt-4 text-lg leading-8 text-[#53615b]">
+        <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
           Enter customer details to create a pending DokKit order.
         </p>
       </div>
@@ -147,36 +148,36 @@ export function CheckoutPage() {
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_360px]">
         <form
           onSubmit={handleSubmit}
-          className="rounded-lg border border-[#dfe7e2] bg-white p-6 shadow-sm"
+          className="rounded-lg border border-[#ece7df] bg-white p-6 shadow-sm"
         >
           <h2 className="text-xl font-semibold">Customer details</h2>
           <div className="mt-6 grid gap-5">
-            <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+            <label className="grid gap-2 text-sm font-medium text-[#111111]">
               Email address
               <input
                 type="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
-                className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+                className="rounded-md border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
               />
             </label>
-            <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+            <label className="grid gap-2 text-sm font-medium text-[#111111]">
               Full name
               <input
                 type="text"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
-                className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+                className="rounded-md border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
               />
             </label>
-            <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+            <label className="grid gap-2 text-sm font-medium text-[#111111]">
               Phone number
               <input
                 type="tel"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
-                className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+                className="rounded-md border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
               />
             </label>
           </div>
@@ -199,13 +200,13 @@ export function CheckoutPage() {
           <button
             type="submit"
             disabled={isSubmitting || cart.length === 0}
-            className="mt-6 rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d] disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? "Creating order..." : "Create order and pay"}
           </button>
         </form>
 
-        <aside className="h-fit rounded-lg border border-[#dfe7e2] bg-white p-6 shadow-sm">
+        <aside className="h-fit rounded-lg border border-[#ece7df] bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold">Order summary</h2>
           <div className="mt-5 grid gap-4">
             {cart.map((item) => (
@@ -216,17 +217,23 @@ export function CheckoutPage() {
                     {formatPrice(item.priceCents * item.quantity)}
                   </span>
                 </div>
-                <p className="mt-1 text-xs text-[#53615b]">
+                <p className="mt-1 text-xs text-[#5f5f66]">
                   Qty {item.quantity}
                 </p>
               </div>
             ))}
           </div>
           <div className="mt-5 flex items-center justify-between text-sm">
-            <span className="text-[#53615b]">Total</span>
-            <span className="text-xl font-semibold text-[#147d64]">
+            <span className="text-[#5f5f66]">Total</span>
+            <span className="text-xl font-semibold text-[#ff6a00]">
               {formatPrice(totalCents)}
             </span>
+          </div>
+          <div className="mt-5 rounded-2xl border border-black/10 bg-white px-4 py-3">
+            <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#5f5f66]">
+              Secure payment
+            </p>
+            <PayfastLogo className="h-8 w-auto" />
           </div>
         </aside>
       </div>

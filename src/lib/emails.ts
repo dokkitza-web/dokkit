@@ -42,7 +42,7 @@ function renderItemsHtml(items: EmailOrderItem[]) {
         <tr>
           <td style="padding:12px 0;border-bottom:1px solid #e5ece8;">
             <strong>${escapeHtml(item.name)}</strong><br />
-            <span style="color:#53615b;">Quantity: ${item.quantity}</span>
+            <span style="color:#5f5f66;">Quantity: ${item.quantity}</span>
           </td>
           <td style="padding:12px 0;border-bottom:1px solid #e5ece8;text-align:right;">
             ${formatPrice(item.totalCents)}
@@ -78,27 +78,27 @@ function renderEmailLayout({
   return `
     <!doctype html>
     <html>
-      <body style="margin:0;background:#f7f9f8;color:#15201c;font-family:Arial,sans-serif;">
+      <body style="margin:0;background:#f6f4f1;color:#111111;font-family:Arial,sans-serif;">
         <div style="margin:0 auto;max-width:640px;padding:32px 20px;">
-          <div style="background:#ffffff;border:1px solid #dfe7e2;border-radius:10px;padding:28px;">
-            <p style="margin:0 0 12px;color:#147d64;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;">
+          <div style="background:#ffffff;border:1px solid #ece7df;border-radius:10px;padding:28px;">
+            <p style="margin:0 0 12px;color:#ff6a00;font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;">
               DokKit
             </p>
             <h1 style="margin:0 0 16px;font-size:28px;line-height:1.2;">
               ${escapeHtml(title)}
             </h1>
-            <p style="margin:0 0 24px;color:#53615b;font-size:15px;line-height:1.7;">
+            <p style="margin:0 0 24px;color:#5f5f66;font-size:15px;line-height:1.7;">
               ${escapeHtml(intro)}
             </p>
             ${children}
             <p style="margin:28px 0 0;">
-              <a href="${escapeHtml(actionUrl)}" style="display:inline-block;background:#147d64;color:#ffffff;text-decoration:none;font-weight:700;border-radius:6px;padding:13px 18px;">
+              <a href="${escapeHtml(actionUrl)}" style="display:inline-block;background:#ff6a00;color:#ffffff;text-decoration:none;font-weight:700;border-radius:6px;padding:13px 18px;">
                 ${escapeHtml(actionLabel)}
               </a>
             </p>
-            <p style="margin:28px 0 0;color:#53615b;font-size:12px;line-height:1.6;">
+            <p style="margin:28px 0 0;color:#5f5f66;font-size:12px;line-height:1.6;">
               If the button does not open, copy and paste this link into your browser:<br />
-              <a href="${escapeHtml(actionUrl)}" style="color:#147d64;">${escapeHtml(actionUrl)}</a>
+              <a href="${escapeHtml(actionUrl)}" style="color:#ff6a00;">${escapeHtml(actionUrl)}</a>
             </p>
           </div>
           <p style="margin:18px 0 0;color:#6b7772;font-size:12px;line-height:1.6;text-align:center;">
@@ -360,6 +360,72 @@ export async function sendDownloadReadyEmail({
     customerId,
     to,
     templateKey: "download_ready",
+    subject,
+    html,
+    text,
+  });
+}
+
+export async function sendAdminPaidOrderNotificationEmail({
+  supabase,
+  orderId,
+  customerId,
+  orderNumber,
+  customerEmail,
+  totalCents,
+  items,
+}: {
+  supabase: SupabaseClient;
+  orderId: string;
+  customerId?: string | null;
+  orderNumber: string;
+  customerEmail: string;
+  totalCents: number;
+  items: EmailOrderItem[];
+}) {
+  const adminEmail =
+    process.env.ORDER_NOTIFICATION_EMAIL ||
+    process.env.RESEND_REPLY_TO ||
+    "support@dokkit.co.za";
+  const adminUrl = `${getSiteUrl()}/admin/orders`;
+  const subject = `New paid DokKit order: ${orderNumber}`;
+  const html = renderEmailLayout({
+    title: "New paid order",
+    intro:
+      "PayFast has confirmed a DokKit payment. The customer download email has been queued from the website.",
+    actionLabel: "Open admin orders",
+    actionUrl: adminUrl,
+    children: `
+      <p style="margin:0 0 12px;font-size:15px;"><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
+      <p style="margin:0 0 12px;font-size:15px;"><strong>Customer email:</strong> ${escapeHtml(customerEmail)}</p>
+      <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:14px;">
+        ${renderItemsHtml(items)}
+        <tr>
+          <td style="padding:14px 0 0;font-weight:700;">Paid total</td>
+          <td style="padding:14px 0 0;text-align:right;font-weight:700;">${formatPrice(totalCents)}</td>
+        </tr>
+      </table>
+    `,
+  });
+  const text = [
+    "New paid DokKit order",
+    "",
+    `Order: ${orderNumber}`,
+    `Customer email: ${customerEmail}`,
+    `Paid total: ${formatPrice(totalCents)}`,
+    "",
+    renderItemsText(items),
+    "",
+    "Open admin orders:",
+    adminUrl,
+  ].join("\n");
+
+  return sendTransactionalEmail({
+    supabase,
+    orderId,
+    customerId,
+    to: adminEmail,
+    templateKey: "admin_paid_order_notification",
     subject,
     html,
     text,

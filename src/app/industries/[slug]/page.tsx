@@ -52,21 +52,21 @@ export default async function IndustryDetailPage({
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
-      <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+    <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
+      <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
         <div>
-          <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#147d64]">
+          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
             Industry package
           </p>
-          <h1 className="mt-3 text-4xl font-semibold tracking-tight">
+          <h1 className="mt-4 text-5xl font-black tracking-tight">
             {industry.name}
           </h1>
-          <p className="mt-5 text-lg leading-8 text-[#53615b]">
+          <p className="mt-5 text-lg leading-8 text-[#5f5f66]">
             {industry.summary}
           </p>
-          <div className="mt-8 rounded-lg border border-[#dfe7e2] bg-white p-5">
-            <h2 className="text-base font-semibold">Why it is attractive</h2>
-            <p className="mt-3 text-sm leading-6 text-[#53615b]">
+          <div className="mt-8 rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
+            <h2 className="text-base font-black">Why it is attractive</h2>
+            <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
               {industry.why}
             </p>
           </div>
@@ -76,32 +76,42 @@ export default async function IndustryDetailPage({
           {packageTiers.map((tier) => (
             <article
               key={tier.key}
-              className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm"
+              className={`rounded-[1.75rem] border p-6 shadow-sm ${
+                tier.key === "complete"
+                  ? "border-[#ff6a00] bg-[#111111] text-white orange-glow"
+                  : "border-black/10 bg-white"
+              }`}
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold">
+                  <h2 className="text-xl font-black">
                     {industry.name} {tier.name} Package
                   </h2>
-                  <p className="mt-2 text-sm leading-6 text-[#53615b]">
+                  <p
+                    className={`mt-2 text-sm leading-6 ${
+                      tier.key === "complete" ? "text-white/65" : "text-[#5f5f66]"
+                    }`}
+                  >
                     {tier.summary}
                   </p>
                 </div>
-                <p className="text-2xl font-semibold text-[#147d64]">
+                <p className="text-2xl font-black text-[#ff6a00]">
                   {formatPrice(tier.priceCents)}
                 </p>
               </div>
-              <div className="mt-5 grid gap-3 text-sm text-[#53615b] sm:grid-cols-3">
-                <span className="rounded-md bg-[#eef5f2] px-3 py-2">
+              <div
+                className={`mt-5 grid gap-3 text-sm font-bold sm:grid-cols-3 ${
+                  tier.key === "complete" ? "text-white/75" : "text-[#5f5f66]"
+                }`}
+              >
+                <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
                   {tier.documentCount} DOCX
                 </span>
-                <span className="rounded-md bg-[#eef5f2] px-3 py-2">
+                <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
                   {tier.workbookCount} XLSX
                 </span>
-                <span className="rounded-md bg-[#eef5f2] px-3 py-2">
-                  {tier.pdfCount > 0
-                    ? `${tier.pdfCount} PDFs`
-                    : "PDFs coming soon"}
+                <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
+                  PDF coming soon
                 </span>
               </div>
               <div className="mt-5">
@@ -121,21 +131,21 @@ export default async function IndustryDetailPage({
       </div>
 
       <div className="mt-12 grid gap-8 lg:grid-cols-2">
-        <section className="rounded-lg border border-[#dfe7e2] bg-white p-6">
-          <h2 className="text-xl font-semibold">Featured documents</h2>
-          <ul className="mt-5 grid gap-3 text-sm text-[#53615b]">
+        <section className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-black">Featured documents</h2>
+          <ul className="mt-5 grid gap-3 text-sm text-[#5f5f66]">
             {industry.featuredDocuments.map((item) => (
-              <li key={item} className="rounded-md bg-[#f7f9f8] px-4 py-3">
+              <li key={item} className="rounded-2xl bg-[#f6f4f1] px-4 py-3">
                 {item}
               </li>
             ))}
           </ul>
         </section>
-        <section className="rounded-lg border border-[#dfe7e2] bg-white p-6">
-          <h2 className="text-xl font-semibold">Customer use cases</h2>
-          <ul className="mt-5 grid gap-3 text-sm text-[#53615b]">
+        <section className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
+          <h2 className="text-xl font-black">Customer use cases</h2>
+          <ul className="mt-5 grid gap-3 text-sm text-[#5f5f66]">
             {industry.useCases.map((item) => (
-              <li key={item} className="rounded-md bg-[#f7f9f8] px-4 py-3">
+              <li key={item} className="rounded-2xl bg-[#f6f4f1] px-4 py-3">
                 {item}
               </li>
             ))}

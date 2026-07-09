@@ -121,7 +121,7 @@ export function OrderStatusPoll({
 
   if (!order) {
     return (
-      <div className="mt-5 rounded-md bg-[#f7f9f8] px-4 py-3 text-sm text-[#53615b]">
+      <div className="mt-5 rounded-md bg-[#f6f4f1] px-4 py-3 text-sm text-[#5f5f66]">
         Loading order status...
       </div>
     );
@@ -134,26 +134,26 @@ export function OrderStatusPoll({
   );
 
   return (
-    <div className="mt-5 rounded-lg border border-[#dfe7e2] bg-[#f7f9f8] p-5">
-      <p className="text-sm font-semibold text-[#15201c]">
+    <div className="mt-5 rounded-lg border border-[#ece7df] bg-[#f6f4f1] p-5">
+      <p className="text-sm font-semibold text-[#111111]">
         {statusCopy.title}
       </p>
-      <p className="mt-2 text-sm leading-6 text-[#53615b]">{statusCopy.body}</p>
+      <p className="mt-2 text-sm leading-6 text-[#5f5f66]">{statusCopy.body}</p>
       <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
         <div>
-          <dt className="text-[#53615b]">Order</dt>
+          <dt className="text-[#5f5f66]">Order</dt>
           <dd className="mt-1 font-semibold">{order.orderNumber}</dd>
         </div>
         <div>
-          <dt className="text-[#53615b]">Total</dt>
+          <dt className="text-[#5f5f66]">Total</dt>
           <dd className="mt-1 font-semibold">{formatPrice(order.totalCents)}</dd>
         </div>
         <div>
-          <dt className="text-[#53615b]">Status</dt>
+          <dt className="text-[#5f5f66]">Status</dt>
           <dd className="mt-1 font-semibold">{order.status}</dd>
         </div>
         <div>
-          <dt className="text-[#53615b]">Paid at</dt>
+          <dt className="text-[#5f5f66]">Paid at</dt>
           <dd className="mt-1 font-semibold">{order.paidAt ?? "-"}</dd>
         </div>
       </dl>
@@ -165,8 +165,8 @@ export function OrderStatusPoll({
         </div>
       ) : null}
       {order.status === "paid" && order.downloadsUnlocked ? (
-        <div className="mt-5 rounded-lg border border-[#dfe7e2] bg-white p-4">
-          <p className="text-sm font-semibold text-[#15201c]">
+        <div className="mt-5 rounded-lg border border-[#ece7df] bg-white p-4">
+          <p className="text-sm font-semibold text-[#111111]">
             Secure downloads
           </p>
           {downloadCount ? (
@@ -176,7 +176,7 @@ export function OrderStatusPoll({
                   key={item.slug}
                   className="rounded-md border border-[#eef2ef] p-4"
                 >
-                  <p className="text-sm font-semibold text-[#15201c]">
+                  <p className="text-sm font-semibold text-[#111111]">
                     {item.name}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-3">
@@ -195,7 +195,7 @@ export function OrderStatusPoll({
               ))}
             </div>
           ) : (
-            <p className="mt-3 text-sm leading-6 text-[#53615b]">
+            <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
               No files are attached to this paid product yet. Once product files
               are uploaded to the private Supabase bucket, they will appear here
               automatically.
@@ -206,7 +206,7 @@ export function OrderStatusPoll({
       {order.status === "paid" ? null : (
         <Link
           href="/industries"
-          className="mt-5 inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
+          className="mt-5 inline-flex rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
         >
           Continue
         </Link>

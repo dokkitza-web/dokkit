@@ -64,7 +64,7 @@ export function DownloadFileButton({
         type="button"
         onClick={requestDownload}
         disabled={isLoading}
-        className="inline-flex rounded-md bg-[#147d64] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#0f604d] disabled:cursor-not-allowed disabled:bg-[#9ab9ae]"
+        className="inline-flex rounded-md bg-[#ff6a00] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#d95400] disabled:cursor-not-allowed disabled:bg-[#f3aa73]"
       >
         {isLoading
           ? "Creating link..."

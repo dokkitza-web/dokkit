@@ -1,25 +1,59 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { BrandLogo } from "@/components/brand-logo";
 
 export function SiteFooter() {
+  const pathname = usePathname();
+
+  if (pathname.startsWith("/admin")) {
+    return null;
+  }
+
   return (
-    <footer className="border-t border-[#dfe7e2] bg-white">
-      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-8 text-sm text-[#53615b] lg:flex-row lg:items-center lg:justify-between lg:px-8">
+    <footer className="border-t border-black/10 bg-[#111111] text-white">
+      <div className="mx-auto grid max-w-7xl gap-8 px-6 py-10 lg:grid-cols-[1fr_auto] lg:px-8">
         <div>
-          <p className="font-semibold text-[#15201c]">DokKit</p>
-          <p className="mt-1">
-            Editable business document packages for South African small
-            businesses.
+          <BrandLogo light />
+          <p className="mt-4 max-w-xl text-sm leading-6 text-white/65">
+            Premium editable business document packs for South African small
+            businesses that need sharper admin, faster setup, and professional
+            customer-facing documents.
           </p>
+          <p className="mt-3 text-sm font-bold text-white/70">
+            Support:{" "}
+            <Link
+              href="mailto:support@dokkit.co.za"
+              className="text-[#ffb06f] hover:text-white"
+            >
+              support@dokkit.co.za
+            </Link>
+          </p>
+          <div className="mt-5 flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.14em] text-white/70">
+            <span className="rounded-full border border-white/15 px-3 py-1.5">
+              DOCX
+            </span>
+            <span className="rounded-full border border-white/15 px-3 py-1.5">
+              XLSX
+            </span>
+            <span className="rounded-full border border-white/15 px-3 py-1.5">
+              PayFast checkout
+            </span>
+          </div>
         </div>
-        <div className="flex flex-wrap gap-4">
-          <Link href="/industries" className="hover:text-[#147d64]">
+        <div className="flex flex-wrap gap-4 text-sm font-bold text-white/70 lg:justify-end">
+          <Link href="/industries" className="hover:text-[#ff6a00]">
             Industries
           </Link>
-          <Link href="/packages" className="hover:text-[#147d64]">
+          <Link href="/packages" className="hover:text-[#ff6a00]">
             Packages
           </Link>
-          <Link href="/single-documents" className="hover:text-[#147d64]">
-            Single documents
+          <Link href="/single-documents" className="hover:text-[#ff6a00]">
+            Templates
+          </Link>
+          <Link href="/cart" className="hover:text-[#ff6a00]">
+            Cart
           </Link>
         </div>
       </div>

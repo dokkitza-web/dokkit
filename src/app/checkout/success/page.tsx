@@ -15,14 +15,14 @@ export default async function CheckoutSuccessPage({
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-14 lg:px-8">
-      <div className="rounded-lg border border-[#dfe7e2] bg-white p-8 shadow-sm">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#147d64]">
+      <div className="rounded-lg border border-[#ece7df] bg-white p-8 shadow-sm">
+        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ff6a00]">
           Payment returned
         </p>
         <h1 className="mt-3 text-3xl font-semibold tracking-tight">
           We are verifying your payment
         </h1>
-        <p className="mt-4 text-sm leading-6 text-[#53615b]">
+        <p className="mt-4 text-sm leading-6 text-[#5f5f66]">
           PayFast returned you to DokKit. Downloads will unlock after the PayFast
           payment notification confirms the order.
         </p>
@@ -31,7 +31,7 @@ export default async function CheckoutSuccessPage({
         ) : null}
         <Link
           href="/industries"
-          className="mt-6 inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
+          className="mt-6 inline-flex rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
         >
           Back to catalogue
         </Link>

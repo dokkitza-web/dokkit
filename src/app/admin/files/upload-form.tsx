@@ -40,7 +40,7 @@ const fileKindConfig: Record<
   pdf: {
     accept: ".pdf",
     contentTypes: ["application/pdf"],
-    label: "PDF reference",
+    label: "PDF reference (coming soon)",
   },
 };
 
@@ -234,21 +234,21 @@ export function AdminFileUploadForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="rounded-lg border border-[#dfe7e2] bg-white p-6 shadow-sm"
+      className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm"
     >
-      <h2 className="text-xl font-semibold">Upload product file</h2>
-      <p className="mt-2 text-sm leading-6 text-[#53615b]">
+      <h2 className="text-xl font-black">Upload product file</h2>
+      <p className="mt-2 text-sm leading-6 text-[#5f5f66]">
         Files upload to the private Supabase bucket and are immediately linked
         to the selected product for paid-order downloads.
       </p>
 
       <div className="mt-6 grid gap-5">
-        <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+        <label className="grid gap-2 text-sm font-bold text-[#111111]">
           Product
           <select
             value={productId}
             onChange={(event) => setProductId(event.target.value)}
-            className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+            className="rounded-2xl border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
           >
             {products.map((product) => (
               <option key={product.id} value={product.id}>
@@ -260,12 +260,12 @@ export function AdminFileUploadForm({
         </label>
 
         <div className="grid gap-5 md:grid-cols-2">
-          <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+          <label className="grid gap-2 text-sm font-bold text-[#111111]">
             File type
             <select
               value={fileKind}
               onChange={(event) => setFileKind(event.target.value as FileKind)}
-              className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+              className="rounded-2xl border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
             >
               {(Object.keys(fileKindConfig) as FileKind[]).map((kind) => (
                 <option key={kind} value={kind}>
@@ -275,19 +275,19 @@ export function AdminFileUploadForm({
             </select>
           </label>
 
-          <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+          <label className="grid gap-2 text-sm font-bold text-[#111111]">
             Version label
             <input
               type="text"
               value={versionLabel}
               onChange={(event) => setVersionLabel(event.target.value)}
               maxLength={40}
-              className="rounded-md border border-[#b9c8c0] bg-white px-4 py-3 text-base outline-none transition focus:border-[#147d64] focus:ring-2 focus:ring-[#c8eadf]"
+              className="rounded-2xl border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
             />
           </label>
         </div>
 
-        <label className="grid gap-2 text-sm font-medium text-[#15201c]">
+        <label className="grid gap-2 text-sm font-bold text-[#111111]">
           File
           <input
             key={fileKind}
@@ -295,34 +295,34 @@ export function AdminFileUploadForm({
             type="file"
             accept={fileKindConfig[fileKind].accept}
             required
-            className="rounded-md border border-dashed border-[#b9c8c0] bg-[#f7f9f8] px-4 py-4 text-sm file:mr-4 file:rounded-md file:border-0 file:bg-[#147d64] file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white"
+            className="rounded-2xl border border-dashed border-[#cfc7bd] bg-[#f6f4f1] px-4 py-4 text-sm file:mr-4 file:rounded-full file:border-0 file:bg-[#ff6a00] file:px-4 file:py-2 file:text-sm file:font-black file:text-white"
           />
-          <span className="text-xs text-[#53615b]">
+          <span className="text-xs text-[#5f5f66]">
             Maximum size: {formatBytes(maxFileSizeBytes)}. Accepted file:
             {" "}
             {fileKindConfig[fileKind].accept}
           </span>
         </label>
 
-        <label className="flex items-center gap-3 text-sm font-medium text-[#15201c]">
+        <label className="flex items-center gap-3 text-sm font-bold text-[#111111]">
           <input
             type="checkbox"
             checked={isActive}
             onChange={(event) => setIsActive(event.target.checked)}
-            className="h-4 w-4 accent-[#147d64]"
+            className="h-4 w-4 accent-[#ff6a00]"
           />
           Make this file active for customer downloads
         </label>
       </div>
 
       {error ? (
-        <p className="mt-5 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <p className="mt-5 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
         </p>
       ) : null}
 
       {message ? (
-        <p className="mt-5 rounded-md border border-[#c8eadf] bg-[#eef8f4] px-4 py-3 text-sm text-[#0f604d]">
+        <p className="mt-5 rounded-2xl border border-[#ffd8bd] bg-[#fff4eb] px-4 py-3 text-sm font-bold text-[#d95400]">
           {message}
         </p>
       ) : null}
@@ -330,7 +330,7 @@ export function AdminFileUploadForm({
       <button
         type="submit"
         disabled={isUploading}
-        className="mt-6 rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d] disabled:cursor-not-allowed disabled:opacity-70"
+        className="mt-6 rounded-full bg-[#ff6a00] px-5 py-3 text-sm font-black text-white transition hover:bg-[#d95400] disabled:cursor-not-allowed disabled:opacity-70"
       >
         {isUploading ? "Uploading..." : "Upload and attach file"}
       </button>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AdminNav } from "@/components/admin-nav";
+import { AdminShell } from "@/components/admin-shell";
 import { requireAdmin } from "@/lib/supabase/admin";
 
 export const metadata = {
@@ -15,6 +15,13 @@ const countCards = [
   { table: "product_files", label: "Product files" },
   { table: "payments", label: "Payments" },
   { table: "email_logs", label: "Email logs" },
+];
+
+const launchTargets = [
+  { key: "industries", label: "Live industries", expected: 15 },
+  { key: "packageTiers", label: "Live package tiers", expected: 3 },
+  { key: "industryProducts", label: "Live industry packages", expected: 45 },
+  { key: "singleDocuments", label: "Live single templates", expected: 20 },
 ];
 
 async function getCount(
@@ -38,40 +45,93 @@ async function getCount(
   };
 }
 
+async function getLaunchReadiness(
+  supabase: Awaited<ReturnType<typeof requireAdmin>>["supabase"],
+) {
+  const [
+    liveIndustries,
+    livePackageTiers,
+    liveIndustryProducts,
+    liveSingleDocuments,
+  ] = await Promise.all([
+    supabase
+      .from("industries")
+      .select("id", { count: "exact", head: true })
+      .eq("is_live", true),
+    supabase
+      .from("package_tiers")
+      .select("id", { count: "exact", head: true })
+      .eq("is_live", true),
+    supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("is_live", true)
+      .eq("product_type", "industry_package"),
+    supabase
+      .from("products")
+      .select("id", { count: "exact", head: true })
+      .eq("is_live", true)
+      .eq("product_type", "single_document"),
+  ]);
+  const countByKey = {
+    industries: liveIndustries,
+    packageTiers: livePackageTiers,
+    industryProducts: liveIndustryProducts,
+    singleDocuments: liveSingleDocuments,
+  };
+
+  return launchTargets.map((target) => {
+    const result = countByKey[target.key as keyof typeof countByKey];
+    const count = result.count ?? 0;
+
+    return {
+      ...target,
+      count,
+      missing: Math.max(target.expected - count, 0),
+      error: result.error?.message ?? null,
+    };
+  });
+}
+
 export default async function AdminDashboardPage() {
   const { supabase, user } = await requireAdmin();
-  const counts = await Promise.all(
-    countCards.map(async (card) => ({
-      ...card,
-      ...(await getCount(supabase, card.table)),
-    })),
+  const [counts, launchReadiness] = await Promise.all([
+    Promise.all(
+      countCards.map(async (card) => ({
+        ...card,
+        ...(await getCount(supabase, card.table)),
+      })),
+    ),
+    getLaunchReadiness(supabase),
+  ]);
+  const readinessIssues = launchReadiness.filter(
+    (item) => item.error || item.missing > 0,
   );
+  const catalogueReady = readinessIssues.length === 0;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-10 lg:px-8">
-      <AdminNav email={user.email ?? "Admin user"} />
-
-      <div className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#147d64]">
-          Owner dashboard
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-          Admin overview
-        </h1>
-        <p className="mt-4 max-w-3xl text-sm leading-6 text-[#53615b]">
-          This is the first protected admin area. Today it verifies owner-only
-          access and reads the live Supabase tables.
-        </p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <AdminShell
+      email={user.email ?? "Admin user"}
+      eyebrow="Owner dashboard"
+      title="Admin overview"
+      description="Monitor live DokKit catalogue, orders, product files, payments, and customer activity from one protected workspace."
+      actions={
+        <Link
+          href="/admin/files"
+          className="rounded-full bg-[#ff6a00] px-4 py-2 text-sm font-black text-white transition hover:bg-[#d95400]"
+        >
+          Upload template
+        </Link>
+      }
+    >
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {counts.map((card) => (
           <article
             key={card.table}
-            className="rounded-lg border border-[#dfe7e2] bg-white p-5 shadow-sm"
+            className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm"
           >
-            <p className="text-sm font-medium text-[#53615b]">{card.label}</p>
-            <p className="mt-3 text-4xl font-semibold text-[#15201c]">
+            <p className="text-sm font-bold text-[#5f5f66]">{card.label}</p>
+            <p className="mt-3 text-4xl font-black text-[#111111]">
               {card.count}
             </p>
             {card.error ? (
@@ -81,16 +141,77 @@ export default async function AdminDashboardPage() {
         ))}
       </div>
 
-      <div className="mt-8 rounded-lg border border-[#dfe7e2] bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold">Next admin modules</h2>
+      <div
+        className={`mt-8 rounded-[1.5rem] border p-6 shadow-sm ${
+          catalogueReady
+            ? "border-[#ffd8bd] bg-white"
+            : "border-amber-200 bg-amber-50"
+        }`}
+      >
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
+              Launch readiness
+            </p>
+            <h2 className="mt-2 text-xl font-black">
+              Live catalogue against local seed targets
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-[#5f5f66]">
+              The launch seed expects 15 industries, 3 package tiers, 45
+              industry package products, and 20 single templates to be live.
+            </p>
+          </div>
+          <span
+            className={`w-fit rounded-full px-4 py-2 text-sm font-black ${
+              catalogueReady
+                ? "bg-[#fff4eb] text-[#ff6a00]"
+                : "bg-white text-amber-800"
+            }`}
+          >
+            {catalogueReady ? "Ready" : `${readinessIssues.length} issue(s)`}
+          </span>
+        </div>
+
+        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {launchReadiness.map((item) => (
+            <article
+              key={item.key}
+              className="rounded-2xl border border-black/10 bg-white p-4"
+            >
+              <p className="text-sm font-bold text-[#5f5f66]">{item.label}</p>
+              <p className="mt-2 text-2xl font-black text-[#111111]">
+                {item.count} / {item.expected}
+              </p>
+              {item.error ? (
+                <p className="mt-2 text-xs text-red-700">{item.error}</p>
+              ) : item.missing ? (
+                <p className="mt-2 text-xs font-bold text-amber-800">
+                  {item.missing} missing from live catalogue
+                </p>
+              ) : (
+                <p className="mt-2 text-xs font-bold text-[#ff6a00]">
+                  Target met
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
+        <h2 className="text-xl font-black">Admin modules</h2>
         <div className="mt-5 grid gap-3 md:grid-cols-2">
           {[
             "Product editing and pricing",
-            "Download file QA and version cleanup",
+            "Template upload, activation, and deletion",
+            "Order, payment, email, and download review",
             "Refund and cancellation workflows",
             "Customer account access",
           ].map((item) => (
-            <div key={item} className="rounded-md bg-[#f7f9f8] px-4 py-3 text-sm">
+            <div
+              key={item}
+              className="rounded-2xl bg-[#f6f4f1] px-4 py-3 text-sm font-bold text-[#5f5f66]"
+            >
               {item}
             </div>
           ))}
@@ -98,18 +219,18 @@ export default async function AdminDashboardPage() {
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
             href="/admin/orders"
-            className="inline-flex rounded-md bg-[#147d64] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#0f604d]"
+            className="inline-flex rounded-full bg-[#111111] px-5 py-3 text-sm font-black text-white transition hover:bg-[#2b2b2b]"
           >
             Review orders
           </Link>
           <Link
             href="/admin/products"
-            className="inline-flex rounded-md border border-[#dfe7e2] px-5 py-3 text-sm font-semibold text-[#15201c] transition hover:border-[#147d64]"
+            className="inline-flex rounded-full border border-black/10 px-5 py-3 text-sm font-black text-[#111111] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
           >
             Review products
           </Link>
         </div>
       </div>
-    </section>
+    </AdminShell>
   );
 }
