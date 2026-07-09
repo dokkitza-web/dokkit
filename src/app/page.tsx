@@ -25,14 +25,54 @@ const preferredIndustrySlugs = [
 ];
 
 const documentPreviews = [
-  { title: "Business Profile Template", type: "doc" as const },
-  { title: "Quotation Template", type: "doc" as const },
-  { title: "Invoice Workbook", type: "sheet" as const },
-  { title: "Operations Manual", type: "doc" as const },
-  { title: "SOP Template", type: "doc" as const },
-  { title: "Client Intake Form", type: "doc" as const },
-  { title: "Income and Expense Tracker", type: "sheet" as const },
-  { title: "Job Tracker", type: "sheet" as const },
+  {
+    title: "Client Treatment Intake Form",
+    industry: "Beauty Salons and Spas",
+    format: "DOCX",
+    imageSrc: "/images/previews/beauty-client-intake.png",
+  },
+  {
+    title: "Catering and Baking Quotation",
+    industry: "Catering and Baking",
+    format: "DOCX",
+    imageSrc: "/images/previews/catering-quotation.png",
+  },
+  {
+    title: "Cleaning Services Invoice",
+    industry: "Cleaning Services",
+    format: "DOCX",
+    imageSrc: "/images/previews/cleaning-invoice.png",
+  },
+  {
+    title: "Construction Risk Assessment",
+    industry: "Construction Subcontractors",
+    format: "DOCX",
+    imageSrc: "/images/previews/construction-risk-assessment.png",
+  },
+  {
+    title: "Project Proposal Template",
+    industry: "Freelancers and Consultants",
+    format: "DOCX",
+    imageSrc: "/images/previews/freelancer-proposal.png",
+  },
+  {
+    title: "Garden Service Site Intake Form",
+    industry: "Landscaping and Garden Services",
+    format: "DOCX",
+    imageSrc: "/images/previews/landscaping-site-intake.png",
+  },
+  {
+    title: "Security Site Risk Assessment",
+    industry: "Safety and Security",
+    format: "DOCX",
+    imageSrc: "/images/previews/security-site-risk.png",
+  },
+  {
+    title: "Proof of Delivery and Handover Form",
+    industry: "Transport and Delivery Services",
+    format: "DOCX",
+    imageSrc: "/images/previews/transport-proof-of-delivery.png",
+  },
 ];
 
 const benefits = [
@@ -260,7 +300,9 @@ export default async function Home() {
               <DocumentPreviewCard
                 key={preview.title}
                 title={preview.title}
-                type={preview.type}
+                industry={preview.industry}
+                format={preview.format}
+                imageSrc={preview.imageSrc}
               />
             ))}
           </div>

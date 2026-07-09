@@ -32,47 +32,33 @@ export function ProductMockup() {
 
 export function DocumentPreviewCard({
   title,
-  type,
+  industry,
+  format,
+  imageSrc,
 }: {
   title: string;
-  type: "doc" | "sheet";
+  industry: string;
+  format: string;
+  imageSrc: string;
 }) {
   return (
-    <div className="group rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
-      <div className="rounded-2xl bg-[#fff4eb] p-4">
-        <div className="mb-4 flex items-center justify-between">
-          <span className="rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-white">
-            {type === "doc" ? "DOCX" : "XLSX"}
-          </span>
-          <span className="h-3 w-3 rounded-full bg-[#ff6a00]" />
-        </div>
-        <div className="rounded-xl bg-white p-4 shadow-sm">
-          <div className="h-3 w-3/5 rounded-full bg-[#111111]" />
-          {type === "doc" ? (
-            <div className="mt-5 space-y-2">
-              {[90, 74, 82, 58, 68].map((width) => (
-                <span
-                  key={width}
-                  className="block h-2 rounded-full bg-black/15"
-                  style={{ width: `${width}%` }}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="mt-5 grid grid-cols-4 gap-1">
-              {Array.from({ length: 16 }, (_, index) => (
-                <span
-                  key={index}
-                  className={`h-5 rounded ${
-                    index < 4 ? "bg-[#111111]" : "bg-black/10"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+    <article className="group rounded-3xl border border-black/10 bg-white p-4 shadow-sm transition hover:-translate-y-1 hover:shadow-xl">
+      <div className="relative aspect-[3/4] overflow-hidden rounded-2xl border border-black/10 bg-[#f6f4f1]">
+        <Image
+          src={imageSrc}
+          alt={`${title} document preview for ${industry}`}
+          fill
+          sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 90vw"
+          className="object-cover object-top transition duration-300 group-hover:scale-[1.03]"
+        />
+        <span className="absolute left-3 top-3 rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black uppercase tracking-[0.14em] text-white shadow-sm">
+          {format}
+        </span>
       </div>
       <p className="mt-4 text-sm font-black text-[#111111]">{title}</p>
-    </div>
+      <p className="mt-1 text-xs font-bold leading-5 text-[#5f5f66]">
+        {industry}
+      </p>
+    </article>
   );
 }
