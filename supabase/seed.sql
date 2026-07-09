@@ -23,23 +23,23 @@ on conflict (tier_key) do update set
   display_order = excluded.display_order,
   is_live = excluded.is_live;
 
+update public.industries
+set is_live = false;
+
+update public.products
+set is_live = false
+where product_type = 'industry_package';
+
 insert into public.industries (slug, name, summary, why, display_order, is_live)
 values
-  ('cleaning-services', 'Cleaning Services', 'Residential, office, move-in, move-out, and contract cleaning businesses need repeatable quotes and checklists.', 'Cleaning is easy to start, has strong local demand, and customers expect clear scope, pricing, and sign-off documents.', 1, true),
-  ('construction-subcontractors', 'Construction Subcontractors', 'Small trade teams need quote, job card, safety, variation, and sign-off documents for site work.', 'Subcontractors handle higher-value work where paperwork reduces disputes and improves payment follow-up.', 2, true),
-  ('beauty-salons-and-spas', 'Beauty Salons and Spas', 'Beauty businesses need appointment, consent, treatment, price list, and client record templates.', 'Salons have frequent customer interactions and benefit from polished client forms and simple revenue tracking.', 3, true),
-  ('mobile-car-wash-detailing', 'Mobile Car Wash and Detailing', 'Mobile vehicle care operators need bookings, service menus, condition checks, and customer sign-offs.', 'Mobile operators sell convenience and trust, so clear service records and before-after sign-offs matter.', 4, true),
-  ('catering-and-baking', 'Catering and Baking', 'Food businesses need order forms, event quotes, ingredient costing, delivery notes, and stock trackers.', 'Custom food orders create admin pressure around deposits, quantities, dietary details, and delivery timing.', 5, true),
-  ('freelancers-consultants', 'Freelancers and Consultants', 'Independent professionals need proposals, retainers, onboarding forms, invoices, and client trackers.', 'This segment buys digital templates readily and values documents that make a solo business look established.', 6, true),
-  ('tutors-training-providers', 'Tutors and Training Providers', 'Tutors, facilitators, and short-course providers need enrolment, attendance, lesson, and payment records.', 'Education services are admin-heavy and many small providers need affordable, editable templates.', 7, true),
-  ('event-planners', 'Event Planners', 'Event operators need client briefs, supplier trackers, quotes, run sheets, and delivery checklists.', 'Events involve many moving parts and clients expect structured planning documents.', 8, true),
-  ('landscaping-garden-services', 'Landscaping and Garden Services', 'Garden service businesses need maintenance schedules, quotes, site checks, and recurring service records.', 'Recurring outdoor services are common and simple templates help businesses win and retain contracts.', 9, true),
-  ('handyman-home-repair', 'Handyman and Home Repair', 'Repair businesses need job cards, quotes, inspection forms, warranties, and customer acceptance records.', 'Handyman work is broad and prone to scope misunderstandings, making simple paperwork very valuable.', 10, true),
-  ('photography-videography', 'Photography and Videography', 'Creative service providers need booking forms, package sheets, shoot briefs, release forms, and delivery notes.', 'Customers compare packages carefully, and clear contracts protect time, usage rights, and deliverables.', 11, true),
-  ('property-rental-admin', 'Property Rental Admin', 'Small landlords and rental administrators need tenant, inspection, payment, and maintenance records.', 'Rental admin needs consistency, and even small landlords require records that are easy to update and store.', 12, true),
-  ('transport-delivery-services', 'Transport and Delivery Services', 'Delivery operators need trip sheets, delivery notes, vehicle logs, client trackers, and invoice records.', 'Transport businesses depend on proof of delivery, route records, and vehicle admin.', 13, true),
-  ('food-trucks-small-food-vendors', 'Food Trucks and Small Food Vendors', 'Small food sellers need stock, menu, costing, supplier, and daily cash-up templates.', 'Food margins need close tracking, and simple daily workbooks create quick operational value.', 14, true),
-  ('online-resellers-ecommerce', 'Online Resellers and E-commerce', 'Resellers need stock, order, returns, supplier, profit, and customer trackers.', 'Online sellers are comfortable buying digital tools and need lightweight admin before adopting complex software.', 15, true)
+  ('beauty-salons-and-spas', 'Beauty Salons and Spas', 'Beauty businesses need appointment, consent, treatment, price list, and client record templates.', 'Salons have frequent customer interactions and benefit from polished client forms and simple revenue tracking.', 1, true),
+  ('catering-and-baking', 'Catering and Baking', 'Food businesses need order forms, event quotes, ingredient costing, delivery notes, and stock trackers.', 'Custom food orders create admin pressure around deposits, quantities, dietary details, and delivery timing.', 2, true),
+  ('cleaning-services', 'Cleaning Services', 'Residential, office, move-in, move-out, and contract cleaning businesses need repeatable quotes and checklists.', 'Cleaning is easy to start, has strong local demand, and customers expect clear scope, pricing, and sign-off documents.', 3, true),
+  ('construction-subcontractors', 'Construction Subcontractors', 'Small trade teams need quote, job card, safety, variation, and sign-off documents for site work.', 'Subcontractors handle higher-value work where paperwork reduces disputes and improves payment follow-up.', 4, true),
+  ('freelancers-consultants', 'Freelancers and Consultants', 'Independent professionals need proposals, retainers, onboarding forms, invoices, and client trackers.', 'This segment buys digital templates readily and values documents that make a solo business look established.', 5, true),
+  ('landscaping-garden-services', 'Landscaping and Garden Services', 'Garden service businesses need maintenance schedules, quotes, site checks, and recurring service records.', 'Recurring outdoor services are common and simple templates help businesses win and retain contracts.', 6, true),
+  ('safety-security', 'Safety and Security', 'Safety and security service providers need site assessments, service records, incident reports, and client sign-offs.', 'Security and safety services depend on clear records, shift notes, incident details, and proof of service delivery.', 7, true),
+  ('transport-delivery-services', 'Transport and Delivery Services', 'Delivery operators need trip sheets, delivery notes, vehicle logs, client trackers, and invoice records.', 'Transport businesses depend on proof of delivery, route records, and vehicle admin.', 8, true)
 on conflict (slug) do update set
   name = excluded.name,
   summary = excluded.summary,
@@ -47,6 +47,51 @@ on conflict (slug) do update set
   display_order = excluded.display_order,
   is_live = excluded.is_live;
 
+with pack_details as (
+  select *
+  from (
+    values
+      ('beauty-salons-and-spas', 'salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers', 11, 20, 34),
+      ('catering-and-baking', 'caterers, bakers, cake makers, meal prep businesses, and event food service providers', 7, 10, 15),
+      ('cleaning-services', 'residential cleaners, office cleaners, move-in and move-out cleaners, and contract cleaning teams', 7, 10, 18),
+      ('construction-subcontractors', 'small trade teams, subcontractors, site service providers, and construction support businesses', 7, 10, 22),
+      ('freelancers-consultants', 'freelancers, consultants, independent professionals, coaches, and specialist service providers', 7, 10, 20),
+      ('landscaping-garden-services', 'garden services, landscapers, lawn care providers, irrigation teams, and outdoor maintenance businesses', 7, 10, 22),
+      ('safety-security', 'security service providers, safety consultants, patrol teams, guarding businesses, and risk support providers', 7, 10, 22),
+      ('transport-delivery-services', 'couriers, delivery businesses, transport operators, shuttle services, and small logistics providers', 7, 10, 22)
+  ) as rows (
+    industry_slug,
+    audience,
+    starter_document_count,
+    professional_document_count,
+    complete_document_count
+  )
+),
+product_rows as (
+  select
+    i.id as industry_id,
+    i.slug || '-' || t.tier_key as slug,
+    i.name || ' ' || t.name || ' Package' as name,
+    case t.tier_key
+      when 'starter' then 'A focused editable starter pack for ' || d.audience || ' that need core admin, quotation, invoice, client, and work-tracking templates.'
+      when 'professional' then 'A stronger editable operating pack for ' || d.audience || ' that need detailed client, job, supplier, staff, and follow-up records.'
+      else 'A full editable business document library for ' || d.audience || ', with Word templates and an Excel administration workbook for daily operations.'
+    end as description,
+    t.tier_key as package_tier,
+    t.price_cents,
+    case t.tier_key
+      when 'starter' then d.starter_document_count
+      when 'professional' then d.professional_document_count
+      else d.complete_document_count
+    end as document_count,
+    1 as workbook_count,
+    0 as pdf_count,
+    d.industry_slug
+  from pack_details d
+  join public.industries i
+    on i.slug = d.industry_slug
+  cross join public.package_tiers t
+)
 insert into public.products (
   industry_id,
   slug,
@@ -62,23 +107,29 @@ insert into public.products (
   is_live
 )
 select
-  i.id,
-  i.slug || '-' || t.tier_key,
-  i.name || ' ' || t.name || ' Package',
-  t.summary,
+  p.industry_id,
+  p.slug,
+  p.name,
+  p.description,
   'industry_package',
-  t.tier_key,
-  t.price_cents,
-  t.document_count,
-  t.workbook_count,
-  t.pdf_count,
-  jsonb_build_object('industry_slug', i.slug, 'tier_key', t.tier_key),
+  p.package_tier,
+  p.price_cents,
+  p.document_count,
+  p.workbook_count,
+  p.pdf_count,
+  jsonb_build_object(
+    'industry_slug', p.industry_slug,
+    'tier_key', p.package_tier,
+    'formats', jsonb_build_array('DOCX', 'XLSX')
+  ),
   true
-from public.industries i
-cross join public.package_tiers t
+from product_rows p
 on conflict (slug) do update set
+  industry_id = excluded.industry_id,
   name = excluded.name,
   description = excluded.description,
+  product_type = excluded.product_type,
+  package_tier = excluded.package_tier,
   price_cents = excluded.price_cents,
   document_count = excluded.document_count,
   workbook_count = excluded.workbook_count,

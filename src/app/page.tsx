@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatPrice } from "@/data/catalogue";
+import { formatDocumentRange, formatPrice } from "@/data/catalogue";
 import {
   DocumentPreviewCard,
   ProductMockup,
@@ -14,14 +14,14 @@ import {
 export const revalidate = 300;
 
 const preferredIndustrySlugs = [
-  "cleaning-services",
   "beauty-salons-and-spas",
   "catering-and-baking",
+  "cleaning-services",
   "construction-subcontractors",
-  "tutors-training-providers",
   "freelancers-consultants",
+  "landscaping-garden-services",
+  "safety-security",
   "transport-delivery-services",
-  "property-rental-admin",
 ];
 
 const documentPreviews = [
@@ -84,7 +84,7 @@ const faqs = [
   {
     question: "Are these industry-specific?",
     answer:
-      "Industry packs are organised around common small-business categories such as cleaning, catering, construction, beauty, transport, and property admin.",
+      "Industry packs are organised around ready small-business categories such as beauty, catering, cleaning, construction, consulting, landscaping, safety and security, and transport.",
   },
 ];
 
@@ -143,7 +143,7 @@ export default async function Home() {
             </div>
             <div className="mt-10 grid gap-4 sm:grid-cols-3">
               {[
-                ["15", "industry categories"],
+                [industries.length.toString(), "ready industries"],
                 ["DOCX", "editable templates"],
                 ["PayFast", "secure checkout"],
               ].map(([value, label]) => (
@@ -340,8 +340,8 @@ export default async function Home() {
                     tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
                   }`}
                 >
-                  {tier.documentCount} DOCX, {tier.workbookCount} XLSX / PDF
-                  coming soon
+                  {formatDocumentRange(tier.key)} DOCX, {tier.workbookCount}{" "}
+                  XLSX / PDF coming soon
                 </p>
                 <ul className="mt-7 grid gap-3 text-sm font-bold">
                   {tier.includes.slice(0, 4).map((item) => (

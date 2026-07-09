@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { formatPrice } from "@/data/catalogue";
+import { formatDocumentRange, formatPrice } from "@/data/catalogue";
 import { getCataloguePackageTiers } from "@/lib/supabase/catalogue";
 
 export const metadata = {
@@ -22,8 +22,9 @@ export default async function PackagesPage() {
           Starter, Professional, and Complete
         </h1>
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
-          Keep the offer simple at launch: one clear ladder repeated across all
-          15 industries, with industry-specific wording and templates inside.
+          Choose one clear package level across the ready industry packs.
+          Exact DOCX counts vary by industry and are shown on each industry
+          page.
         </p>
       </div>
 
@@ -52,6 +53,14 @@ export default async function PackagesPage() {
             </p>
             <p className="mt-6 text-4xl font-black text-[#ff6a00]">
               {formatPrice(tier.priceCents)}
+            </p>
+            <p
+              className={`mt-2 text-sm ${
+                tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
+              }`}
+            >
+              {formatDocumentRange(tier.key)} DOCX, {tier.workbookCount} XLSX /
+              PDF coming soon
             </p>
             <p
               className={`mt-2 text-sm ${

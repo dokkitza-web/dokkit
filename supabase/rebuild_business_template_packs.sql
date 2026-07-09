@@ -54,6 +54,54 @@ values
     'Custom food orders create admin pressure around deposits, quantities, dietary details, and delivery timing.',
     2,
     true
+  ),
+  (
+    'cleaning-services',
+    'Cleaning Services',
+    'Residential, office, move-in, move-out, and contract cleaning businesses need repeatable quotes and checklists.',
+    'Cleaning is easy to start, has strong local demand, and customers expect clear scope, pricing, and sign-off documents.',
+    3,
+    true
+  ),
+  (
+    'construction-subcontractors',
+    'Construction Subcontractors',
+    'Small trade teams need quote, job card, safety, variation, and sign-off documents for site work.',
+    'Subcontractors handle higher-value work where paperwork reduces disputes and improves payment follow-up.',
+    4,
+    true
+  ),
+  (
+    'freelancers-consultants',
+    'Freelancers and Consultants',
+    'Independent professionals need proposals, retainers, onboarding forms, invoices, and client trackers.',
+    'This segment buys digital templates readily and values documents that make a solo business look established.',
+    5,
+    true
+  ),
+  (
+    'landscaping-garden-services',
+    'Landscaping and Garden Services',
+    'Garden service businesses need maintenance schedules, quotes, site checks, and recurring service records.',
+    'Recurring outdoor services are common and simple templates help businesses win and retain contracts.',
+    6,
+    true
+  ),
+  (
+    'safety-security',
+    'Safety and Security',
+    'Safety and security service providers need site assessments, service records, incident reports, and client sign-offs.',
+    'Security and safety services depend on clear records, shift notes, incident details, and proof of service delivery.',
+    7,
+    true
+  ),
+  (
+    'transport-delivery-services',
+    'Transport and Delivery Services',
+    'Delivery operators need trip sheets, delivery notes, vehicle logs, client trackers, and invoice records.',
+    'Transport businesses depend on proof of delivery, route records, and vehicle admin.',
+    8,
+    true
   )
 on conflict (slug) do update set
   name = excluded.name,
@@ -63,87 +111,50 @@ on conflict (slug) do update set
   is_live = excluded.is_live,
   updated_at = now();
 
-with product_rows as (
+with pack_details as (
   select *
   from (
     values
-      (
-        'beauty-salons-and-spas',
-        'beauty-salons-and-spas-starter',
-        'Beauty Salons and Spas Starter Package',
-        'A focused editable starter library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers who need the core admin basics.',
-        'starter',
-        24900,
-        11,
-        1,
-        0
-      ),
-      (
-        'beauty-salons-and-spas',
-        'beauty-salons-and-spas-professional',
-        'Beauty Salons and Spas Professional Package',
-        'A stronger editable operating library for beauty businesses that quote often, record treatment details, manage staff worksheets, track stock, and collect customer feedback.',
-        'professional',
-        59900,
-        20,
-        1,
-        0
-      ),
-      (
-        'beauty-salons-and-spas',
-        'beauty-salons-and-spas-complete',
-        'Beauty Salons and Spas Complete Package',
-        'A full editable business document library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers.',
-        'complete',
-        119900,
-        34,
-        1,
-        0
-      ),
-      (
-        'catering-and-baking',
-        'catering-and-baking-starter',
-        'Catering and Baking Starter Package',
-        'A focused editable starter library for caterers, bakers, cake makers, meal prep businesses, and event food service providers who need core order and admin templates.',
-        'starter',
-        24900,
-        11,
-        1,
-        0
-      ),
-      (
-        'catering-and-baking',
-        'catering-and-baking-professional',
-        'Catering and Baking Professional Package',
-        'A stronger editable operating library for food businesses that quote events, capture allergens, manage staff worksheets, track stock, and collect customer feedback.',
-        'professional',
-        59900,
-        20,
-        1,
-        0
-      ),
-      (
-        'catering-and-baking',
-        'catering-and-baking-complete',
-        'Catering and Baking Complete Package',
-        'A full editable business document library for caterers, bakers, cake makers, meal prep businesses, and event food service providers.',
-        'complete',
-        119900,
-        34,
-        1,
-        0
-      )
+      ('beauty-salons-and-spas', 'salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers', 11, 20, 34),
+      ('catering-and-baking', 'caterers, bakers, cake makers, meal prep businesses, and event food service providers', 7, 10, 15),
+      ('cleaning-services', 'residential cleaners, office cleaners, move-in and move-out cleaners, and contract cleaning teams', 7, 10, 18),
+      ('construction-subcontractors', 'small trade teams, subcontractors, site service providers, and construction support businesses', 7, 10, 22),
+      ('freelancers-consultants', 'freelancers, consultants, independent professionals, coaches, and specialist service providers', 7, 10, 20),
+      ('landscaping-garden-services', 'garden services, landscapers, lawn care providers, irrigation teams, and outdoor maintenance businesses', 7, 10, 22),
+      ('safety-security', 'security service providers, safety consultants, patrol teams, guarding businesses, and risk support providers', 7, 10, 22),
+      ('transport-delivery-services', 'couriers, delivery businesses, transport operators, shuttle services, and small logistics providers', 7, 10, 22)
   ) as rows (
     industry_slug,
-    slug,
-    name,
-    description,
-    package_tier,
-    price_cents,
-    document_count,
-    workbook_count,
-    pdf_count
+    audience,
+    starter_document_count,
+    professional_document_count,
+    complete_document_count
   )
+),
+product_rows as (
+  select
+    i.id as industry_id,
+    i.slug || '-' || t.tier_key as slug,
+    i.name || ' ' || t.name || ' Package' as name,
+    case t.tier_key
+      when 'starter' then 'A focused editable starter pack for ' || d.audience || ' that need core admin, quotation, invoice, client, and work-tracking templates.'
+      when 'professional' then 'A stronger editable operating pack for ' || d.audience || ' that need detailed client, job, supplier, staff, and follow-up records.'
+      else 'A full editable business document library for ' || d.audience || ', with Word templates and an Excel administration workbook for daily operations.'
+    end as description,
+    t.tier_key as package_tier,
+    t.price_cents,
+    case t.tier_key
+      when 'starter' then d.starter_document_count
+      when 'professional' then d.professional_document_count
+      else d.complete_document_count
+    end as document_count,
+    1 as workbook_count,
+    0 as pdf_count,
+    d.industry_slug
+  from pack_details d
+  join public.industries i
+    on i.slug = d.industry_slug
+  cross join public.package_tiers t
 )
 insert into public.products (
   industry_id,
@@ -160,7 +171,7 @@ insert into public.products (
   is_live
 )
 select
-  i.id,
+  p.industry_id,
   p.slug,
   p.name,
   p.description,
@@ -178,8 +189,6 @@ select
   ),
   true
 from product_rows p
-join public.industries i
-  on i.slug = p.industry_slug
 on conflict (slug) do update set
   industry_id = excluded.industry_id,
   name = excluded.name,

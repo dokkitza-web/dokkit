@@ -1,9 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
 import {
+  getFallbackIndustryPackageProducts,
   industries as fallbackIndustries,
   packageTiers as fallbackPackageTiers,
+  readyIndustries,
   singleDocuments as fallbackSingleDocuments,
   type Industry,
+  type IndustryPackageProduct,
   type PackageTier,
   type PackageTierKey,
   type SingleDocument,
@@ -38,6 +41,20 @@ type ProductRow = {
   } | null;
 };
 
+type IndustryPackageProductRow = {
+  slug: string;
+  name: string;
+  description: string;
+  package_tier: string | null;
+  price_cents: number;
+  document_count: number;
+  workbook_count: number;
+  pdf_count: number;
+  metadata: {
+    formats?: string[];
+  } | null;
+};
+
 const fallbackIndustryBySlug = new Map(
   fallbackIndustries.map((industry) => [industry.slug, industry]),
 );
@@ -48,6 +65,10 @@ const fallbackPackageTierByKey = new Map(
 
 const singleDocumentOrder = new Map(
   fallbackSingleDocuments.map((document, index) => [document.slug, index]),
+);
+
+const packageTierOrder = new Map<PackageTierKey, number>(
+  fallbackPackageTiers.map((tier, index) => [tier.key, index]),
 );
 
 function createCatalogueClient() {
@@ -89,7 +110,7 @@ export async function getCatalogueIndustries(): Promise<Industry[]> {
   const supabase = createCatalogueClient();
 
   if (!supabase) {
-    return fallbackIndustries;
+    return readyIndustries;
   }
 
   const { data, error } = await supabase
@@ -100,7 +121,7 @@ export async function getCatalogueIndustries(): Promise<Industry[]> {
 
   if (error || !data?.length) {
     console.warn("Using fallback industries catalogue.", error?.message);
-    return fallbackIndustries;
+    return readyIndustries;
   }
 
   return (data as IndustryRow[]).map((row, index) => {
@@ -160,6 +181,69 @@ export async function getCataloguePackageTiers(): Promise<PackageTier[]> {
       includes: fallback?.includes ?? [],
     };
   });
+}
+
+export async function getCatalogueIndustryPackageProducts(
+  industrySlug: string,
+): Promise<IndustryPackageProduct[]> {
+  const fallbackProducts = getFallbackIndustryPackageProducts(industrySlug);
+  const supabase = createCatalogueClient();
+
+  if (!supabase) {
+    return fallbackProducts;
+  }
+
+  const expectedSlugs = fallbackPackageTiers.map(
+    (tier) => `${industrySlug}-${tier.key}`,
+  );
+  const { data, error } = await supabase
+    .from("products")
+    .select(
+      "slug,name,description,package_tier,price_cents,document_count,workbook_count,pdf_count,metadata",
+    )
+    .eq("is_live", true)
+    .eq("product_type", "industry_package")
+    .in("slug", expectedSlugs);
+
+  if (error || !data?.length) {
+    console.warn(
+      `Using fallback package products for ${industrySlug}.`,
+      error?.message,
+    );
+    return fallbackProducts;
+  }
+
+  const productsByTier = new Map(
+    (data as IndustryPackageProductRow[])
+      .filter((row) => row.package_tier)
+      .map((row) => [row.package_tier as PackageTierKey, row]),
+  );
+
+  return fallbackProducts
+    .map((fallbackProduct) => {
+      const row = productsByTier.get(fallbackProduct.key);
+
+      if (!row) {
+        return fallbackProduct;
+      }
+
+      return {
+        key: fallbackProduct.key,
+        slug: row.slug,
+        name: row.name,
+        description: row.description,
+        priceCents: row.price_cents,
+        documentCount: row.document_count,
+        workbookCount: row.workbook_count,
+        pdfCount: row.pdf_count,
+        fileFormats: getLaunchFormats(row.metadata?.formats),
+      };
+    })
+    .sort(
+      (a, b) =>
+        (packageTierOrder.get(a.key) ?? Number.MAX_SAFE_INTEGER) -
+        (packageTierOrder.get(b.key) ?? Number.MAX_SAFE_INTEGER),
+    );
 }
 
 export async function getCatalogueSingleDocuments(): Promise<SingleDocument[]> {

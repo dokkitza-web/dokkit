@@ -4,8 +4,8 @@ import { AddToCartButton } from "@/components/add-to-cart-button";
 import { formatPrice } from "@/data/catalogue";
 import {
   getCatalogueIndustries,
+  getCatalogueIndustryPackageProducts,
   getCatalogueIndustryBySlug,
-  getCataloguePackageTiers,
 } from "@/lib/supabase/catalogue";
 
 export const revalidate = 300;
@@ -42,9 +42,9 @@ export default async function IndustryDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [industry, packageTiers] = await Promise.all([
+  const [industry, packageProducts] = await Promise.all([
     getCatalogueIndustryBySlug(slug),
-    getCataloguePackageTiers(),
+    getCatalogueIndustryPackageProducts(slug),
   ]);
 
   if (!industry) {
@@ -73,11 +73,11 @@ export default async function IndustryDetailPage({
         </div>
 
         <div className="grid gap-4">
-          {packageTiers.map((tier) => (
+          {packageProducts.map((product) => (
             <article
-              key={tier.key}
+              key={product.slug}
               className={`rounded-[1.75rem] border p-6 shadow-sm ${
-                tier.key === "complete"
+                product.key === "complete"
                   ? "border-[#ff6a00] bg-[#111111] text-white orange-glow"
                   : "border-black/10 bg-white"
               }`}
@@ -85,30 +85,32 @@ export default async function IndustryDetailPage({
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
                   <h2 className="text-xl font-black">
-                    {industry.name} {tier.name} Package
+                    {product.name}
                   </h2>
                   <p
                     className={`mt-2 text-sm leading-6 ${
-                      tier.key === "complete" ? "text-white/65" : "text-[#5f5f66]"
+                      product.key === "complete"
+                        ? "text-white/65"
+                        : "text-[#5f5f66]"
                     }`}
                   >
-                    {tier.summary}
+                    {product.description}
                   </p>
                 </div>
                 <p className="text-2xl font-black text-[#ff6a00]">
-                  {formatPrice(tier.priceCents)}
+                  {formatPrice(product.priceCents)}
                 </p>
               </div>
               <div
                 className={`mt-5 grid gap-3 text-sm font-bold sm:grid-cols-3 ${
-                  tier.key === "complete" ? "text-white/75" : "text-[#5f5f66]"
+                  product.key === "complete" ? "text-white/75" : "text-[#5f5f66]"
                 }`}
               >
                 <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
-                  {tier.documentCount} DOCX
+                  {product.documentCount} DOCX
                 </span>
                 <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
-                  {tier.workbookCount} XLSX
+                  {product.workbookCount} XLSX
                 </span>
                 <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
                   PDF coming soon
@@ -117,11 +119,11 @@ export default async function IndustryDetailPage({
               <div className="mt-5">
                 <AddToCartButton
                   item={{
-                    slug: `${industry.slug}-${tier.key}`,
-                    name: `${industry.name} ${tier.name} Package`,
-                    priceCents: tier.priceCents,
+                    slug: product.slug,
+                    name: product.name,
+                    priceCents: product.priceCents,
                     category: "industry_package",
-                    description: tier.summary,
+                    description: product.description,
                   }}
                 />
               </div>

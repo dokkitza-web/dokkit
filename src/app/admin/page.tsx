@@ -18,9 +18,9 @@ const countCards = [
 ];
 
 const launchTargets = [
-  { key: "industries", label: "Live industries", expected: 15 },
+  { key: "industries", label: "Live industries", expected: 8 },
   { key: "packageTiers", label: "Live package tiers", expected: 3 },
-  { key: "industryProducts", label: "Live industry packages", expected: 45 },
+  { key: "industryProducts", label: "Live industry packages", expected: 24 },
   { key: "singleDocuments", label: "Live single templates", expected: 20 },
 ];
 
@@ -157,8 +157,9 @@ export default async function AdminDashboardPage() {
               Live catalogue against local seed targets
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-[#5f5f66]">
-              The launch seed expects 15 industries, 3 package tiers, 45
-              industry package products, and 20 single templates to be live.
+              The approved launch catalogue expects 8 ready industries, 3
+              package tiers, 24 industry package products, and 20 single
+              templates to be live.
             </p>
           </div>
           <span

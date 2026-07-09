@@ -30,6 +30,18 @@ export type SingleDocument = {
   fileFormats: string[];
 };
 
+export type IndustryPackageProduct = {
+  key: PackageTierKey;
+  slug: string;
+  name: string;
+  description: string;
+  priceCents: number;
+  documentCount: number;
+  workbookCount: number;
+  pdfCount: number;
+  fileFormats: string[];
+};
+
 export const packageTiers: PackageTier[] = [
   {
     key: "starter",
@@ -98,7 +110,7 @@ export const packageTiers: PackageTier[] = [
 
 export const industries: Industry[] = [
   {
-    rank: 1,
+    rank: 3,
     slug: "cleaning-services",
     name: "Cleaning Services",
     summary:
@@ -119,7 +131,7 @@ export const industries: Industry[] = [
     ],
   },
   {
-    rank: 2,
+    rank: 4,
     slug: "construction-subcontractors",
     name: "Construction Subcontractors",
     summary:
@@ -140,7 +152,7 @@ export const industries: Industry[] = [
     ],
   },
   {
-    rank: 3,
+    rank: 1,
     slug: "beauty-salons-and-spas",
     name: "Beauty Salons and Spas",
     summary:
@@ -182,7 +194,7 @@ export const industries: Industry[] = [
     ],
   },
   {
-    rank: 5,
+    rank: 2,
     slug: "catering-and-baking",
     name: "Catering and Baking",
     summary:
@@ -203,7 +215,7 @@ export const industries: Industry[] = [
     ],
   },
   {
-    rank: 6,
+    rank: 5,
     slug: "freelancers-consultants",
     name: "Freelancers and Consultants",
     summary:
@@ -266,7 +278,7 @@ export const industries: Industry[] = [
     ],
   },
   {
-    rank: 9,
+    rank: 6,
     slug: "landscaping-garden-services",
     name: "Landscaping and Garden Services",
     summary:
@@ -284,6 +296,27 @@ export const industries: Industry[] = [
       "Plan recurring visits",
       "Track materials",
       "Get client approvals",
+    ],
+  },
+  {
+    rank: 7,
+    slug: "safety-security",
+    name: "Safety and Security",
+    summary:
+      "Safety and security providers need site assessments, service records, incident reports, and client sign-offs.",
+    why: "Security and safety services depend on clear records, shift notes, incident details, and proof of service delivery.",
+    featuredDocuments: [
+      "Site risk assessment form",
+      "Security services quotation",
+      "Shift handover log",
+      "Incident report",
+      "Patrol register",
+    ],
+    useCases: [
+      "Quote guarding and patrol services",
+      "Record site risks and instructions",
+      "Track shifts and incidents",
+      "Confirm service completion",
     ],
   },
   {
@@ -350,7 +383,7 @@ export const industries: Industry[] = [
     ],
   },
   {
-    rank: 13,
+    rank: 8,
     slug: "transport-delivery-services",
     name: "Transport and Delivery Services",
     summary:
@@ -413,6 +446,142 @@ export const industries: Industry[] = [
     ],
   },
 ];
+
+export const readyIndustrySlugs = [
+  "beauty-salons-and-spas",
+  "catering-and-baking",
+  "cleaning-services",
+  "construction-subcontractors",
+  "freelancers-consultants",
+  "landscaping-garden-services",
+  "safety-security",
+  "transport-delivery-services",
+];
+
+export const readyIndustries = readyIndustrySlugs
+  .map((slug) => industries.find((industry) => industry.slug === slug))
+  .filter((industry): industry is Industry => Boolean(industry));
+
+const industryPackageDocumentCounts: Record<
+  string,
+  Record<PackageTierKey, number>
+> = {
+  "beauty-salons-and-spas": {
+    starter: 11,
+    professional: 20,
+    complete: 34,
+  },
+  "catering-and-baking": {
+    starter: 7,
+    professional: 10,
+    complete: 15,
+  },
+  "cleaning-services": {
+    starter: 7,
+    professional: 10,
+    complete: 18,
+  },
+  "construction-subcontractors": {
+    starter: 7,
+    professional: 10,
+    complete: 22,
+  },
+  "freelancers-consultants": {
+    starter: 7,
+    professional: 10,
+    complete: 20,
+  },
+  "landscaping-garden-services": {
+    starter: 7,
+    professional: 10,
+    complete: 22,
+  },
+  "safety-security": {
+    starter: 7,
+    professional: 10,
+    complete: 22,
+  },
+  "transport-delivery-services": {
+    starter: 7,
+    professional: 10,
+    complete: 22,
+  },
+};
+
+const industryAudiences: Record<string, string> = {
+  "beauty-salons-and-spas":
+    "salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers",
+  "catering-and-baking":
+    "caterers, bakers, cake makers, meal prep businesses, and event food service providers",
+  "cleaning-services":
+    "residential cleaners, office cleaners, move-in and move-out cleaners, and contract cleaning teams",
+  "construction-subcontractors":
+    "small trade teams, subcontractors, site service providers, and construction support businesses",
+  "freelancers-consultants":
+    "freelancers, consultants, independent professionals, coaches, and specialist service providers",
+  "landscaping-garden-services":
+    "garden services, landscapers, lawn care providers, irrigation teams, and outdoor maintenance businesses",
+  "safety-security":
+    "security service providers, safety consultants, patrol teams, guarding businesses, and risk support providers",
+  "transport-delivery-services":
+    "couriers, delivery businesses, transport operators, shuttle services, and small logistics providers",
+};
+
+export const tierDocumentRanges: Record<
+  PackageTierKey,
+  { min: number; max: number }
+> = {
+  starter: { min: 7, max: 11 },
+  professional: { min: 10, max: 20 },
+  complete: { min: 15, max: 34 },
+};
+
+function createFallbackPackageDescription(
+  industry: Industry,
+  tierKey: PackageTierKey,
+) {
+  const audience = industryAudiences[industry.slug] ?? "small businesses";
+
+  if (tierKey === "starter") {
+    return `A focused editable starter pack for ${audience} that need core admin, quotation, invoice, client, and work-tracking templates.`;
+  }
+
+  if (tierKey === "professional") {
+    return `A stronger editable operating pack for ${audience} that need detailed client, job, supplier, staff, and follow-up records.`;
+  }
+
+  return `A full editable business document library for ${audience}, with Word templates and an Excel administration workbook for daily operations.`;
+}
+
+export function getFallbackIndustryPackageProducts(
+  industrySlug: string,
+): IndustryPackageProduct[] {
+  const industry = industries.find((item) => item.slug === industrySlug);
+
+  if (!industry) {
+    return [];
+  }
+
+  const counts = industryPackageDocumentCounts[industry.slug];
+
+  return packageTiers.map((tier) => ({
+    key: tier.key,
+    slug: `${industry.slug}-${tier.key}`,
+    name: `${industry.name} ${tier.name} Package`,
+    description: createFallbackPackageDescription(industry, tier.key),
+    priceCents: tier.priceCents,
+    documentCount: counts?.[tier.key] ?? tier.documentCount,
+    workbookCount: 1,
+    pdfCount: 0,
+    fileFormats: ["DOCX", "XLSX"],
+  }));
+}
+
+export function formatDocumentRange(tierKey: PackageTierKey) {
+  const range = tierDocumentRanges[tierKey];
+
+  return range.min === range.max ? `${range.min}` : `${range.min}-${range.max}`;
+}
 
 export const singleDocuments: SingleDocument[] = [
   {
@@ -557,7 +726,7 @@ export const singleDocuments: SingleDocument[] = [
   },
 ];
 
-export const featuredIndustries = industries.slice(0, 6);
+export const featuredIndustries = readyIndustries.slice(0, 6);
 
 export function getIndustryBySlug(slug: string) {
   return industries.find((industry) => industry.slug === slug);
