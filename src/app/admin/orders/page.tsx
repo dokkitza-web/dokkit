@@ -1,4 +1,11 @@
+import Link from "next/link";
 import { AdminShell } from "@/components/admin-shell";
+import {
+  clearOrderFromDashboard,
+  restoreOrderToDashboard,
+} from "@/app/admin/orders/actions";
+import { ClearOrderButton } from "@/app/admin/orders/clear-order-button";
+import { getClearedOrderIds } from "@/app/admin/orders/cleared-orders";
 import {
   VAT_INCLUDED_SUMMARY_LABEL,
   formatPrice,
@@ -79,6 +86,8 @@ type DownloadEventRow = {
   created_at: string;
 };
 
+type OrdersView = "active" | "cleared" | "all";
+
 function groupByOrderId<T extends { order_id: string | null }>(rows: T[]) {
   return rows.reduce((map, row) => {
     if (!row.order_id) {
@@ -139,16 +148,113 @@ function getLatest<T extends { created_at: string }>(rows: T[]) {
   )[0];
 }
 
-export default async function AdminOrdersPage() {
+function getSearchParam(
+  searchParams: Record<string, string | string[] | undefined>,
+  key: string,
+) {
+  const value = searchParams[key];
+
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function getOrdersView(value?: string): OrdersView {
+  if (value === "cleared" || value === "all") {
+    return value;
+  }
+
+  return "active";
+}
+
+function StatusMessage({
+  searchParams,
+}: {
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
+  const cleared = getSearchParam(searchParams, "cleared");
+  const restored = getSearchParam(searchParams, "restored");
+  const error = getSearchParam(searchParams, "error");
+
+  if (error) {
+    return (
+      <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-5 text-sm text-red-700">
+        {error === "invalid-order" ? "Order could not be found." : error}
+      </div>
+    );
+  }
+
+  if (cleared) {
+    return (
+      <div className="mb-6 rounded-2xl border border-[#ffd8bd] bg-[#fff4eb] p-5 text-sm font-bold text-[#d95400]">
+        Order cleared from the active dashboard. It remains available in the
+        Cleared view.
+      </div>
+    );
+  }
+
+  if (restored) {
+    return (
+      <div className="mb-6 rounded-2xl border border-[#ffd8bd] bg-[#fff4eb] p-5 text-sm font-bold text-[#d95400]">
+        Order restored to the active dashboard.
+      </div>
+    );
+  }
+
+  return null;
+}
+
+export default async function AdminOrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const view = getOrdersView(getSearchParam(resolvedSearchParams, "view"));
   const { supabase, user } = await requireAdmin();
-  const { data: orders, error: ordersError } = await supabase
-    .from("orders")
-    .select(
-      "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at",
-    )
-    .order("created_at", { ascending: false })
-    .limit(50);
-  const orderRows = (orders ?? []) as OrderRow[];
+  let clearedOrderIds: string[] = [];
+  let clearedOrdersError: string | null = null;
+
+  try {
+    clearedOrderIds = await getClearedOrderIds(supabase);
+  } catch (error) {
+    clearedOrdersError =
+      error instanceof Error
+        ? error.message
+        : "Unable to load cleared orders.";
+  }
+
+  const clearedOrderIdSet = new Set(clearedOrderIds);
+  const { data: orders, error: ordersError } =
+    view === "cleared" && clearedOrderIds.length === 0
+      ? { data: [], error: null }
+      : view === "cleared"
+        ? await supabase
+            .from("orders")
+            .select(
+              "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at",
+            )
+            .in("id", clearedOrderIds)
+            .order("created_at", { ascending: false })
+            .limit(50)
+        : await supabase
+            .from("orders")
+            .select(
+              "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at",
+            )
+            .order("created_at", { ascending: false })
+            .limit(100);
+  const orderRows = ((orders ?? []) as OrderRow[])
+    .filter((order) => {
+      if (view === "all") {
+        return true;
+      }
+
+      if (view === "cleared") {
+        return clearedOrderIdSet.has(order.id);
+      }
+
+      return !clearedOrderIdSet.has(order.id);
+    })
+    .slice(0, 50);
   const orderIds = orderRows.map((order) => order.id);
   const customerIds = [
     ...new Set(
@@ -224,8 +330,48 @@ export default async function AdminOrdersPage() {
       email={user.email ?? "Admin user"}
       eyebrow="Order operations"
       title="Orders"
-      description="Review recent orders, PayFast verification, email delivery, and secure download activity from one owner-only screen."
+      description="Review recent orders, PayFast verification, email delivery, secure download activity, and clear completed records from the active dashboard without deleting them."
     >
+      <StatusMessage searchParams={resolvedSearchParams} />
+
+      <div className="mb-6 rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-sm font-black text-[#111111]">
+              Dashboard order view
+            </p>
+            <p className="mt-1 text-xs leading-5 text-[#5f5f66]">
+              Cleared orders are hidden from Active view only. They remain in
+              the database for payment, email, customer, and download records.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {[
+              ["active", "Active"],
+              ["cleared", `Cleared (${clearedOrderIds.length})`],
+              ["all", "All"],
+            ].map(([value, label]) => (
+              <Link
+                key={value}
+                href={`/admin/orders${value === "active" ? "" : `?view=${value}`}`}
+                className={`rounded-full px-4 py-2 text-sm font-black transition ${
+                  view === value
+                    ? "bg-[#ff6a00] text-white"
+                    : "border border-black/10 bg-white text-[#111111] hover:border-[#ff6a00] hover:text-[#ff6a00]"
+                }`}
+              >
+                {label}
+              </Link>
+            ))}
+          </div>
+        </div>
+        {clearedOrdersError ? (
+          <p className="mt-4 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {clearedOrdersError}
+          </p>
+        ) : null}
+      </div>
+
       <div className="mb-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
           <p className="text-sm font-bold text-[#5f5f66]">Recent orders</p>
@@ -271,6 +417,7 @@ export default async function AdminOrdersPage() {
             const emails = emailsByOrderId.get(order.id) ?? [];
             const latestItn = getLatest(itnsByOrderId.get(order.id) ?? []);
             const downloads = downloadsByOrderId.get(order.id) ?? [];
+            const isOrderCleared = clearedOrderIdSet.has(order.id);
 
             return (
               <article
@@ -306,6 +453,29 @@ export default async function AdminOrdersPage() {
                       {VAT_INCLUDED_SUMMARY_LABEL}:{" "}
                       {formatPrice(getVatPortionCents(order.total_cents))}
                     </p>
+                    {isOrderCleared ? (
+                      <form
+                        action={restoreOrderToDashboard}
+                        className="mt-3 lg:flex lg:justify-end"
+                      >
+                        <input type="hidden" name="orderId" value={order.id} />
+                        <ClearOrderButton
+                          orderNumber={order.order_number}
+                          mode="restore"
+                        />
+                      </form>
+                    ) : (
+                      <form
+                        action={clearOrderFromDashboard}
+                        className="mt-3 lg:flex lg:justify-end"
+                      >
+                        <input type="hidden" name="orderId" value={order.id} />
+                        <ClearOrderButton
+                          orderNumber={order.order_number}
+                          mode="clear"
+                        />
+                      </form>
+                    )}
                   </div>
                 </div>
 
