@@ -8,6 +8,7 @@ const adminLinks = [
   { href: "/admin/products", label: "Templates" },
   { href: "/admin/files", label: "Upload Templates" },
   { href: "/admin/orders", label: "Orders" },
+  { href: "/admin/settings", label: "Settings" },
 ];
 
 const comingSoonLinks = [
@@ -15,7 +16,6 @@ const comingSoonLinks = [
   "Customers",
   "Downloads",
   "Payments",
-  "Settings",
 ];
 
 export function AdminShell({
