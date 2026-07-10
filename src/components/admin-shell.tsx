@@ -5,17 +5,14 @@ import { BrandLogo } from "@/components/brand-logo";
 
 const adminLinks = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/categories", label: "Categories" },
   { href: "/admin/products", label: "Templates" },
   { href: "/admin/files", label: "Upload Templates" },
   { href: "/admin/orders", label: "Orders" },
+  { href: "/admin/customers", label: "Customers" },
+  { href: "/admin/downloads", label: "Downloads" },
+  { href: "/admin/payments", label: "Payments" },
   { href: "/admin/settings", label: "Settings" },
-];
-
-const comingSoonLinks = [
-  "Categories",
-  "Customers",
-  "Downloads",
-  "Payments",
 ];
 
 export function AdminShell({
@@ -35,7 +32,7 @@ export function AdminShell({
 }) {
   return (
     <div className="min-h-screen bg-[linear-gradient(135deg,#fffaf5_0%,#ffffff_48%,#fff0e3_100%)] text-[#111111]">
-      <aside className="fixed inset-y-0 left-0 z-30 hidden w-80 border-r border-black/10 bg-white px-5 py-6 shadow-xl shadow-black/5 xl:block">
+      <aside className="fixed inset-y-0 left-0 z-30 hidden w-80 flex-col border-r border-black/10 bg-white px-5 py-6 shadow-xl shadow-black/5 xl:flex">
         <div className="flex items-center justify-between">
           <BrandLogo href="/admin" />
           <span className="rounded-full border border-[#ffcfaa] bg-[#fff4eb] px-3 py-1 text-xs font-black text-[#d95400]">
@@ -50,7 +47,7 @@ export function AdminShell({
             {email}
           </p>
         </div>
-        <nav className="mt-8 grid gap-2">
+        <nav className="mt-8 grid gap-1 overflow-y-auto pb-6">
           {adminLinks.map((link) => (
             <Link
               key={link.href}
@@ -61,22 +58,7 @@ export function AdminShell({
             </Link>
           ))}
         </nav>
-        <div className="mt-8">
-          <p className="px-4 text-xs font-black uppercase tracking-[0.18em] text-[#9b938b]">
-            Coming soon
-          </p>
-          <div className="mt-3 grid gap-2">
-            {comingSoonLinks.map((link) => (
-              <span
-                key={link}
-                className="rounded-2xl px-4 py-3 text-sm font-bold text-[#9b938b]"
-              >
-                {link}
-              </span>
-            ))}
-          </div>
-        </div>
-        <form action={signOutAdmin} className="absolute inset-x-5 bottom-6">
+        <form action={signOutAdmin} className="mt-auto pt-6">
           <button
             type="submit"
             className="w-full rounded-full border border-black/10 bg-[#111111] px-4 py-3 text-sm font-black text-white transition hover:bg-[#2b2b2b]"
