@@ -124,6 +124,20 @@ export async function POST(request: Request) {
   const orderNumber = createOrderNumber();
   const orderAccessToken = createOrderAccessToken(orderNumber);
   const cleanEmail = customer.email.toLowerCase().trim();
+  const payment = createPayFastPayment({
+    orderNumber,
+    orderAccessToken,
+    email: cleanEmail,
+    amountCents: subtotalCents,
+    itemName:
+      normalisedItems.length === 1
+        ? normalisedItems[0].product.name
+        : `DokKit order ${orderNumber}`,
+  });
+
+  if (payment.mode === "configuration_required") {
+    return NextResponse.json({ error: payment.message }, { status: 503 });
+  }
 
   const { data: customerRow, error: customerError } = await supabase
     .from("customers")
@@ -213,17 +227,6 @@ export async function POST(request: Request) {
       quantity: item.quantity,
       totalCents: item.totalCents,
     })),
-  });
-
-  const payment = createPayFastPayment({
-    orderNumber,
-    orderAccessToken,
-    email: cleanEmail,
-    amountCents: subtotalCents,
-    itemName:
-      normalisedItems.length === 1
-        ? normalisedItems[0].product.name
-        : `DokKit order ${orderNumber}`,
   });
 
   return NextResponse.json(

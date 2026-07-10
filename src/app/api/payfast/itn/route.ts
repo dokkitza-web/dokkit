@@ -7,6 +7,7 @@ import {
   sendAdminPaidOrderNotificationEmail,
   sendDownloadReadyEmail,
 } from "@/lib/emails";
+import { getPayFastRuntimeConfig } from "@/lib/payfast";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -32,15 +33,6 @@ type OrderEmailItemRow = {
 
 function encodePayFastValue(value: string) {
   return encodeURIComponent(value.trim()).replace(/%20/g, "+");
-}
-
-function getPayFastHost() {
-  const processUrl =
-    process.env.PAYFAST_PROCESS_URL || "https://sandbox.payfast.co.za/eng/process";
-
-  return processUrl.includes("sandbox")
-    ? "sandbox.payfast.co.za"
-    : "www.payfast.co.za";
 }
 
 function parseForwardedIps(request: Request) {
@@ -79,7 +71,7 @@ function validSignature(data: PayFastData, paramString: string) {
   return data.signature === expectedSignature;
 }
 
-async function validPayFastIp(request: Request) {
+async function validPayFastIp(request: Request, validHosts: string[]) {
   if (process.env.PAYFAST_SKIP_IP_CHECK === "true") {
     return true;
   }
@@ -90,12 +82,6 @@ async function validPayFastIp(request: Request) {
     return false;
   }
 
-  const validHosts = [
-    "www.payfast.co.za",
-    "sandbox.payfast.co.za",
-    "w1w.payfast.co.za",
-    "w2w.payfast.co.za",
-  ];
   const lookupResults = await Promise.allSettled(
     validHosts.map((host) => dns.lookup(host, { all: true })),
   );
@@ -120,8 +106,7 @@ function validPaymentAmount(expectedCents: number, amountGross: string | undefin
   return Math.abs(expectedCents / 100 - paidAmount) <= 0.01;
 }
 
-async function validServerConfirmation(paramString: string) {
-  const host = getPayFastHost();
+async function validServerConfirmation(paramString: string, host: string) {
   const response = await fetch(`https://${host}/eng/query/validate`, {
     method: "POST",
     headers: {
@@ -217,6 +202,22 @@ export async function POST(request: Request) {
   let signatureValid = false;
   let amountValid = false;
   const statusText = data.payment_status ?? "UNKNOWN";
+  const payFastConfig = getPayFastRuntimeConfig();
+
+  if (!payFastConfig.ok) {
+    await logItn({
+      payload: {
+        ...data,
+        _payfast_configuration_error: payFastConfig.message,
+      },
+      signatureValid: false,
+      amountValid: false,
+      statusText: "PAYFAST_CONFIGURATION_ERROR",
+      processed: false,
+    });
+
+    return NextResponse.json({ received: true }, { status: 200 });
+  }
 
   try {
     const supabase = createSupabaseServiceClient();
@@ -250,9 +251,12 @@ export async function POST(request: Request) {
 
     paymentId = payment?.id;
     signatureValid = validSignature(data, paramString);
-    const ipValid = await validPayFastIp(request);
+    const ipValid = await validPayFastIp(request, payFastConfig.ipHosts);
     amountValid = validPaymentAmount(order.total_cents, data.amount_gross);
-    const serverConfirmed = await validServerConfirmation(paramString);
+    const serverConfirmed = await validServerConfirmation(
+      paramString,
+      payFastConfig.validationHost,
+    );
     const isComplete = data.payment_status === "COMPLETE";
     const checksPassed =
       signatureValid && ipValid && amountValid && serverConfirmed && isComplete;
@@ -260,6 +264,7 @@ export async function POST(request: Request) {
     await logItn({
       payload: {
         ...data,
+        _payfast_environment: payFastConfig.mode,
         _checks: JSON.stringify({
           signatureValid,
           ipValid,
@@ -283,7 +288,10 @@ export async function POST(request: Request) {
           .update({
             status: "invalid",
             provider_payment_id: pfPaymentId ?? payment?.provider_payment_id,
-            raw_payload: data,
+            raw_payload: {
+              ...data,
+              _payfast_environment: payFastConfig.mode,
+            },
             updated_at: new Date().toISOString(),
           })
           .eq("id", paymentId);
@@ -309,7 +317,10 @@ export async function POST(request: Request) {
         .update({
           status: "verified",
           provider_payment_id: pfPaymentId ?? payment?.provider_payment_id,
-          raw_payload: data,
+          raw_payload: {
+            ...data,
+            _payfast_environment: payFastConfig.mode,
+          },
           verified_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
