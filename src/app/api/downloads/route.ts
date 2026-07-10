@@ -6,6 +6,7 @@ import {
   hashDownloadToken,
   verifyOrderAccessToken,
 } from "@/lib/downloads";
+import { hasVerifiedLivePayFastPayment } from "@/lib/payment-verification";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -71,6 +72,18 @@ export async function POST(request: Request) {
     return NextResponse.json(
       { error: "Downloads unlock after PayFast verifies payment." },
       { status: 409 },
+    );
+  }
+
+  const hasLivePayment = await hasVerifiedLivePayFastPayment({
+    supabase,
+    orderId: order.id,
+  });
+
+  if (!hasLivePayment) {
+    return NextResponse.json(
+      { error: "Downloads require a verified live PayFast payment." },
+      { status: 403 },
     );
   }
 

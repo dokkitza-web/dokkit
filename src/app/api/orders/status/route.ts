@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { verifyOrderAccessToken } from "@/lib/downloads";
+import { hasVerifiedLivePayFastPayment } from "@/lib/payment-verification";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -62,8 +63,30 @@ export async function GET(request: Request) {
   }
 
   const orderItems = (items ?? []) as OrderItemRow[];
+  let hasLivePayment = false;
+
+  if (order.status === "paid") {
+    try {
+      hasLivePayment = await hasVerifiedLivePayFastPayment({
+        supabase,
+        orderId: order.id,
+      });
+    } catch (error) {
+      return NextResponse.json(
+        {
+          error:
+            error instanceof Error
+              ? error.message
+              : "Could not verify payment status.",
+        },
+        { status: 500 },
+      );
+    }
+  }
+
   const downloadsUnlocked =
     order.status === "paid" &&
+    hasLivePayment &&
     verifyOrderAccessToken({
       orderNumber: order.order_number,
       suppliedToken: parsedQuery.data.access,
