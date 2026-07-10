@@ -1,5 +1,9 @@
 import Link from "next/link";
-import { formatDocumentRange, formatPrice } from "@/data/catalogue";
+import {
+  VAT_INCLUDED_LABEL,
+  formatDocumentRange,
+  formatPrice,
+} from "@/data/catalogue";
 import { getCataloguePackageTiers } from "@/lib/supabase/catalogue";
 
 export const metadata = {
@@ -54,6 +58,13 @@ export default async function PackagesPage() {
             </p>
             <p className="mt-6 text-4xl font-black text-[#ff6a00]">
               {formatPrice(tier.priceCents)}
+            </p>
+            <p
+              className={`mt-1 text-xs font-black uppercase tracking-[0.14em] ${
+                tier.key === "complete" ? "text-[#ffb06f]" : "text-[#d95400]"
+              }`}
+            >
+              {VAT_INCLUDED_LABEL}
             </p>
             <p
               className={`mt-2 text-sm ${

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { formatPrice } from "@/data/catalogue";
+import { VAT_INCLUDED_LABEL, formatPrice } from "@/data/catalogue";
 import {
   getCatalogueIndustries,
   getCatalogueIndustryPackageProducts,
@@ -97,9 +97,20 @@ export default async function IndustryDetailPage({
                     {product.description}
                   </p>
                 </div>
-                <p className="text-2xl font-black text-[#ff6a00]">
-                  {formatPrice(product.priceCents)}
-                </p>
+                <div className="shrink-0 sm:text-right">
+                  <p className="text-2xl font-black text-[#ff6a00]">
+                    {formatPrice(product.priceCents)}
+                  </p>
+                  <p
+                    className={`mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] ${
+                      product.key === "complete"
+                        ? "text-[#ffb06f]"
+                        : "text-[#d95400]"
+                    }`}
+                  >
+                    {VAT_INCLUDED_LABEL}
+                  </p>
+                </div>
               </div>
               <div
                 className={`mt-5 grid gap-3 text-sm font-bold sm:grid-cols-3 ${

@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { formatPrice } from "@/data/catalogue";
+import {
+  VAT_INCLUDED_SUMMARY_LABEL,
+  formatPrice,
+  getVatPortionCents,
+} from "@/data/catalogue";
 import { DownloadFileButton } from "@/components/download-file-button";
 
 type OrderStatusResponse = {
@@ -128,6 +132,7 @@ export function OrderStatusPoll({
   }
 
   const statusCopy = getStatusCopy(order.status);
+  const vatPortionCents = getVatPortionCents(order.totalCents);
   const downloadCount = order.items.reduce(
     (total, item) => total + item.files.length,
     0,
@@ -147,6 +152,12 @@ export function OrderStatusPoll({
         <div>
           <dt className="text-[#5f5f66]">Total</dt>
           <dd className="mt-1 font-semibold">{formatPrice(order.totalCents)}</dd>
+        </div>
+        <div>
+          <dt className="text-[#5f5f66]">{VAT_INCLUDED_SUMMARY_LABEL}</dt>
+          <dd className="mt-1 font-semibold">
+            {formatPrice(vatPortionCents)}
+          </dd>
         </div>
         <div>
           <dt className="text-[#5f5f66]">Status</dt>

@@ -273,7 +273,7 @@ export default async function AdminProductEditPage({
             {productRow.product_type === "single_document" ? (
               <>
                 <label className="grid gap-2 text-sm font-bold text-[#111111]">
-                  Price in rand
+                  VAT-inclusive price in rand
                   <input
                     name="price"
                     defaultValue={formatPriceInput(productRow.price_cents)}
@@ -352,7 +352,8 @@ export default async function AdminProductEditPage({
                   <strong className="text-[#111111]">
                     {formatPrice(productRow.price_cents)}
                   </strong>
-                  . Use the tier pricing panel to change package prices.
+                  , including 15% VAT. Use the tier pricing panel to change
+                  package prices.
                 </div>
               </>
             )}
@@ -409,7 +410,7 @@ export default async function AdminProductEditPage({
                 </label>
 
                 <label className="grid gap-2 text-sm font-bold text-[#111111]">
-                  Tier price in rand
+                  VAT-inclusive tier price in rand
                   <input
                     name="price"
                     defaultValue={formatPriceInput(packageTierRow.price_cents)}

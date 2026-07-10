@@ -1,5 +1,9 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
-import { formatFileFormats, formatPrice } from "@/data/catalogue";
+import {
+  VAT_INCLUDED_LABEL,
+  formatFileFormats,
+  formatPrice,
+} from "@/data/catalogue";
 import { getCatalogueSingleDocuments } from "@/lib/supabase/catalogue";
 
 export const metadata = {
@@ -49,9 +53,14 @@ export default async function SingleDocumentsPage() {
             </div>
             <div className="flex items-start justify-between gap-4">
               <h2 className="text-lg font-black">{document.name}</h2>
-              <p className="shrink-0 rounded-full bg-[#111111] px-3 py-1 text-sm font-black text-white">
-                {formatPrice(document.priceCents)}
-              </p>
+              <div className="shrink-0 text-right">
+                <p className="rounded-full bg-[#111111] px-3 py-1 text-sm font-black text-white">
+                  {formatPrice(document.priceCents)}
+                </p>
+                <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
+                  {VAT_INCLUDED_LABEL}
+                </p>
+              </div>
             </div>
             <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
               {document.description}

@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { PayfastLogo } from "@/components/payfast-logo";
-import { formatPrice } from "@/data/catalogue";
+import {
+  VAT_INCLUDED_LABEL,
+  VAT_INCLUDED_SUMMARY_LABEL,
+  formatPrice,
+  getVatPortionCents,
+} from "@/data/catalogue";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
@@ -67,6 +72,10 @@ export function CheckoutPage() {
   const [pendingOrder, setPendingOrder] = useState<CheckoutResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
+  const vatPortionCents = useMemo(
+    () => getVatPortionCents(totalCents),
+    [totalCents],
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -213,12 +222,12 @@ export function CheckoutPage() {
               <div key={item.slug} className="border-b border-[#eef2ef] pb-3">
                 <div className="flex justify-between gap-4 text-sm">
                   <span className="font-medium">{item.name}</span>
-                  <span className="font-semibold">
+                  <span className="text-right font-semibold">
                     {formatPrice(item.priceCents * item.quantity)}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-[#5f5f66]">
-                  Qty {item.quantity}
+                  Qty {item.quantity} | {VAT_INCLUDED_LABEL}
                 </p>
               </div>
             ))}
@@ -227,6 +236,14 @@ export function CheckoutPage() {
             <span className="text-[#5f5f66]">Total</span>
             <span className="text-xl font-semibold text-[#ff6a00]">
               {formatPrice(totalCents)}
+            </span>
+          </div>
+          <div className="mt-3 flex items-center justify-between text-xs">
+            <span className="font-bold uppercase tracking-[0.12em] text-[#d95400]">
+              {VAT_INCLUDED_SUMMARY_LABEL}
+            </span>
+            <span className="font-semibold text-[#5f5f66]">
+              {formatPrice(vatPortionCents)}
             </span>
           </div>
           <div className="mt-5 rounded-2xl border border-black/10 bg-white px-4 py-3">

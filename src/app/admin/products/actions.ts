@@ -38,7 +38,9 @@ function parsePriceCents(value: string) {
   const normalizedValue = value.replace(",", ".");
 
   if (!/^\d+(?:\.\d{1,2})?$/.test(normalizedValue)) {
-    throw new Error("Enter a valid price, for example 249 or 249.00.");
+    throw new Error(
+      "Enter a valid VAT-inclusive price, for example 249 or 249.00.",
+    );
   }
 
   return Math.round(Number(normalizedValue) * 100);
