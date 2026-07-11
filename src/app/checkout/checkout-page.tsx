@@ -12,7 +12,11 @@ import {
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
+  formatCartDiscountTotal,
+  formatCartOriginalTotal,
   formatCartTotal,
+  getCartItemLineTotalCents,
+  getCartItemOriginalLineTotalCents,
   type CartItem,
 } from "@/lib/cart";
 
@@ -72,6 +76,14 @@ export function CheckoutPage() {
   const [pendingOrder, setPendingOrder] = useState<CheckoutResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
+  const originalTotalCents = useMemo(
+    () => formatCartOriginalTotal(cart),
+    [cart],
+  );
+  const discountTotalCents = useMemo(
+    () => formatCartDiscountTotal(cart),
+    [cart],
+  );
   const vatPortionCents = useMemo(
     () => getVatPortionCents(totalCents),
     [totalCents],
@@ -218,20 +230,54 @@ export function CheckoutPage() {
         <aside className="h-fit rounded-lg border border-[#ece7df] bg-white p-6 shadow-sm">
           <h2 className="text-xl font-semibold">Order summary</h2>
           <div className="mt-5 grid gap-4">
-            {cart.map((item) => (
-              <div key={item.slug} className="border-b border-[#eef2ef] pb-3">
-                <div className="flex justify-between gap-4 text-sm">
-                  <span className="font-medium">{item.name}</span>
-                  <span className="text-right font-semibold">
-                    {formatPrice(item.priceCents * item.quantity)}
-                  </span>
+            {cart.map((item) => {
+              const lineTotalCents = getCartItemLineTotalCents(item);
+              const originalLineTotalCents =
+                getCartItemOriginalLineTotalCents(item);
+              const hasOfferSaving = originalLineTotalCents > lineTotalCents;
+
+              return (
+                <div key={item.slug} className="border-b border-[#eef2ef] pb-3">
+                  <div className="flex justify-between gap-4 text-sm">
+                    <span className="font-medium">{item.name}</span>
+                    <span className="text-right font-semibold">
+                      {hasOfferSaving ? (
+                        <span className="block text-xs font-semibold text-[#8a8178] line-through">
+                          {formatPrice(originalLineTotalCents)}
+                        </span>
+                      ) : null}
+                      {formatPrice(lineTotalCents)}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs text-[#5f5f66]">
+                    Qty {item.quantity} | {VAT_INCLUDED_LABEL}
+                  </p>
+                  {hasOfferSaving && item.discountPercent ? (
+                    <p className="mt-2 w-fit rounded-full bg-[#fff4eb] px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
+                      {item.offerLabel ?? "Launch offer"} -{" "}
+                      {item.discountPercent}% off
+                    </p>
+                  ) : null}
                 </div>
-                <p className="mt-1 text-xs text-[#5f5f66]">
-                  Qty {item.quantity} | {VAT_INCLUDED_LABEL}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
+          {discountTotalCents > 0 ? (
+            <>
+              <div className="mt-5 flex items-center justify-between text-sm">
+                <span className="text-[#5f5f66]">Standard price</span>
+                <span className="font-semibold">
+                  {formatPrice(originalTotalCents)}
+                </span>
+              </div>
+              <div className="mt-3 flex items-center justify-between text-sm">
+                <span className="text-[#5f5f66]">Launch offer saving</span>
+                <span className="font-semibold text-[#d95400]">
+                  -{formatPrice(discountTotalCents)}
+                </span>
+              </div>
+            </>
+          ) : null}
           <div className="mt-5 flex items-center justify-between text-sm">
             <span className="text-[#5f5f66]">Total</span>
             <span className="text-xl font-semibold text-[#ff6a00]">

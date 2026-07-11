@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import {
-  createOrderAccessToken,
-} from "@/lib/downloads";
+import { createOrderAccessToken } from "@/lib/downloads";
 import { sendOrderConfirmationEmail } from "@/lib/emails";
+import {
+  LAUNCH_OFFER_DATE_RANGE_LABEL,
+  LAUNCH_OFFER_END_ISO,
+  LAUNCH_OFFER_LABEL,
+  LAUNCH_OFFER_START_ISO,
+  getLaunchOfferPricing,
+} from "@/lib/launch-offer";
 import { createPayFastPayment } from "@/lib/payfast";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
@@ -111,13 +116,32 @@ export async function POST(request: Request) {
       throw new Error(`Missing product ${item.slug}`);
     }
 
+    const pricing = getLaunchOfferPricing({
+      priceCents: product.price_cents,
+      productType: product.product_type,
+      packageTier: product.package_tier,
+    });
+    const unitPriceCents = pricing.priceCents;
+
     return {
       product,
       quantity: item.quantity,
-      totalCents: product.price_cents * item.quantity,
+      pricing,
+      unitPriceCents,
+      subtotalCents: product.price_cents * item.quantity,
+      discountCents: pricing.discountCents * item.quantity,
+      totalCents: unitPriceCents * item.quantity,
     };
   });
   const subtotalCents = normalisedItems.reduce(
+    (total, item) => total + item.subtotalCents,
+    0,
+  );
+  const discountCents = normalisedItems.reduce(
+    (total, item) => total + item.discountCents,
+    0,
+  );
+  const totalCents = normalisedItems.reduce(
     (total, item) => total + item.totalCents,
     0,
   );
@@ -128,7 +152,7 @@ export async function POST(request: Request) {
     orderNumber,
     orderAccessToken,
     email: cleanEmail,
-    amountCents: subtotalCents,
+    amountCents: totalCents,
     itemName:
       normalisedItems.length === 1
         ? normalisedItems[0].product.name
@@ -165,8 +189,8 @@ export async function POST(request: Request) {
       email: cleanEmail,
       status: "pending_payment",
       subtotal_cents: subtotalCents,
-      discount_cents: 0,
-      total_cents: subtotalCents,
+      discount_cents: discountCents,
+      total_cents: totalCents,
       currency: "ZAR",
       payfast_m_payment_id: orderNumber,
     })
@@ -191,9 +215,26 @@ export async function POST(request: Request) {
         workbook_count: item.product.workbook_count,
         pdf_count: item.product.pdf_count,
         metadata: item.product.metadata,
+        pricing: {
+          standard_price_cents: item.product.price_cents,
+          unit_price_cents: item.unitPriceCents,
+          line_discount_cents: item.discountCents,
+          offer_label: item.pricing.isApplied ? LAUNCH_OFFER_LABEL : null,
+          offer_applied: item.pricing.isApplied,
+          offer_discount_percent: item.pricing.isApplied
+            ? item.pricing.discountPercent
+            : 0,
+          offer_period: item.pricing.isApplied
+            ? LAUNCH_OFFER_DATE_RANGE_LABEL
+            : null,
+          offer_starts_at: item.pricing.isApplied
+            ? LAUNCH_OFFER_START_ISO
+            : null,
+          offer_ends_at: item.pricing.isApplied ? LAUNCH_OFFER_END_ISO : null,
+        },
       },
       quantity: item.quantity,
-      unit_price_cents: item.product.price_cents,
+      unit_price_cents: item.unitPriceCents,
       total_cents: item.totalCents,
     })),
   );
@@ -206,7 +247,7 @@ export async function POST(request: Request) {
     order_id: order.id,
     provider: "payfast",
     status: "initiated",
-    amount_cents: subtotalCents,
+    amount_cents: totalCents,
     raw_payload: {},
   });
 
@@ -220,7 +261,7 @@ export async function POST(request: Request) {
     customerId: customerRow.id,
     orderNumber,
     to: cleanEmail,
-    totalCents: subtotalCents,
+    totalCents,
     accessToken: orderAccessToken,
     items: normalisedItems.map((item) => ({
       name: item.product.name,
@@ -232,6 +273,7 @@ export async function POST(request: Request) {
   return NextResponse.json(
     {
       orderNumber: order.order_number,
+      discountCents,
       totalCents: order.total_cents,
       payment,
     },

@@ -11,6 +11,11 @@ import {
 } from "@/components/marketing/product-mockup";
 import { PayfastLogo } from "@/components/payfast-logo";
 import {
+  LAUNCH_OFFER_END_LABEL,
+  LAUNCH_OFFER_START_LABEL,
+  getLaunchOfferPhase,
+} from "@/lib/launch-offer";
+import {
   getCatalogueIndustries,
   getCataloguePackageTiers,
   getCatalogueSingleDocuments,
@@ -155,6 +160,12 @@ export default async function Home() {
   ]);
   const featuredIndustries = getFeaturedIndustries(industries);
   const featuredDocuments = singleDocuments.slice(0, 6);
+  const launchOfferPhase = getLaunchOfferPhase();
+  const showLaunchOffer = launchOfferPhase !== "ended";
+  const launchOfferCopy =
+    launchOfferPhase === "active"
+      ? `Launch offer now live until ${LAUNCH_OFFER_END_LABEL}: selected packages up to 20% off.`
+      : `Launch offer starts ${LAUNCH_OFFER_START_LABEL}: selected packages up to 20% off.`;
 
   return (
     <>
@@ -172,12 +183,20 @@ export default async function Home() {
               quoting, invoicing, tracking, onboarding, operations, and everyday
               business admin.
             </p>
+            {showLaunchOffer ? (
+              <Link
+                href="/launch-offer"
+                className="mt-6 inline-flex w-fit rounded-full border border-[#ffcfaa] bg-white px-4 py-2 text-sm font-black text-[#d95400] shadow-sm transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
+              >
+                {launchOfferCopy}
+              </Link>
+            ) : null}
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href="/single-documents"
+                href={showLaunchOffer ? "/launch-offer" : "/single-documents"}
                 className="inline-flex items-center justify-center rounded-full bg-[#ff6a00] px-6 py-3.5 text-sm font-black text-white shadow-xl shadow-[#ff6a00]/25 transition hover:-translate-y-0.5 hover:bg-[#d95400]"
               >
-                Browse Templates
+                {showLaunchOffer ? "View Launch Offer" : "Browse Templates"}
               </Link>
               <Link
                 href="#how-it-works"
@@ -355,6 +374,14 @@ export default async function Home() {
             <h2 className="mt-4 text-4xl font-black tracking-tight">
               Simple package options for different business stages.
             </h2>
+            {showLaunchOffer ? (
+              <Link
+                href="/launch-offer"
+                className="mt-5 inline-flex rounded-full border border-[#ffcfaa] bg-white px-4 py-2 text-sm font-black text-[#d95400] shadow-sm transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
+              >
+                {launchOfferCopy}
+              </Link>
+            ) : null}
           </div>
           <div className="mt-10 grid gap-5 lg:grid-cols-3">
             {packageTiers.map((tier) => (

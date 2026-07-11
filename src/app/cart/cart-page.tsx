@@ -12,7 +12,11 @@ import {
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
+  formatCartDiscountTotal,
+  formatCartOriginalTotal,
   formatCartTotal,
+  getCartItemLineTotalCents,
+  getCartItemOriginalLineTotalCents,
   type CartItem,
 } from "@/lib/cart";
 
@@ -35,6 +39,14 @@ export function CartPage() {
   const [cart, setCart] = useState<CartItem[]>(readCart);
 
   const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
+  const originalTotalCents = useMemo(
+    () => formatCartOriginalTotal(cart),
+    [cart],
+  );
+  const discountTotalCents = useMemo(
+    () => formatCartDiscountTotal(cart),
+    [cart],
+  );
   const vatPortionCents = useMemo(
     () => getVatPortionCents(totalCents),
     [totalCents],
@@ -89,72 +101,119 @@ export function CartPage() {
       ) : (
         <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_360px]">
           <div className="grid gap-4">
-            {cart.map((item) => (
-              <article
-                key={item.slug}
-                className="rounded-lg border border-[#ece7df] bg-white p-5 shadow-sm"
-              >
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff6a00]">
-                      {item.category === "industry_package"
-                        ? "Industry package"
-                        : "Single document"}
-                    </p>
-                    <h2 className="mt-2 text-xl font-semibold">{item.name}</h2>
-                    {item.description ? (
-                      <p className="mt-2 text-sm leading-6 text-[#5f5f66]">
-                        {item.description}
+            {cart.map((item) => {
+              const lineTotalCents = getCartItemLineTotalCents(item);
+              const originalLineTotalCents =
+                getCartItemOriginalLineTotalCents(item);
+              const hasOfferSaving = originalLineTotalCents > lineTotalCents;
+
+              return (
+                <article
+                  key={item.slug}
+                  className="rounded-lg border border-[#ece7df] bg-white p-5 shadow-sm"
+                >
+                  <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff6a00]">
+                        {item.category === "industry_package"
+                          ? "Industry package"
+                          : "Single document"}
                       </p>
-                    ) : null}
+                      <h2 className="mt-2 text-xl font-semibold">
+                        {item.name}
+                      </h2>
+                      {item.description ? (
+                        <p className="mt-2 text-sm leading-6 text-[#5f5f66]">
+                          {item.description}
+                        </p>
+                      ) : null}
+                      {hasOfferSaving && item.discountPercent ? (
+                        <p className="mt-3 w-fit rounded-full bg-[#fff4eb] px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-[#d95400]">
+                          {item.offerLabel ?? "Launch offer"} -{" "}
+                          {item.discountPercent}% off
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateQuantity(item.slug, item.quantity - 1)
+                        }
+                        className="h-9 w-9 rounded-md border border-[#ece7df] text-lg"
+                      >
+                        -
+                      </button>
+                      <span className="w-8 text-center text-sm font-semibold">
+                        {item.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateQuantity(item.slug, item.quantity + 1)
+                        }
+                        className="h-9 w-9 rounded-md border border-[#ece7df] text-lg"
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="mt-5 flex items-center justify-between border-t border-[#eef2ef] pt-4 text-sm">
                     <button
                       type="button"
-                      onClick={() => updateQuantity(item.slug, item.quantity - 1)}
-                      className="h-9 w-9 rounded-md border border-[#ece7df] text-lg"
+                      onClick={() => updateQuantity(item.slug, 0)}
+                      className="font-semibold text-[#5f5f66] hover:text-red-700"
                     >
-                      -
+                      Remove
                     </button>
-                    <span className="w-8 text-center text-sm font-semibold">
-                      {item.quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => updateQuantity(item.slug, item.quantity + 1)}
-                      className="h-9 w-9 rounded-md border border-[#ece7df] text-lg"
-                    >
-                      +
-                    </button>
+                    <div className="text-right">
+                      {hasOfferSaving ? (
+                        <p className="text-xs font-semibold text-[#8a8178] line-through">
+                          {formatPrice(originalLineTotalCents)}
+                        </p>
+                      ) : null}
+                      <p className="font-semibold text-[#ff6a00]">
+                        {formatPrice(lineTotalCents)}
+                      </p>
+                      <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#5f5f66]">
+                        {VAT_INCLUDED_LABEL}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="mt-5 flex items-center justify-between border-t border-[#eef2ef] pt-4 text-sm">
-                  <button
-                    type="button"
-                    onClick={() => updateQuantity(item.slug, 0)}
-                    className="font-semibold text-[#5f5f66] hover:text-red-700"
-                  >
-                    Remove
-                  </button>
-                  <div className="text-right">
-                    <p className="font-semibold text-[#ff6a00]">
-                      {formatPrice(item.priceCents * item.quantity)}
-                    </p>
-                    <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#5f5f66]">
-                      {VAT_INCLUDED_LABEL}
-                    </p>
-                  </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
 
           <aside className="h-fit rounded-lg border border-[#ece7df] bg-white p-6 shadow-sm">
             <h2 className="text-xl font-semibold">Order summary</h2>
-            <div className="mt-5 flex items-center justify-between text-sm">
-              <span className="text-[#5f5f66]">Subtotal</span>
-              <span className="font-semibold">{formatPrice(totalCents)}</span>
-            </div>
+            {discountTotalCents > 0 ? (
+              <>
+                <div className="mt-5 flex items-center justify-between text-sm">
+                  <span className="text-[#5f5f66]">Standard price</span>
+                  <span className="font-semibold">
+                    {formatPrice(originalTotalCents)}
+                  </span>
+                </div>
+                <div className="mt-3 flex items-center justify-between text-sm">
+                  <span className="text-[#5f5f66]">Launch offer saving</span>
+                  <span className="font-semibold text-[#d95400]">
+                    -{formatPrice(discountTotalCents)}
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center justify-between border-t border-[#eef2ef] pt-4 text-sm">
+                  <span className="text-[#5f5f66]">Total</span>
+                  <span className="font-semibold">
+                    {formatPrice(totalCents)}
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="mt-5 flex items-center justify-between text-sm">
+                <span className="text-[#5f5f66]">Subtotal</span>
+                <span className="font-semibold">{formatPrice(totalCents)}</span>
+              </div>
+            )}
             <div className="mt-3 flex items-center justify-between text-xs">
               <span className="font-bold uppercase tracking-[0.12em] text-[#d95400]">
                 {VAT_INCLUDED_SUMMARY_LABEL}

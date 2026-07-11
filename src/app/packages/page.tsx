@@ -4,6 +4,11 @@ import {
   formatDocumentRange,
   formatPrice,
 } from "@/data/catalogue";
+import {
+  LAUNCH_OFFER_END_LABEL,
+  LAUNCH_OFFER_START_LABEL,
+  getLaunchOfferPhase,
+} from "@/lib/launch-offer";
 import { getCataloguePackageTiers } from "@/lib/supabase/catalogue";
 
 export const metadata = {
@@ -16,6 +21,12 @@ export const revalidate = 300;
 
 export default async function PackagesPage() {
   const packageTiers = await getCataloguePackageTiers();
+  const launchOfferPhase = getLaunchOfferPhase();
+  const showLaunchOffer = launchOfferPhase !== "ended";
+  const launchOfferCopy =
+    launchOfferPhase === "active"
+      ? `Launch offer now live until ${LAUNCH_OFFER_END_LABEL}: selected packages up to 20% off.`
+      : `Launch offer starts ${LAUNCH_OFFER_START_LABEL}: selected packages up to 20% off.`;
 
   return (
     <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
@@ -31,6 +42,14 @@ export default async function PackagesPage() {
           Exact Word document counts vary by industry and are shown on each industry
           page.
         </p>
+        {showLaunchOffer ? (
+          <Link
+            href="/launch-offer"
+            className="mt-6 inline-flex rounded-full border border-[#ffcfaa] bg-[#fff4eb] px-4 py-2 text-sm font-black text-[#d95400] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
+          >
+            {launchOfferCopy}
+          </Link>
+        ) : null}
       </div>
 
       <div className="mt-10 grid gap-4 lg:grid-cols-3">

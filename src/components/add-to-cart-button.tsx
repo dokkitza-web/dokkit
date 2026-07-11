@@ -40,6 +40,7 @@ export function AddToCartButton({
           cartItem.slug === item.slug
             ? {
                 ...cartItem,
+                ...item,
                 quantity: cartItem.quantity + 1,
               }
             : cartItem,

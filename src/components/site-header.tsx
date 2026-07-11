@@ -7,6 +7,7 @@ import { BrandLogo } from "@/components/brand-logo";
 import { CartLink } from "@/components/cart-link";
 
 const navigation = [
+  { href: "/launch-offer", label: "Launch Offer" },
   { href: "/industries", label: "Industries" },
   { href: "/packages", label: "Packages" },
   { href: "/single-documents", label: "Templates" },
@@ -38,10 +39,10 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href="/packages"
+            href="/launch-offer"
             className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-black text-[#111111] shadow-sm transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
           >
-            View Packages
+            Launch Offer
           </Link>
           <Link
             href="/single-documents"
@@ -51,15 +52,18 @@ export function SiteHeader() {
           </Link>
           <CartLink />
         </div>
-        <button
-          type="button"
-          onClick={() => setMenuOpen((value) => !value)}
-          className="rounded-full border border-black/10 px-4 py-2 text-sm font-black text-[#111111] lg:hidden"
-          aria-expanded={menuOpen}
-          aria-controls="mobile-navigation"
-        >
-          Menu
-        </button>
+        <div className="flex items-center gap-2 lg:hidden">
+          <CartLink />
+          <button
+            type="button"
+            onClick={() => setMenuOpen((value) => !value)}
+            className="rounded-full border border-black/10 px-4 py-2 text-sm font-black text-[#111111]"
+            aria-expanded={menuOpen}
+            aria-controls="mobile-navigation"
+          >
+            Menu
+          </button>
+        </div>
       </div>
       {menuOpen ? (
         <div
@@ -78,13 +82,12 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              href="/single-documents"
+              href="/launch-offer"
               onClick={() => setMenuOpen(false)}
               className="rounded-2xl bg-[#ff6a00] px-4 py-3 text-center font-black text-white"
             >
-              Browse Templates
+              Launch Offer
             </Link>
-            <CartLink />
           </nav>
         </div>
       ) : null}

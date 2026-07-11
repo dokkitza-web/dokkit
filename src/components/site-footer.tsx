@@ -43,6 +43,9 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="flex flex-wrap gap-4 text-sm font-bold text-white/70 lg:justify-end">
+          <Link href="/launch-offer" className="hover:text-[#ff6a00]">
+            Launch Offer
+          </Link>
           <Link href="/industries" className="hover:text-[#ff6a00]">
             Industries
           </Link>
