@@ -229,10 +229,10 @@ export function CartPage() {
               <PayfastLogo className="h-8 w-auto" />
             </div>
             <Link
-              href="/checkout"
+              href="/recommended-add-ons"
               className="mt-6 flex w-full justify-center rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
             >
-              Continue to checkout
+              Continue
             </Link>
             <button
               type="button"
