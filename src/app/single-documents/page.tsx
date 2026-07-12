@@ -1,4 +1,5 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { SingleDocumentPreview } from "@/components/single-document-preview";
 import {
   VAT_INCLUDED_LABEL,
   formatFileFormats,
@@ -37,20 +38,27 @@ export default async function SingleDocumentsPage() {
             key={document.slug}
             className="rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#ff6a00] hover:shadow-xl"
           >
-            <div className="mb-5 rounded-2xl bg-[#fff4eb] p-4">
-              <div className="rounded-xl bg-white p-4 shadow-sm">
-                <div className="h-3 w-3/5 rounded-full bg-[#111111]" />
-                <div className="mt-5 space-y-2">
-                  {[88, 72, 80, 58].map((width) => (
-                    <span
-                      key={width}
-                      className="block h-2 rounded-full bg-black/15"
-                      style={{ width: `${width}%` }}
-                    />
-                  ))}
+            {document.previewImageSrc ? (
+              <SingleDocumentPreview
+                imageSrc={document.previewImageSrc}
+                name={document.name}
+              />
+            ) : (
+              <div className="mb-5 rounded-2xl bg-[#fff4eb] p-4">
+                <div className="rounded-xl bg-white p-4 shadow-sm">
+                  <div className="h-3 w-3/5 rounded-full bg-[#111111]" />
+                  <div className="mt-5 space-y-2">
+                    {[88, 72, 80, 58].map((width) => (
+                      <span
+                        key={width}
+                        className="block h-2 rounded-full bg-black/15"
+                        style={{ width: `${width}%` }}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
             <div className="flex items-start justify-between gap-4">
               <h2 className="text-lg font-black">{document.name}</h2>
               <div className="shrink-0 text-right">

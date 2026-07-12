@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import {
   getFallbackIndustryPackageProducts,
+  getSingleDocumentPreviewImageSrc,
   industries as fallbackIndustries,
   packageTiers as fallbackPackageTiers,
   readyIndustries,
@@ -38,6 +39,7 @@ type ProductRow = {
   price_cents: number;
   metadata: {
     formats?: string[];
+    previewImageSrc?: string;
   } | null;
 };
 
@@ -272,6 +274,9 @@ export async function getCatalogueSingleDocuments(): Promise<SingleDocument[]> {
       description: row.description,
       priceCents: row.price_cents,
       fileFormats: getLaunchFormats(row.metadata?.formats),
+      previewImageSrc:
+        row.metadata?.previewImageSrc ??
+        getSingleDocumentPreviewImageSrc(row.slug),
     }))
     .sort(orderByKnownSingleDocuments);
 }

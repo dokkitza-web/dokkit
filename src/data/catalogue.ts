@@ -28,6 +28,7 @@ export type SingleDocument = {
   description: string;
   priceCents: number;
   fileFormats: string[];
+  previewImageSrc?: string;
 };
 
 export type IndustryPackageProduct = {
@@ -599,6 +600,10 @@ export function formatFileFormats(fileFormats: string[]) {
     .join(" + ");
 }
 
+export function getSingleDocumentPreviewImageSrc(slug: string) {
+  return `/images/previews/single-documents/${slug}.png`;
+}
+
 export const singleDocuments: SingleDocument[] = [
   {
     slug: "business-financial-income-statement-template",
@@ -607,6 +612,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Excel income statement workbook for recording revenue, cost of sales, expenses, and profit.",
     priceCents: 12900,
     fileFormats: ["XLSX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "business-financial-income-statement-template",
+    ),
   },
   {
     slug: "crm-tracker",
@@ -614,6 +622,7 @@ export const singleDocuments: SingleDocument[] = [
     description: "Excel tracker for leads, customers, follow-ups, status, and next actions.",
     priceCents: 9900,
     fileFormats: ["XLSX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc("crm-tracker"),
   },
   {
     slug: "income-and-expense-tracker",
@@ -621,6 +630,9 @@ export const singleDocuments: SingleDocument[] = [
     description: "Monthly workbook for small-business income, expenses, and totals.",
     priceCents: 9900,
     fileFormats: ["XLSX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "income-and-expense-tracker",
+    ),
   },
   {
     slug: "invoice-workbook-template",
@@ -629,6 +641,9 @@ export const singleDocuments: SingleDocument[] = [
       "Excel invoice workbook for customer details, invoice items, payment status, and VAT-ready totals.",
     priceCents: 9900,
     fileFormats: ["XLSX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "invoice-workbook-template",
+    ),
   },
   {
     slug: "fixed-term-employment-contract-template",
@@ -637,6 +652,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word template for fixed-term staff appointments, duties, pay details, dates, and signatures.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "fixed-term-employment-contract-template",
+    ),
   },
   {
     slug: "general-service-agreement-template",
@@ -645,6 +663,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word agreement for service scope, fees, timelines, responsibilities, and client approvals.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "general-service-agreement-template",
+    ),
   },
   {
     slug: "joint-venture-structure-agreement-template",
@@ -653,6 +674,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word starting point for recording joint venture structure, roles, contributions, and signatures.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "joint-venture-structure-agreement-template",
+    ),
   },
   {
     slug: "master-quotation-template",
@@ -661,6 +685,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word quotation template for pricing, scope, validity, acceptance, and customer details.",
     priceCents: 7900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "master-quotation-template",
+    ),
   },
   {
     slug: "non-disclosure-agreement-template",
@@ -669,6 +696,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word non-disclosure agreement template for confidential business information and signatures.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "non-disclosure-agreement-template",
+    ),
   },
   {
     slug: "popia-privacy-policy-statement-template",
@@ -677,6 +707,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word privacy policy statement template for customer, staff, supplier, and business contact information.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "popia-privacy-policy-statement-template",
+    ),
   },
   {
     slug: "terms-and-conditions-template",
@@ -685,6 +718,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word terms and conditions template for quotes, services, payment terms, delivery, cancellations, and general admin.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "terms-and-conditions-template",
+    ),
   },
   {
     slug: "vat-compliant-invoice-template",
@@ -693,6 +729,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word invoice template with VAT-friendly fields for supplier, customer, line items, totals, and payment details.",
     priceCents: 7900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "vat-compliant-invoice-template",
+    ),
   },
   {
     slug: "vat-ready-purchase-order-template",
@@ -701,6 +740,9 @@ export const singleDocuments: SingleDocument[] = [
       "Editable Word purchase order template for supplier details, items, quantities, VAT-ready totals, and approval.",
     priceCents: 7900,
     fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "vat-ready-purchase-order-template",
+    ),
   },
 ];
 
