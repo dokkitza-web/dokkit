@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export function SingleDocumentPreview({
   imageSrc,
@@ -11,6 +11,34 @@ export function SingleDocumentPreview({
   name: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
+  const preloadRef = useRef<HTMLImageElement | null>(null);
+
+  function preloadPreview() {
+    if (!preloadRef.current) {
+      const previewImage = new window.Image();
+      previewImage.src = imageSrc;
+      preloadRef.current = previewImage;
+    }
+
+    return preloadRef.current;
+  }
+
+  async function openPreview() {
+    const previewImage = preloadPreview();
+    setIsOpening(true);
+
+    try {
+      if (!previewImage.complete) {
+        await previewImage.decode();
+      }
+    } catch {
+      // The modal can still display the browser-loaded image if decode is unavailable.
+    } finally {
+      setIsOpening(false);
+      setIsOpen(true);
+    }
+  }
 
   useEffect(() => {
     if (!isOpen) {
@@ -25,14 +53,31 @@ export function SingleDocumentPreview({
 
     window.addEventListener("keydown", handleKeyDown);
 
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    const previousPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth =
+      window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = "hidden";
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = previousOverflow;
+      document.body.style.paddingRight = previousPaddingRight;
+    };
   }, [isOpen]);
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => void openPreview()}
+        onPointerEnter={preloadPreview}
+        onFocus={preloadPreview}
+        disabled={isOpening}
         className="group relative mb-5 block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-black/10 bg-[#fff4eb] p-3 text-left shadow-sm transition hover:border-[#ff6a00]"
         aria-label={`Preview ${name}`}
       >
@@ -42,7 +87,7 @@ export function SingleDocumentPreview({
             alt=""
             fill
             sizes="(min-width: 1280px) 360px, (min-width: 768px) 50vw, 100vw"
-            className="object-cover object-top transition duration-300 group-hover:scale-[1.03]"
+            className="object-cover object-top"
           />
         </span>
         <span className="absolute bottom-6 right-6 rounded-full bg-[#111111] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white shadow-lg transition group-hover:bg-[#ff6a00]">
@@ -52,10 +97,15 @@ export function SingleDocumentPreview({
 
       {isOpen ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-6 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center overscroll-contain bg-black/80 px-4 py-6"
           role="dialog"
           aria-modal="true"
           aria-label={`${name} preview`}
+          onMouseDown={(event) => {
+            if (event.currentTarget === event.target) {
+              setIsOpen(false);
+            }
+          }}
         >
           <div className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-[1.25rem] bg-white shadow-2xl">
             <div className="flex items-center justify-between gap-4 border-b border-black/10 px-5 py-4">
@@ -83,7 +133,7 @@ export function SingleDocumentPreview({
                   fill
                   sizes="(min-width: 1024px) 768px, 95vw"
                   className="object-contain"
-                  priority
+                  unoptimized
                 />
               </div>
             </div>
