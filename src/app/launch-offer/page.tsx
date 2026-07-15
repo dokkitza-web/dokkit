@@ -31,7 +31,7 @@ import {
 export const metadata: Metadata = {
   title: "Launch Offer | DokKit",
   description:
-    "Save up to 20% on selected DokKit industry package packs from 13 to 31 July 2026. Prices include 15% VAT.",
+    "Save up to 20% on selected DokKit industry package packs from 13 July to 31 August 2026. Prices include 15% VAT.",
 };
 
 export const revalidate = 300;

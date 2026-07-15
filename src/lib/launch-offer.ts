@@ -3,10 +3,10 @@ import type { PackageTierKey } from "@/data/catalogue";
 export type LaunchOfferPhase = "upcoming" | "active" | "ended";
 
 export const LAUNCH_OFFER_START_ISO = "2026-07-12T22:00:00.000Z";
-export const LAUNCH_OFFER_END_ISO = "2026-07-31T21:59:59.999Z";
+export const LAUNCH_OFFER_END_ISO = "2026-08-31T21:59:59.999Z";
 export const LAUNCH_OFFER_START_LABEL = "13 July 2026";
-export const LAUNCH_OFFER_END_LABEL = "31 July 2026";
-export const LAUNCH_OFFER_DATE_RANGE_LABEL = "13 to 31 July 2026";
+export const LAUNCH_OFFER_END_LABEL = "31 August 2026";
+export const LAUNCH_OFFER_DATE_RANGE_LABEL = "13 July to 31 August 2026";
 export const LAUNCH_OFFER_LABEL = "Launch offer";
 
 export const LAUNCH_OFFER_DISCOUNTS: Record<PackageTierKey, number> = {
