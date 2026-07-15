@@ -193,6 +193,17 @@ function prepareProducts() {
   });
 }
 
+function requestedSlugs(argv) {
+  const argument = argv.find((item) => item.startsWith("--slug="));
+  if (!argument) return [];
+
+  return argument
+    .slice("--slug=".length)
+    .split(",")
+    .map((slug) => slug.trim())
+    .filter(Boolean);
+}
+
 async function upsertProduct(supabase, industryId, product) {
   const { data, error } = await supabase
     .from("products")
@@ -328,8 +339,16 @@ async function verifyPublishedProducts(supabase, prepared) {
 async function main() {
   const execute = process.argv.includes("--execute");
   const verify = process.argv.includes("--verify");
+  const slugs = requestedSlugs(process.argv.slice(2));
   loadEnvFiles();
-  const prepared = prepareProducts();
+  const allPrepared = prepareProducts();
+  const prepared = slugs.length
+    ? allPrepared.filter((product) => slugs.includes(product.slug))
+    : allPrepared;
+
+  if (!prepared.length) {
+    throw new Error("No HR products matched the requested slug filter.");
+  }
 
   console.log(execute ? "EXECUTE MODE" : verify ? "VERIFY MODE" : "DRY RUN");
   for (const product of prepared) {
