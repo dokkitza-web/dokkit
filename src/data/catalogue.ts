@@ -115,6 +115,27 @@ export const packageTiers: PackageTier[] = [
 
 export const industries: Industry[] = [
   {
+    rank: 9,
+    slug: "human-resources",
+    name: "Human Resources",
+    summary:
+      "South African HR templates for hiring, onboarding, employee records, performance, discipline, leave, and exits.",
+    why: "Small employers need consistent employee records and fair, repeatable HR processes without building every document from scratch.",
+    featuredDocuments: [
+      "Employment agreements",
+      "Employee onboarding checklist",
+      "Leave and attendance records",
+      "Performance management documents",
+      "Disciplinary and grievance procedures",
+    ],
+    useCases: [
+      "Appoint and onboard employees",
+      "Maintain employee and payroll records",
+      "Manage leave, attendance, and performance",
+      "Document discipline, grievances, and employee exits",
+    ],
+  },
+  {
     rank: 3,
     slug: "cleaning-services",
     name: "Cleaning Services",
@@ -453,6 +474,7 @@ export const industries: Industry[] = [
 ];
 
 export const readyIndustrySlugs = [
+  "human-resources",
   "beauty-salons-and-spas",
   "catering-and-baking",
   "cleaning-services",
@@ -567,6 +589,35 @@ export function getFallbackIndustryPackageProducts(
     return [];
   }
 
+  if (industry.slug === "human-resources") {
+    return [
+      {
+        key: "starter",
+        slug: "human-resources-essential",
+        name: "South African HR Essential Package",
+        description:
+          "A practical editable HR starter library for hiring, onboarding, employee information, payroll records, leave administration, attendance, core policies, and employee exits.",
+        priceCents: 89900,
+        documentCount: 20,
+        workbookCount: 0,
+        pdfCount: 0,
+        fileFormats: ["DOCX"],
+      },
+      {
+        key: "complete",
+        slug: "human-resources-complete",
+        name: "South African HR Complete Package",
+        description:
+          "A comprehensive editable HR administration library covering employment, onboarding, employee records, performance, training, discipline, grievances, incapacity, termination, and retrenchment processes.",
+        priceCents: 199900,
+        documentCount: 53,
+        workbookCount: 0,
+        pdfCount: 0,
+        fileFormats: ["DOCX"],
+      },
+    ];
+  }
+
   const counts = industryPackageDocumentCounts[industry.slug];
 
   return packageTiers.map((tier) => ({
@@ -605,6 +656,17 @@ export function getSingleDocumentPreviewImageSrc(slug: string) {
 }
 
 export const singleDocuments: SingleDocument[] = [
+  {
+    slug: "permanent-employment-agreement-template",
+    name: "South African Permanent Employment Agreement Template",
+    description:
+      "Editable Word agreement for recording a permanent employee's role, remuneration, working arrangements, leave, conduct, confidentiality, and signatures.",
+    priceCents: 14900,
+    fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "permanent-employment-agreement-template",
+    ),
+  },
   {
     slug: "business-financial-income-statement-template",
     name: "Business Financial Income Statement Template",
@@ -647,13 +709,68 @@ export const singleDocuments: SingleDocument[] = [
   },
   {
     slug: "fixed-term-employment-contract-template",
-    name: "Fixed-Term Employment Contract Template",
+    name: "South African Fixed-Term Employment Agreement Template",
     description:
-      "Editable Word template for fixed-term staff appointments, duties, pay details, dates, and signatures.",
+      "Editable Word agreement for a defined period, project, or event, including the fixed-term basis, appointment details, remuneration, leave, confidentiality, and termination administration.",
     priceCents: 14900,
     fileFormats: ["DOCX"],
     previewImageSrc: getSingleDocumentPreviewImageSrc(
       "fixed-term-employment-contract-template",
+    ),
+  },
+  {
+    slug: "job-description-template",
+    name: "Job Description Template for South African Small Businesses",
+    description:
+      "Define a role's purpose, responsibilities, reporting lines, authority, objective requirements, and measurable outputs before hiring or reviewing an employee.",
+    priceCents: 7900,
+    fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "job-description-template",
+    ),
+  },
+  {
+    slug: "employee-onboarding-checklist-template",
+    name: "Employee Onboarding Checklist Template",
+    description:
+      "Track pre-start, first-day, payroll, policy, safety, privacy, equipment, and early-employment actions for a new employee.",
+    priceCents: 6900,
+    fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "employee-onboarding-checklist-template",
+    ),
+  },
+  {
+    slug: "employee-timesheet-template",
+    name: "Employee Timesheet Template",
+    description:
+      "Record employee working time, task or project allocation, reporting period details, and manager approval in an editable Word format.",
+    priceCents: 4900,
+    fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "employee-timesheet-template",
+    ),
+  },
+  {
+    slug: "leave-application-form-template",
+    name: "Leave Application Form Template",
+    description:
+      "Give employees a structured way to request leave and managers a clear place to approve, decline, and route the request for recordkeeping or payroll action.",
+    priceCents: 4900,
+    fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "leave-application-form-template",
+    ),
+  },
+  {
+    slug: "disciplinary-code-and-procedure-template",
+    name: "Disciplinary Code and Procedure Template",
+    description:
+      "A practical framework for workplace rules, corrective action, formal hearings, warnings, dismissals, and recordkeeping, subject to a fair assessment of each case.",
+    priceCents: 24900,
+    fileFormats: ["DOCX"],
+    previewImageSrc: getSingleDocumentPreviewImageSrc(
+      "disciplinary-code-and-procedure-template",
     ),
   },
   {

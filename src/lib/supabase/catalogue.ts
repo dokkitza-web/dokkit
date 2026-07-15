@@ -195,9 +195,7 @@ export async function getCatalogueIndustryPackageProducts(
     return fallbackProducts;
   }
 
-  const expectedSlugs = fallbackPackageTiers.map(
-    (tier) => `${industrySlug}-${tier.key}`,
-  );
+  const expectedSlugs = fallbackProducts.map((product) => product.slug);
   const { data, error } = await supabase
     .from("products")
     .select(

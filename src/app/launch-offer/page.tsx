@@ -72,6 +72,10 @@ const phaseCopy: Record<
 };
 
 function getTierName(product: IndustryPackageProduct) {
+  if (product.slug === "human-resources-essential") {
+    return "Essential";
+  }
+
   return tierLabels[product.key] ?? product.name;
 }
 
@@ -221,9 +225,14 @@ function IndustryOfferCard({
                   {getTierName(product)} Package
                 </p>
                 <p className="mt-1 text-xs font-bold text-[#5f5f66]">
-                  {product.documentCount} Word documents,{" "}
-                  {product.workbookCount} Excel workbook /{" "}
-                  {formatFileFormats(product.fileFormats)}
+                  {product.documentCount} Word document
+                  {product.documentCount === 1 ? "" : "s"}
+                  {product.workbookCount > 0
+                    ? `, ${product.workbookCount} Excel workbook${
+                        product.workbookCount === 1 ? "" : "s"
+                      }`
+                    : ""}{" "}
+                  / {formatFileFormats(product.fileFormats)}
                 </p>
                 <p className="mt-2 w-fit rounded-full bg-[#fff4eb] px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
                   {previewPricing.discountPercent}% off launch offer

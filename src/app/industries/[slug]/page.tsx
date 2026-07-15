@@ -168,10 +168,15 @@ export default async function IndustryDetailPage({
                   }`}
                 >
                   <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
-                    {product.documentCount} Word documents
+                    {product.documentCount} Word document
+                    {product.documentCount === 1 ? "" : "s"}
                   </span>
                   <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
-                    {product.workbookCount} Excel workbook
+                    {product.workbookCount > 0
+                      ? `${product.workbookCount} Excel workbook${
+                          product.workbookCount === 1 ? "" : "s"
+                        }`
+                      : "Editable Word files"}
                   </span>
                   <span className="rounded-2xl bg-[#fff4eb] px-3 py-2 text-[#5f5f66]">
                     PDF coming soon

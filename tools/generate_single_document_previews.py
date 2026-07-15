@@ -15,8 +15,17 @@ SOURCE_ROOT = Path(
 OUTPUT_ROOT = Path(
     r"C:\Elzano Cox\Projects\dokkit\public\images\previews\single-documents"
 )
+HR_SOURCE_ROOT = Path(
+    r"C:\Elzano Cox\Projects\dokkit-template-production\03_PACKAGED_PRODUCTS\03_SINGLE_TEMPLATES"
+)
 
 DOCUMENTS = [
+    {
+        "slug": "permanent-employment-agreement-template",
+        "title": "South African Permanent Employment Agreement Template",
+        "source": HR_SOURCE_ROOT / "02_Permanent_Employment_Agreement.docx",
+        "format": "Word",
+    },
     {
         "slug": "business-financial-income-statement-template",
         "title": "Business Financial Income Statement Template",
@@ -45,10 +54,38 @@ DOCUMENTS = [
     },
     {
         "slug": "fixed-term-employment-contract-template",
-        "title": "Fixed-Term Employment Contract Template",
-        "source": SOURCE_ROOT
-        / "Word"
-        / "DokKit_Fixed_Term_Employment_Contract_Template_v1.docx",
+        "title": "South African Fixed-Term Employment Agreement Template",
+        "source": HR_SOURCE_ROOT / "03_Fixed_Term_Employment_Agreement.docx",
+        "format": "Word",
+    },
+    {
+        "slug": "job-description-template",
+        "title": "Job Description Template for South African Small Businesses",
+        "source": HR_SOURCE_ROOT / "06_Job_Description_Template.docx",
+        "format": "Word",
+    },
+    {
+        "slug": "employee-onboarding-checklist-template",
+        "title": "Employee Onboarding Checklist Template",
+        "source": HR_SOURCE_ROOT / "11_Employee_Onboarding_Checklist.docx",
+        "format": "Word",
+    },
+    {
+        "slug": "employee-timesheet-template",
+        "title": "Employee Timesheet Template",
+        "source": HR_SOURCE_ROOT / "18_Timesheet_Template.docx",
+        "format": "Word",
+    },
+    {
+        "slug": "leave-application-form-template",
+        "title": "Leave Application Form Template",
+        "source": HR_SOURCE_ROOT / "20_Leave_Application_Form.docx",
+        "format": "Word",
+    },
+    {
+        "slug": "disciplinary-code-and-procedure-template",
+        "title": "Disciplinary Code and Procedure Template",
+        "source": HR_SOURCE_ROOT / "26_Disciplinary_Code_and_Procedure.docx",
         "format": "Word",
     },
     {
