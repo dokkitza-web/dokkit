@@ -47,7 +47,7 @@ export const META_PIXEL_ID =
   process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() ?? "";
 
 export function initialiseGoogleAnalytics(preferences: ConsentPreferences) {
-  if (!preferences.analytics || !GOOGLE_MEASUREMENT_ID) {
+  if (!GOOGLE_MEASUREMENT_ID) {
     return false;
   }
 
@@ -63,7 +63,8 @@ export function initialiseGoogleAnalytics(preferences: ConsentPreferences) {
       ad_storage: "denied",
       ad_user_data: "denied",
       ad_personalization: "denied",
-      analytics_storage: "granted",
+      analytics_storage: "denied",
+      wait_for_update: 500,
     });
     window.gtag("js", new Date());
     window.gtag("config", GOOGLE_MEASUREMENT_ID, {
@@ -71,13 +72,16 @@ export function initialiseGoogleAnalytics(preferences: ConsentPreferences) {
       anonymize_ip: true,
     });
     window.__dokkitGoogleConfigured = true;
-  } else {
-    window.gtag("consent", "update", {
-      analytics_storage: "granted",
-    });
   }
 
-  return true;
+  window.gtag("consent", "update", {
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
+    analytics_storage: preferences.analytics ? "granted" : "denied",
+  });
+
+  return preferences.analytics;
 }
 
 export function initialiseMetaPixel(preferences: ConsentPreferences) {

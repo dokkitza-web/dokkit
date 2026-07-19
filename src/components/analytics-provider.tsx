@@ -64,9 +64,6 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
   );
   const ready = consentSnapshot !== null;
   const hasChoice = Boolean(preferences);
-  const googleReady = Boolean(
-    preferences?.analytics && GOOGLE_MEASUREMENT_ID && !isAdmin,
-  );
   const metaReady = Boolean(
     preferences?.marketing && META_PIXEL_ID && !isAdmin,
   );
@@ -76,12 +73,8 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (preferences.analytics && GOOGLE_MEASUREMENT_ID) {
+    if (GOOGLE_MEASUREMENT_ID) {
       initialiseGoogleAnalytics(preferences);
-    } else if (window.gtag) {
-      window.gtag("consent", "update", {
-        analytics_storage: "denied",
-      });
     }
 
     if (preferences.marketing && META_PIXEL_ID) {
@@ -117,11 +110,12 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
   }, [isAdmin, pathname, preferences]);
 
   function savePreferences(analytics: boolean, marketing: boolean) {
-    persistConsentPreferences({
+    const nextPreferences = persistConsentPreferences({
       analytics,
       marketing,
     });
 
+    initialiseGoogleAnalytics(nextPreferences);
     setDraftAnalytics(analytics);
     setDraftMarketing(marketing);
     setSettingsOpen(false);
@@ -142,16 +136,6 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
       }}
     >
       {children}
-
-      {googleReady ? (
-        <Script
-          id="dokkit-google-tag"
-          src={`https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(
-            GOOGLE_MEASUREMENT_ID,
-          )}`}
-          strategy="afterInteractive"
-        />
-      ) : null}
 
       {metaReady ? (
         <Script

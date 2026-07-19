@@ -20,7 +20,8 @@ export default function PrivacyPage() {
         </h1>
         <p className="mt-5 max-w-3xl text-lg leading-8 text-[#5f5f66]">
           DokKit uses a small amount of browser storage to run the shop. Optional
-          measurement tools only activate after you give permission.
+          analytics storage and full measurement only activate after you give
+          permission.
         </p>
 
         <div className="mt-12 space-y-10 text-base leading-7 text-[#3f3f43]">
@@ -41,10 +42,13 @@ export default function PrivacyPage() {
               Google Analytics 4
             </h2>
             <p className="mt-3">
-              When analytics is enabled, Google Analytics 4 records page views
-              and shop events such as viewing a product, adding it to the cart,
-              starting checkout and completing a purchase. This helps DokKit
-              understand which products and pages are useful.
+              DokKit loads the Google tag with analytics storage denied. Before
+              permission, Google may receive cookieless consent and measurement
+              signals but cannot use analytics cookies. When analytics is
+              enabled, Google Analytics 4 records page views and shop events
+              such as viewing a product, adding it to the cart, starting
+              checkout and completing a purchase. This helps DokKit understand
+              which products and pages are useful.
             </p>
           </section>
 
