@@ -66,22 +66,24 @@ export function SiteFooter() {
             <CookieSettingsButton className="w-fit text-left transition hover:text-[#ff6a00]" />
           </div>
         </nav>
-        <a
-          href="https://proudlysa.co.za/"
-          target="_blank"
-          rel="noreferrer"
-          aria-label="Visit Proudly South African"
-          className="inline-flex w-fit transition hover:opacity-85 md:justify-self-end"
-        >
+        <div className="inline-flex w-fit items-center gap-3 md:justify-self-end">
           <Image
-            src="/brand/proudly-south-african-member.png"
-            alt="Proudly South African"
-            width={1448}
-            height={1448}
-            sizes="112px"
-            className="h-28 w-28 object-contain"
+            src="/brand/south-africa-flag.svg"
+            alt="South African flag"
+            width={900}
+            height={600}
+            sizes="42px"
+            className="h-7 w-[42px] border border-white/20 object-cover shadow-sm"
           />
-        </a>
+          <div>
+            <p className="text-[0.65rem] font-black uppercase text-white/40">
+              Made in
+            </p>
+            <p className="mt-0.5 text-sm font-black text-white">
+              South Africa
+            </p>
+          </div>
+        </div>
       </div>
       <div className="bg-[#173f6d]">
         <div className="mx-auto max-w-7xl px-5 py-3 lg:px-8">
