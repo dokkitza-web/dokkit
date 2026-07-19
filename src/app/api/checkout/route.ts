@@ -29,6 +29,12 @@ const checkoutSchema = z.object({
     )
     .min(1)
     .max(50),
+  attribution: z
+    .object({
+      fbp: z.string().trim().min(1).max(255).optional(),
+      fbc: z.string().trim().min(1).max(255).optional(),
+    })
+    .optional(),
 });
 
 type ProductRow = {
@@ -50,6 +56,14 @@ function createOrderNumber() {
   const randomPart = crypto.randomUUID().slice(0, 8).toUpperCase();
 
   return `DK-${datePart}-${randomPart}`;
+}
+
+function getClientIp(request: Request) {
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+    request.headers.get("x-real-ip")?.trim() ||
+    undefined
+  );
 }
 
 export async function POST(request: Request) {
@@ -81,7 +95,7 @@ export async function POST(request: Request) {
     );
   }
 
-  const { customer, items } = parsedBody.data;
+  const { attribution, customer, items } = parsedBody.data;
   const slugs = [...new Set(items.map((item) => item.slug))];
   const { data: products, error: productsError } = await supabase
     .from("products")
@@ -248,7 +262,17 @@ export async function POST(request: Request) {
     provider: "payfast",
     status: "initiated",
     amount_cents: totalCents,
-    raw_payload: {},
+    raw_payload: attribution
+      ? {
+          _meta_attribution: {
+            fbp: attribution.fbp,
+            fbc: attribution.fbc,
+            client_ip_address: getClientIp(request),
+            client_user_agent:
+              request.headers.get("user-agent")?.slice(0, 500) ?? undefined,
+          },
+        }
+      : {},
   });
 
   if (paymentError) {

@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
+import { CookieSettingsButton } from "@/components/cookie-settings-button";
 
 export function SiteFooter() {
   const pathname = usePathname();
@@ -59,6 +60,10 @@ export function SiteFooter() {
             <Link href="/cart" className="transition hover:text-[#ff6a00]">
               Cart
             </Link>
+            <Link href="/privacy" className="transition hover:text-[#ff6a00]">
+              Privacy
+            </Link>
+            <CookieSettingsButton className="w-fit text-left transition hover:text-[#ff6a00]" />
           </div>
         </nav>
         <a
@@ -81,7 +86,7 @@ export function SiteFooter() {
       <div className="bg-[#173f6d]">
         <div className="mx-auto max-w-7xl px-5 py-3 lg:px-8">
           <p className="text-sm text-[#a8b9cb]">
-            © 2026 DokKit. All rights reserved.
+            &copy; 2026 DokKit. All rights reserved.
           </p>
         </div>
       </div>

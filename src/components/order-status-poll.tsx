@@ -7,7 +7,9 @@ import {
   formatPrice,
   getVatPortionCents,
 } from "@/data/catalogue";
+import { useConsent } from "@/components/analytics-provider";
 import { DownloadFileButton } from "@/components/download-file-button";
+import { trackGooglePurchase } from "@/lib/analytics";
 
 type OrderStatusResponse = {
   orderNumber: string;
@@ -71,6 +73,7 @@ export function OrderStatusPoll({
 }) {
   const [order, setOrder] = useState<OrderStatusResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { preferences, ready } = useConsent();
 
   useEffect(() => {
     let isMounted = true;
@@ -114,6 +117,24 @@ export function OrderStatusPoll({
       window.clearInterval(interval);
     };
   }, [accessToken, orderNumber]);
+
+  useEffect(() => {
+    if (!ready || !preferences?.analytics || order?.status !== "paid") {
+      return;
+    }
+
+    trackGooglePurchase({
+      transactionId: order.orderNumber,
+      valueCents: order.totalCents,
+      items: order.items.map((item) => ({
+        itemId: item.slug,
+        itemName: item.name,
+        itemCategory: "dokkit_product",
+        priceCents: Math.round(item.totalCents / item.quantity),
+        quantity: item.quantity,
+      })),
+    });
+  }, [order, preferences?.analytics, ready]);
 
   if (error) {
     return (

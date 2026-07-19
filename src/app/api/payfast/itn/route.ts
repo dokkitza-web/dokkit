@@ -7,7 +7,9 @@ import {
   sendAdminPaidOrderNotificationEmail,
   sendDownloadReadyEmail,
 } from "@/lib/emails";
+import { sendMetaConversionEvent } from "@/lib/meta-conversions";
 import { getPayFastRuntimeConfig } from "@/lib/payfast";
+import { getSiteUrl } from "@/lib/site-url";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -28,7 +30,15 @@ type OrderEmailItemRow = {
   total_cents: number;
   product_snapshot: {
     name?: string;
+    slug?: string;
   };
+};
+
+type StoredMetaAttribution = {
+  fbp?: string;
+  fbc?: string;
+  client_ip_address?: string;
+  client_user_agent?: string;
 };
 
 function encodePayFastValue(value: string) {
@@ -190,6 +200,96 @@ async function sendDownloadEmailForOrder({
   });
 }
 
+function getStoredMetaAttribution(rawPayload: unknown) {
+  if (!rawPayload || typeof rawPayload !== "object") {
+    return undefined;
+  }
+
+  const attribution = (rawPayload as Record<string, unknown>)[
+    "_meta_attribution"
+  ];
+
+  if (!attribution || typeof attribution !== "object") {
+    return undefined;
+  }
+
+  const candidate = attribution as StoredMetaAttribution;
+
+  return {
+    fbp: typeof candidate.fbp === "string" ? candidate.fbp : undefined,
+    fbc: typeof candidate.fbc === "string" ? candidate.fbc : undefined,
+    client_ip_address:
+      typeof candidate.client_ip_address === "string"
+        ? candidate.client_ip_address
+        : undefined,
+    client_user_agent:
+      typeof candidate.client_user_agent === "string"
+        ? candidate.client_user_agent
+        : undefined,
+  };
+}
+
+async function sendMetaPurchaseForOrder({
+  supabase,
+  order,
+  attribution,
+}: {
+  supabase: SupabaseClient;
+  order: VerifiedOrderRow;
+  attribution?: StoredMetaAttribution;
+}) {
+  if (!attribution) {
+    return;
+  }
+
+  try {
+    const { data: orderItems, error: orderItemsError } = await supabase
+      .from("order_items")
+      .select("quantity,total_cents,product_snapshot")
+      .eq("order_id", order.id);
+
+    if (orderItemsError) {
+      throw new Error(orderItemsError.message);
+    }
+
+    const items = (orderItems ?? []) as OrderEmailItemRow[];
+
+    await sendMetaConversionEvent({
+      eventName: "Purchase",
+      eventId: `purchase_${order.order_number}`,
+      eventSourceUrl: `${getSiteUrl()}/checkout/success`,
+      userData: {
+        clientIpAddress: attribution.client_ip_address,
+        clientUserAgent: attribution.client_user_agent,
+        fbp: attribution.fbp,
+        fbc: attribution.fbc,
+      },
+      customData: {
+        currency: "ZAR",
+        value: order.total_cents / 100,
+        contentIds: items.map(
+          (item) => item.product_snapshot?.slug ?? "dokkit-product",
+        ),
+        contentName:
+          items.length === 1
+            ? items[0].product_snapshot?.name ?? "DokKit product"
+            : "DokKit order",
+        contentType: "product",
+        contents: items.map((item) => ({
+          id: item.product_snapshot?.slug ?? "dokkit-product",
+          quantity: item.quantity,
+          itemPrice: item.total_cents / item.quantity / 100,
+        })),
+      },
+    });
+  } catch (error) {
+    console.warn(
+      "Meta Purchase event was not sent.",
+      error instanceof Error ? error.message : error,
+    );
+  }
+}
+
 export async function POST(request: Request) {
   const rawBody = await request.text();
   const searchParams = new URLSearchParams(rawBody);
@@ -242,7 +342,7 @@ export async function POST(request: Request) {
 
     const { data: payment } = await supabase
       .from("payments")
-      .select("id,status,provider_payment_id")
+      .select("id,status,provider_payment_id,raw_payload")
       .eq("order_id", order.id)
       .eq("provider", "payfast")
       .order("created_at", { ascending: false })
@@ -250,6 +350,7 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     paymentId = payment?.id;
+    const metaAttribution = getStoredMetaAttribution(payment?.raw_payload);
     signatureValid = validSignature(data, paramString);
     const ipValid = await validPayFastIp(request, payFastConfig.ipHosts);
     amountValid = validPaymentAmount(order.total_cents, data.amount_gross);
@@ -291,6 +392,7 @@ export async function POST(request: Request) {
             raw_payload: {
               ...data,
               _payfast_environment: payFastConfig.mode,
+              _meta_attribution: metaAttribution,
             },
             updated_at: new Date().toISOString(),
           })
@@ -303,6 +405,12 @@ export async function POST(request: Request) {
     const verifiedOrder = order as VerifiedOrderRow;
 
     if (order.status === "paid" || payment?.status === "verified") {
+      await sendMetaPurchaseForOrder({
+        supabase,
+        order: verifiedOrder,
+        attribution: metaAttribution,
+      });
+
       await sendDownloadEmailForOrder({
         supabase,
         order: verifiedOrder,
@@ -320,6 +428,7 @@ export async function POST(request: Request) {
           raw_payload: {
             ...data,
             _payfast_environment: payFastConfig.mode,
+            _meta_attribution: metaAttribution,
           },
           verified_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
@@ -335,6 +444,15 @@ export async function POST(request: Request) {
         updated_at: new Date().toISOString(),
       })
       .eq("id", order.id);
+
+    await sendMetaPurchaseForOrder({
+      supabase,
+      order: {
+        ...verifiedOrder,
+        status: "paid",
+      },
+      attribution: metaAttribution,
+    });
 
     await sendDownloadEmailForOrder({
       supabase,

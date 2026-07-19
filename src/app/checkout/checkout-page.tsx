@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useConsent } from "@/components/analytics-provider";
 import { PayfastLogo } from "@/components/payfast-logo";
 import {
   VAT_INCLUDED_LABEL,
@@ -19,6 +20,11 @@ import {
   getCartItemOriginalLineTotalCents,
   type CartItem,
 } from "@/lib/cart";
+import {
+  getMetaAttribution,
+  toAnalyticsItem,
+  trackCommerceEvent,
+} from "@/lib/analytics";
 
 type CheckoutResponse = {
   orderNumber: string;
@@ -75,6 +81,7 @@ export function CheckoutPage() {
   const [error, setError] = useState<string | null>(null);
   const [pendingOrder, setPendingOrder] = useState<CheckoutResponse | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { preferences, ready } = useConsent();
   const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
   const originalTotalCents = useMemo(
     () => formatCartOriginalTotal(cart),
@@ -88,6 +95,34 @@ export function CheckoutPage() {
     () => getVatPortionCents(totalCents),
     [totalCents],
   );
+
+  useEffect(() => {
+    if (
+      !ready ||
+      !cart.length ||
+      (!preferences?.analytics && !preferences?.marketing)
+    ) {
+      return;
+    }
+
+    const cartSignature = cart
+      .map((item) => `${item.slug}:${item.quantity}`)
+      .sort()
+      .join(",");
+
+    trackCommerceEvent({
+      name: "begin_checkout",
+      items: cart.map(toAnalyticsItem),
+      valueCents: totalCents,
+      dedupeKey: `begin_checkout:${cartSignature}`,
+    });
+  }, [
+    cart,
+    preferences?.analytics,
+    preferences?.marketing,
+    ready,
+    totalCents,
+  ]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -110,6 +145,7 @@ export function CheckoutPage() {
           slug: item.slug,
           quantity: item.quantity,
         })),
+        attribution: getMetaAttribution(),
       }),
     });
     const payload = await response.json();
