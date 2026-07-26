@@ -169,56 +169,41 @@ export default async function Home() {
 
   return (
     <>
-      <section className="overflow-hidden bg-[linear-gradient(135deg,#fffaf5_0%,#ffffff_45%,#fff0e3_100%)]">
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 py-16 lg:grid-cols-[1fr_0.95fr] lg:px-8 lg:py-24">
+      <section className="overflow-hidden bg-white">
+        <div className="mx-auto grid max-w-7xl items-center gap-12 px-6 py-14 lg:grid-cols-[1fr_0.95fr] lg:px-8 lg:py-20">
           <div className="flex flex-col justify-center">
-            <div className="mb-6 flex w-fit items-center gap-2 rounded-full border border-[#ffcfaa] bg-white px-4 py-2 text-xs font-black uppercase tracking-[0.18em] text-[#d95400] shadow-sm">
-              South African business templates
-            </div>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-[#111111] sm:text-6xl lg:text-7xl">
-              Professional business templates built for small businesses.
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#5f5f66]">
-              DokKit gives you editable Word templates and Excel workbooks for
-              quoting, invoicing, tracking, onboarding, operations, and everyday
-              business admin.
+            <p className="text-sm font-black uppercase leading-6 text-[#a63d00]">
+              Editable Word &amp; Excel templates for South African small
+              businesses
             </p>
-            {showLaunchOffer ? (
-              <Link
-                href="/launch-offer"
-                className="mt-6 inline-flex w-fit rounded-full border border-[#ffcfaa] bg-white px-4 py-2 text-sm font-black text-[#d95400] shadow-sm transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
-              >
-                {launchOfferCopy}
-              </Link>
-            ) : null}
+            <h1 className="mt-4 max-w-4xl text-5xl font-black leading-[1.02] text-[#111111] sm:text-6xl">
+              Run your business with professional documents without starting
+              from scratch.
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-[#4f4f55]">
+              Choose your type of business and get a ready-made admin pack you
+              can edit in Microsoft Word and Excel. Add your details and logo,
+              pay once in rand, and receive your files after successful
+              payment.
+            </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
-                href={showLaunchOffer ? "/launch-offer" : "/single-documents"}
-                className="inline-flex items-center justify-center rounded-full bg-[#ff6a00] px-6 py-3.5 text-sm font-black text-white shadow-xl shadow-[#ff6a00]/25 transition hover:-translate-y-0.5 hover:bg-[#d95400]"
+                href="/industries"
+                className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#c24100] px-6 py-3 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412]"
               >
-                {showLaunchOffer ? "View Launch Offer" : "Browse Templates"}
+                Choose your business type
               </Link>
               <Link
-                href="#how-it-works"
-                className="inline-flex items-center justify-center rounded-full border border-black/10 bg-white px-6 py-3.5 text-sm font-black text-[#111111] shadow-sm transition hover:-translate-y-0.5 hover:border-[#ff6a00] hover:text-[#ff6a00]"
+                href="/single-documents"
+                className="inline-flex min-h-12 items-center justify-center rounded-md border border-black/20 bg-white px-6 py-3 text-sm font-black text-[#111111] transition hover:border-[#c24100] hover:text-[#a63d00]"
               >
-                View How It Works
+                Preview the templates
               </Link>
             </div>
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              {[
-                [industries.length.toString(), "ready industries"],
-                ["Word", "editable templates"],
-                ["PayFast", "secure checkout"],
-              ].map(([value, label]) => (
-                <div key={label} className="rounded-3xl bg-white p-5 shadow-sm">
-                  <p className="text-3xl font-black text-[#111111]">{value}</p>
-                  <p className="mt-1 text-sm font-bold text-[#5f5f66]">
-                    {label}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <p className="mt-6 text-sm font-bold leading-6 text-[#4f4f55]">
+              Secure PayFast payment &bull; No subscription &bull; Practical
+              South African business templates
+            </p>
           </div>
           <ProductMockup />
         </div>
