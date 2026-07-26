@@ -12,7 +12,6 @@ import {
 } from "@/data/catalogue";
 import {
   CART_STORAGE_KEY,
-  CART_UPDATED_EVENT,
   formatCartDiscountTotal,
   formatCartOriginalTotal,
   formatCartTotal,
@@ -51,11 +50,6 @@ function readCart() {
   }
 }
 
-function clearCart() {
-  window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([]));
-  window.dispatchEvent(new Event(CART_UPDATED_EVENT));
-}
-
 function submitPayFastForm(processUrl: string, fields: Record<string, string>) {
   const form = document.createElement("form");
   form.method = "POST";
@@ -74,7 +68,7 @@ function submitPayFastForm(processUrl: string, fields: Record<string, string>) {
 }
 
 export function CheckoutPage() {
-  const [cart, setCart] = useState<CartItem[]>(readCart);
+  const [cart] = useState<CartItem[]>(readCart);
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -130,42 +124,50 @@ export function CheckoutPage() {
     setPendingOrder(null);
     setIsSubmitting(true);
 
-    const response = await fetch("/api/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        customer: {
-          email,
-          fullName,
-          phone,
+    try {
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        items: cart.map((item) => ({
-          slug: item.slug,
-          quantity: item.quantity,
-        })),
-        attribution: getMetaAttribution(),
-      }),
-    });
-    const payload = await response.json();
-    setIsSubmitting(false);
+        body: JSON.stringify({
+          customer: {
+            email,
+            fullName,
+            phone,
+          },
+          items: cart.map((item) => ({
+            slug: item.slug,
+            quantity: item.quantity,
+          })),
+          attribution: getMetaAttribution(),
+        }),
+      });
+      const payload = await response.json().catch(() => null);
 
-    if (!response.ok) {
-      setError(payload.error ?? "Unable to create checkout order.");
-      return;
-    }
+      if (!response.ok) {
+        setError(
+          payload?.error ??
+            "Checkout could not be started. Your cart is still saved.",
+        );
+        return;
+      }
 
-    const checkoutResponse = payload as CheckoutResponse;
-    clearCart();
-    setCart([]);
-    setPendingOrder(checkoutResponse);
+      const checkoutResponse = payload as CheckoutResponse;
+      setPendingOrder(checkoutResponse);
 
-    if (checkoutResponse.payment.mode === "payfast") {
-      submitPayFastForm(
-        checkoutResponse.payment.processUrl,
-        checkoutResponse.payment.fields,
+      if (checkoutResponse.payment.mode === "payfast") {
+        submitPayFastForm(
+          checkoutResponse.payment.processUrl,
+          checkoutResponse.payment.fields,
+        );
+      }
+    } catch {
+      setError(
+        "Checkout could not connect. Your cart is still saved, so you can try again.",
       );
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -198,8 +200,14 @@ export function CheckoutPage() {
         </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight">Checkout</h1>
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
-          Enter customer details to create a pending DokKit order.
+          Enter the email address that should receive the order confirmation and
+          secure download link. Payment is completed on PayFast.
         </p>
+        <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm font-semibold text-[#5f5f66]">
+          <span>Secure PayFast payment</span>
+          <span>No subscription</span>
+          <span>Email delivery after verification</span>
+        </div>
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_360px]">
@@ -213,6 +221,8 @@ export function CheckoutPage() {
               Email address
               <input
                 type="email"
+                name="email"
+                autoComplete="email"
                 value={email}
                 onChange={(event) => setEmail(event.target.value)}
                 required
@@ -223,6 +233,8 @@ export function CheckoutPage() {
               Full name
               <input
                 type="text"
+                name="name"
+                autoComplete="name"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
                 className="rounded-md border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
@@ -232,6 +244,8 @@ export function CheckoutPage() {
               Phone number
               <input
                 type="tel"
+                name="tel"
+                autoComplete="tel"
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
                 className="rounded-md border border-[#cfc7bd] bg-white px-4 py-3 text-base outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ffd8bd]"
@@ -254,12 +268,48 @@ export function CheckoutPage() {
             </div>
           ) : null}
 
+          <div className="mt-6 border-l-4 border-[#c24100] bg-[#fff7f0] p-5">
+            <h2 className="font-black">What happens next</h2>
+            <ol className="mt-3 grid gap-2 text-sm leading-6 text-[#5f5f66]">
+              <li>1. DokKit creates your order and sends you to PayFast.</li>
+              <li>
+                2. Downloads stay locked until PayFast verifies the payment.
+              </li>
+              <li>
+                3. Your secure order page unlocks and the access link is emailed
+                to you.
+              </li>
+            </ol>
+            <p className="mt-3 text-sm font-semibold text-[#111111]">
+              One payment in South African rand. No subscription.
+            </p>
+            <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
+              Need help? Email{" "}
+              <Link
+                href="mailto:support@dokkit.co.za"
+                className="font-black text-[#005f73] underline underline-offset-4"
+              >
+                support@dokkit.co.za
+              </Link>
+              {" or "}
+              <Link
+                href="/privacy"
+                className="font-black text-[#005f73] underline underline-offset-4"
+              >
+                review our privacy policy
+              </Link>
+              .
+            </p>
+          </div>
+
           <button
             type="submit"
             disabled={isSubmitting || cart.length === 0}
-            className="mt-6 rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400] disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 min-h-12 rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412] disabled:cursor-not-allowed disabled:opacity-70"
           >
-            {isSubmitting ? "Creating order..." : "Create order and pay"}
+            {isSubmitting
+              ? "Opening secure payment..."
+              : "Continue securely to PayFast"}
           </button>
         </form>
 
@@ -334,6 +384,10 @@ export function CheckoutPage() {
             </p>
             <PayfastLogo className="h-8 w-auto" />
           </div>
+          <p className="mt-3 text-xs leading-5 text-[#5f5f66]">
+            Secure PayFast payment. No subscription. Download access follows
+            verified payment.
+          </p>
         </aside>
       </div>
     </section>

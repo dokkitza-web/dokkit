@@ -229,10 +229,20 @@ export function CartPage() {
               <PayfastLogo className="h-8 w-auto" />
             </div>
             <Link
-              href="/recommended-add-ons"
-              className="mt-6 flex w-full justify-center rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
+              href="/checkout"
+              className="mt-6 flex min-h-12 w-full items-center justify-center rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412]"
             >
-              Continue
+              Continue to secure checkout
+            </Link>
+            <p className="mt-3 text-center text-xs leading-5 text-[#5f5f66]">
+              Pay securely with PayFast. Downloads unlock after payment
+              verification and are also sent by email.
+            </p>
+            <Link
+              href="/recommended-add-ons"
+              className="mt-4 flex min-h-12 w-full items-center justify-center rounded-md border border-[#111111] px-5 py-3 text-sm font-semibold text-[#111111] transition hover:bg-[#111111] hover:text-white"
+            >
+              Review up to 3 optional add-ons
             </Link>
             <button
               type="button"

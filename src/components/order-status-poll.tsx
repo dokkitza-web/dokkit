@@ -10,6 +10,7 @@ import {
 import { useConsent } from "@/components/analytics-provider";
 import { DownloadFileButton } from "@/components/download-file-button";
 import { trackGooglePurchase } from "@/lib/analytics";
+import { CART_STORAGE_KEY, CART_UPDATED_EVENT } from "@/lib/cart";
 
 type OrderStatusResponse = {
   orderNumber: string;
@@ -135,6 +136,15 @@ export function OrderStatusPoll({
       })),
     });
   }, [order, preferences?.analytics, ready]);
+
+  useEffect(() => {
+    if (order?.status !== "paid") {
+      return;
+    }
+
+    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify([]));
+    window.dispatchEvent(new Event(CART_UPDATED_EVENT));
+  }, [order?.status]);
 
   if (error) {
     return (

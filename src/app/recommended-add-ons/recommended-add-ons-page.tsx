@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { PayfastLogo } from "@/components/payfast-logo";
 import {
   VAT_INCLUDED_LABEL,
   VAT_INCLUDED_SUMMARY_LABEL,
@@ -19,76 +20,52 @@ import {
   type CartItem,
 } from "@/lib/cart";
 
-const PACKAGE_TIER_SUFFIXES = ["-starter", "-professional", "-complete"];
+const PACKAGE_TIER_SUFFIXES = [
+  "-essential",
+  "-starter",
+  "-professional",
+  "-complete",
+];
 
 const GENERAL_RECOMMENDATION_SLUGS = [
-  "master-quotation-template",
-  "invoice-workbook-template",
-  "crm-tracker",
   "income-and-expense-tracker",
-  "terms-and-conditions-template",
-  "general-service-agreement-template",
   "business-financial-income-statement-template",
-  "vat-compliant-invoice-template",
-  "vat-ready-purchase-order-template",
+  "crm-tracker",
+  "non-disclosure-agreement-template",
+  "popia-privacy-policy-statement-template",
+  "joint-venture-structure-agreement-template",
 ];
 
 const INDUSTRY_RECOMMENDATION_SLUGS: Record<string, string[]> = {
-  "beauty-salons-and-spas": [
-    "crm-tracker",
-    "popia-privacy-policy-statement-template",
-    "vat-compliant-invoice-template",
-    "income-and-expense-tracker",
+  "human-resources": [
     "business-financial-income-statement-template",
+    "income-and-expense-tracker",
+    "crm-tracker",
+  ],
+  "beauty-salons-and-spas": [
+    "popia-privacy-policy-statement-template",
+    "general-service-agreement-template",
+    "non-disclosure-agreement-template",
   ],
   "catering-and-baking": [
-    "master-quotation-template",
-    "vat-compliant-invoice-template",
-    "vat-ready-purchase-order-template",
-    "income-and-expense-tracker",
-    "business-financial-income-statement-template",
-  ],
-  "cleaning-services": [
-    "master-quotation-template",
     "general-service-agreement-template",
-    "terms-and-conditions-template",
-    "vat-compliant-invoice-template",
-    "crm-tracker",
-  ],
-  "construction-subcontractors": [
-    "master-quotation-template",
-    "general-service-agreement-template",
-    "joint-venture-structure-agreement-template",
-    "vat-ready-purchase-order-template",
-    "vat-compliant-invoice-template",
+    "popia-privacy-policy-statement-template",
+    "non-disclosure-agreement-template",
   ],
   "freelancers-consultants": [
-    "general-service-agreement-template",
     "non-disclosure-agreement-template",
+    "joint-venture-structure-agreement-template",
     "crm-tracker",
-    "invoice-workbook-template",
-    "master-quotation-template",
   ],
   "landscaping-garden-services": [
-    "master-quotation-template",
-    "general-service-agreement-template",
-    "vat-ready-purchase-order-template",
+    "popia-privacy-policy-statement-template",
+    "crm-tracker",
     "income-and-expense-tracker",
-    "vat-compliant-invoice-template",
-  ],
-  "safety-security": [
-    "general-service-agreement-template",
-    "non-disclosure-agreement-template",
-    "terms-and-conditions-template",
-    "master-quotation-template",
-    "vat-compliant-invoice-template",
   ],
   "transport-delivery-services": [
-    "vat-ready-purchase-order-template",
-    "invoice-workbook-template",
-    "income-and-expense-tracker",
     "crm-tracker",
-    "terms-and-conditions-template",
+    "income-and-expense-tracker",
+    "popia-privacy-policy-statement-template",
   ],
 };
 
@@ -133,41 +110,48 @@ function getRecommendationPriority(cart: CartItem[]) {
 function getRecommendedDocuments(
   singleDocuments: SingleDocument[],
   cart: CartItem[],
+  packageInclusions: Record<string, string[]>,
 ) {
-  const cartSlugs = new Set(cart.map((item) => item.slug));
+  const excludedSlugs = new Set(cart.map((item) => item.slug));
+  cart
+    .filter((item) => item.category === "industry_package")
+    .forEach((item) => {
+      packageInclusions[item.slug]?.forEach((slug) =>
+        excludedSlugs.add(slug),
+      );
+    });
   const documentsBySlug = new Map(
     singleDocuments.map((document) => [document.slug, document]),
   );
   const prioritySlugs = getRecommendationPriority(cart);
-  const recommended = prioritySlugs
+
+  return prioritySlugs
     .map((slug) => documentsBySlug.get(slug))
-    .filter((document): document is SingleDocument => {
-      if (!document) {
-        return false;
-      }
-
-      return !cartSlugs.has(document.slug);
-    });
-  const recommendedSlugs = new Set(recommended.map((document) => document.slug));
-  const additionalDocuments = singleDocuments.filter(
-    (document) =>
-      !cartSlugs.has(document.slug) && !recommendedSlugs.has(document.slug),
-  );
-
-  return [...recommended, ...additionalDocuments];
+    .filter(
+      (document): document is SingleDocument =>
+        document !== undefined && !excludedSlugs.has(document.slug),
+    )
+    .slice(0, 3);
 }
 
 export function RecommendedAddOnsPage({
   singleDocuments,
+  packageInclusions,
 }: {
   singleDocuments: SingleDocument[];
+  packageInclusions: Record<string, string[]>;
 }) {
   const [cart, setCart] = useState<CartItem[]>(readCart);
   const recommendations = useMemo(
-    () => getRecommendedDocuments(singleDocuments, cart),
-    [cart, singleDocuments],
+    () =>
+      getRecommendedDocuments(singleDocuments, cart, packageInclusions),
+    [cart, packageInclusions, singleDocuments],
   );
   const cartCount = useMemo(() => formatCartCount(cart), [cart]);
+  const hasPackage = useMemo(
+    () => cart.some((item) => item.category === "industry_package"),
+    [cart],
+  );
   const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
   const discountCents = useMemo(() => formatCartDiscountTotal(cart), [cart]);
   const vatPortionCents = useMemo(
@@ -230,22 +214,28 @@ export function RecommendedAddOnsPage({
     <section className="mx-auto max-w-7xl px-6 py-14 pb-32 lg:px-8 lg:pb-16">
       <div className="max-w-3xl">
         <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ff6a00]">
-          Recommended add-ons
+          Optional add-ons
         </p>
         <h1 className="mt-3 text-4xl font-semibold tracking-tight">
-          Add useful single templates before checkout.
+          Up to three useful extras, checked against your cart.
         </h1>
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
-          These optional add-ons are selected from the single-template shop and
-          matched to the items already in your cart.
+          We remove products already in your cart and document types already
+          covered by a selected package. Adding anything here is optional.
         </p>
+        <Link
+          href="/checkout"
+          className="mt-6 inline-flex min-h-12 items-center justify-center rounded-md bg-[#c24100] px-5 py-3 text-sm font-black text-white transition hover:bg-[#9a3412]"
+        >
+          No thanks—continue to checkout
+        </Link>
       </div>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_360px]">
         <div>
           {recommendations.length ? (
             <div className="grid gap-4 md:grid-cols-2">
-              {recommendations.map((document, index) => (
+              {recommendations.map((document) => (
                 <article
                   key={document.slug}
                   className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#ff6a00] hover:shadow-xl"
@@ -253,7 +243,9 @@ export function RecommendedAddOnsPage({
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ff6a00]">
-                        {index < 8 ? "Recommended" : "Useful add-on"}
+                        {hasPackage
+                          ? "Not included in your selected pack"
+                          : "Optional add-on"}
                       </p>
                       <h2 className="mt-2 text-lg font-black text-[#111111]">
                         {document.name}
@@ -287,11 +279,10 @@ export function RecommendedAddOnsPage({
           ) : (
             <div className="rounded-[1.5rem] border border-black/10 bg-white p-8 shadow-sm">
               <h2 className="text-xl font-black">
-                All available add-ons are already in your cart
+                Your cart already covers the closest matches
               </h2>
               <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
-                You can continue to checkout or return to the cart to review
-                quantities.
+                Continue to checkout without adding another product.
               </p>
             </div>
           )}
@@ -325,15 +316,21 @@ export function RecommendedAddOnsPage({
               {formatPrice(vatPortionCents)}
             </span>
           </div>
+          <div className="mt-5 rounded-md border border-black/10 p-4">
+            <p className="mb-2 text-xs font-black uppercase tracking-[0.12em] text-[#5f5f66]">
+              Secure payment
+            </p>
+            <PayfastLogo className="h-8 w-auto" />
+          </div>
           <Link
             href="/checkout"
-            className="mt-6 flex w-full justify-center rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
+            className="mt-6 flex min-h-12 w-full items-center justify-center rounded-md bg-[#c24100] px-5 py-3 text-center text-sm font-black text-white transition hover:bg-[#9a3412]"
           >
-            Continue to checkout
+            No thanks—continue to checkout
           </Link>
           <Link
             href="/cart"
-            className="mt-3 flex w-full justify-center rounded-md border border-[#ece7df] px-5 py-3 text-sm font-semibold text-[#111111] transition hover:border-[#ff6a00]"
+            className="mt-3 flex min-h-11 w-full items-center justify-center rounded-md border border-[#ece7df] px-5 py-2.5 text-sm font-semibold text-[#111111] transition hover:border-[#c24100]"
           >
             Back to cart
           </Link>
@@ -352,9 +349,9 @@ export function RecommendedAddOnsPage({
           </div>
           <Link
             href="/checkout"
-            className="shrink-0 rounded-full bg-[#ff6a00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#ff6a00]/20 transition hover:bg-[#d95400]"
+            className="max-w-[15rem] shrink-0 rounded-md bg-[#c24100] px-4 py-3 text-center text-xs font-black text-white shadow-lg transition hover:bg-[#9a3412]"
           >
-            Continue to checkout
+            No thanks—continue to checkout
           </Link>
         </div>
       </div>

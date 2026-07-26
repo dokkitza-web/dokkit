@@ -32,6 +32,46 @@ const tierOrder = new Map<PackageTierKey, number>([
 
 export const packageManifests = generatedManifests as PackageManifest[];
 
+const packagedWorkbookSingleDocumentSlugs = [
+  "business-financial-income-statement-template",
+  "crm-tracker",
+  "income-and-expense-tracker",
+  "invoice-workbook-template",
+];
+
+const standaloneDocumentMatchers: Record<string, RegExp[]> = {
+  "permanent-employment-agreement-template": [
+    /\bpermanent employment agreement\b/i,
+  ],
+  "fixed-term-employment-contract-template": [
+    /\bfixed term employment agreement\b/i,
+  ],
+  "job-description-template": [/\bjob description\b/i],
+  "employee-onboarding-checklist-template": [
+    /\bemployee onboarding checklist\b/i,
+  ],
+  "employee-timesheet-template": [/\btimesheet template\b/i],
+  "leave-application-form-template": [/\bleave application form\b/i],
+  "disciplinary-code-and-procedure-template": [
+    /\bdisciplinary code and procedure\b/i,
+  ],
+  "general-service-agreement-template": [/\bservice agreement\b/i],
+  "joint-venture-structure-agreement-template": [
+    /\bjoint venture structure agreement\b/i,
+  ],
+  "master-quotation-template": [/\bquotation\b/i],
+  "non-disclosure-agreement-template": [
+    /\bnon disclosure agreement\b/i,
+  ],
+  "popia-privacy-policy-statement-template": [
+    /\bprivacy (?:notice|policy)\b/i,
+  ],
+  "terms-and-conditions-template": [/\bterms and conditions\b/i],
+  "invoice-workbook-template": [/\binvoice template\b/i],
+  "vat-compliant-invoice-template": [/\binvoice template\b/i],
+  "vat-ready-purchase-order-template": [/\bpurchase order\b/i],
+};
+
 export function getIndustryPackageManifests(industrySlug: string) {
   return packageManifests
     .filter((manifest) => manifest.industrySlug === industrySlug)
@@ -66,4 +106,27 @@ export function getPackageManifestCounts(manifest: PackageManifest) {
     workbookCount: countFormat("XLSX"),
     pdfCount: countFormat("PDF"),
   };
+}
+
+export function getIncludedSingleDocumentSlugs(manifest: PackageManifest) {
+  const includedSlugs = new Set<string>();
+  const fileNames = manifest.files.map((file) => file.name);
+
+  Object.entries(standaloneDocumentMatchers).forEach(([slug, matchers]) => {
+    if (
+      fileNames.some((fileName) =>
+        matchers.some((matcher) => matcher.test(fileName)),
+      )
+    ) {
+      includedSlugs.add(slug);
+    }
+  });
+
+  if (manifest.files.some((file) => file.format === "XLSX")) {
+    packagedWorkbookSingleDocumentSlugs.forEach((slug) =>
+      includedSlugs.add(slug),
+    );
+  }
+
+  return [...includedSlugs];
 }
