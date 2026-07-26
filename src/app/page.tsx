@@ -23,6 +23,15 @@ import {
 
 export const revalidate = 300;
 
+const homepageIndustrySlugs = [
+  "human-resources",
+  "beauty-salons-and-spas",
+  "catering-and-baking",
+  "freelancers-consultants",
+  "landscaping-garden-services",
+  "transport-delivery-services",
+];
+
 const documentPreviews = [
   {
     title: "Client Treatment Intake Form",
@@ -133,6 +142,11 @@ export default async function Home() {
     getCataloguePackageTiers(),
     getCatalogueSingleDocuments(),
   ]);
+  const homepageIndustries = homepageIndustrySlugs
+    .map((slug) => industries.find((industry) => industry.slug === slug))
+    .filter((industry): industry is (typeof industries)[number] =>
+      Boolean(industry),
+    );
   const featuredDocuments = singleDocuments.slice(0, 6);
   const launchOfferPhase = getLaunchOfferPhase();
   const showLaunchOffer = launchOfferPhase !== "ended";
@@ -243,11 +257,11 @@ export default async function Home() {
             </Link>
           </div>
           <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {industries.map((industry) => (
+            {homepageIndustries.map((industry) => (
               <Link
                 key={industry.slug}
                 href={`/industries/${industry.slug}`}
-                className="group min-h-56 rounded-[1.75rem] border border-black/10 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-[#c24100] hover:shadow-xl"
+                className="group min-h-56 rounded-md border border-black/10 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-[#c24100] hover:shadow-xl"
               >
                 <p className="text-sm font-black uppercase text-[#a63d00]">
                   Verified package manifests
