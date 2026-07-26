@@ -5,6 +5,7 @@ import {
   industries as fallbackIndustries,
   packageTiers as fallbackPackageTiers,
   readyIndustries,
+  readyIndustrySlugs,
   singleDocuments as fallbackSingleDocuments,
   type Industry,
   type IndustryPackageProduct,
@@ -119,6 +120,7 @@ export async function getCatalogueIndustries(): Promise<Industry[]> {
     .from("industries")
     .select("slug,name,summary,why,display_order")
     .eq("is_live", true)
+    .in("slug", readyIndustrySlugs)
     .order("display_order", { ascending: true });
 
   if (error || !data?.length) {

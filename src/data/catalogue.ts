@@ -477,11 +477,8 @@ export const readyIndustrySlugs = [
   "human-resources",
   "beauty-salons-and-spas",
   "catering-and-baking",
-  "cleaning-services",
-  "construction-subcontractors",
   "freelancers-consultants",
   "landscaping-garden-services",
-  "safety-security",
   "transport-delivery-services",
 ];
 
