@@ -255,17 +255,17 @@ export default async function Home() {
           <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
-                Product categories
+                Start with your business
               </p>
               <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-[#111111]">
-                Industry packs for the admin work your business already does.
+                Which admin pack fits the work you do?
               </h2>
             </div>
             <Link
               href="/industries"
               className="font-black text-[#ff6a00] hover:text-[#d95400]"
             >
-              See all industries
+              View all verified industries
             </Link>
           </div>
           <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -275,8 +275,13 @@ export default async function Home() {
                 href={`/industries/${industry.slug}`}
                 className="group rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#ff6a00] hover:shadow-xl"
               >
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#111111] text-sm font-black text-white group-hover:bg-[#ff6a00]">
-                  {industry.rank.toString().padStart(2, "0")}
+                <div className="mb-5 flex items-center justify-between gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#111111] text-sm font-black text-white group-hover:bg-[#ff6a00]">
+                    {industry.rank.toString().padStart(2, "0")}
+                  </div>
+                  <p className="text-right text-xs font-black uppercase leading-5 tracking-[0.12em] text-[#a63d00]">
+                    Verified package manifests
+                  </p>
                 </div>
                 <h3 className="text-lg font-black text-[#111111]">
                   {industry.name}
@@ -285,7 +290,7 @@ export default async function Home() {
                   {industry.summary}
                 </p>
                 <p className="mt-5 text-sm font-black text-[#ff6a00]">
-                  Compare packages
+                  Compare this industry&apos;s packages
                 </p>
               </Link>
             ))}
