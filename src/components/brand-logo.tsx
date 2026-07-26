@@ -14,8 +14,8 @@ export function BrandLogo({
       <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#111111] text-sm font-black text-white shadow-lg shadow-black/10">
         DK
       </span>
-      <span className="text-2xl font-black tracking-tight">
-        <span className="text-[#ff6a00]">Dok</span>
+      <span className="text-2xl font-black">
+        <span className={light ? "text-[#ff8a3d]" : "text-[#a63d00]"}>Dok</span>
         <span className={light ? "text-white" : "text-[#111111]"}>Kit</span>
       </span>
     </Link>

@@ -42,7 +42,7 @@ export function CartLink() {
     <Link
       href="/cart"
       aria-label={count ? `Cart with ${count} items` : "Cart"}
-      className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/10 bg-white text-[#ff6a00] shadow-sm transition hover:border-[#ff6a00] hover:bg-[#fff4eb]"
+      className="relative inline-flex h-11 w-11 items-center justify-center rounded-full border border-black/15 bg-white text-[#a63d00] shadow-sm transition hover:border-[#c24100] hover:bg-[#fff4eb]"
     >
       <svg
         aria-hidden="true"

@@ -7,11 +7,11 @@ import { BrandLogo } from "@/components/brand-logo";
 import { CartLink } from "@/components/cart-link";
 
 const navigation = [
-  { href: "/launch-offer", label: "Launch Offer" },
   { href: "/industries", label: "Industries" },
   { href: "/packages", label: "Packages" },
   { href: "/single-documents", label: "Templates" },
   { href: "/#faq", label: "FAQ" },
+  { href: "/launch-offer", label: "Launch offer" },
 ];
 
 export function SiteHeader() {
@@ -31,7 +31,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="transition hover:text-[#ff6a00]"
+              className="transition hover:text-[#a63d00]"
             >
               {item.label}
             </Link>
@@ -39,16 +39,10 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href="/launch-offer"
-            className="rounded-full border border-black/10 bg-white px-5 py-2.5 text-sm font-black text-[#111111] shadow-sm transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
+            href="/industries"
+            className="rounded-md bg-[#c24100] px-5 py-2.5 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412]"
           >
-            Launch Offer
-          </Link>
-          <Link
-            href="/single-documents"
-            className="rounded-full bg-[#ff6a00] px-5 py-2.5 text-sm font-black text-white shadow-lg shadow-[#ff6a00]/20 transition hover:bg-[#d95400]"
-          >
-            Browse Templates
+            Choose your business
           </Link>
           <CartLink />
         </div>
@@ -76,17 +70,17 @@ export function SiteHeader() {
                 key={item.href}
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-2xl px-3 py-3 transition hover:bg-[#fff4eb] hover:text-[#ff6a00]"
+                className="rounded-md px-3 py-3 transition hover:bg-[#fff4eb] hover:text-[#a63d00]"
               >
                 {item.label}
               </Link>
             ))}
             <Link
-              href="/launch-offer"
+              href="/industries"
               onClick={() => setMenuOpen(false)}
-              className="rounded-2xl bg-[#ff6a00] px-4 py-3 text-center font-black text-white"
+              className="rounded-md bg-[#c24100] px-4 py-3 text-center font-black text-white"
             >
-              Launch Offer
+              Choose your business
             </Link>
           </nav>
         </div>
