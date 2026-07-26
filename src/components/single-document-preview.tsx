@@ -109,7 +109,7 @@ export function SingleDocumentPreview({
       <button
         type="button"
         onClick={() => setIsMounted(true)}
-        className="group relative mb-5 block aspect-[4/3] w-full overflow-hidden rounded-2xl border border-black/10 bg-[#fff4eb] p-3 text-left shadow-sm transition hover:border-[#ff6a00]"
+        className="group relative mb-5 block aspect-[3/4] w-full overflow-hidden rounded-2xl border border-black/10 bg-[#fff4eb] p-3 text-left shadow-sm transition hover:border-[#ff6a00]"
         aria-label={`Preview ${name}`}
       >
         <span className="relative block h-full overflow-hidden rounded-xl bg-white shadow-sm">
@@ -118,7 +118,7 @@ export function SingleDocumentPreview({
             alt=""
             fill
             sizes="(min-width: 1280px) 360px, (min-width: 768px) 50vw, 100vw"
-            className="object-cover object-top"
+            className="object-contain object-top"
             unoptimized
           />
         </span>

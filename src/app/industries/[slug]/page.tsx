@@ -321,13 +321,13 @@ export default async function IndustryDetailPage({
                   key={preview.src}
                   className="overflow-hidden rounded-md border border-black/10 bg-white shadow-sm"
                 >
-                  <div className="relative aspect-[4/3]">
+                  <div className="relative aspect-[3/4] bg-white">
                     <Image
                       src={preview.src}
                       alt={preview.alt}
                       fill
                       sizes="(min-width: 640px) 45vw, 92vw"
-                      className="object-cover object-top"
+                      className="object-contain object-top"
                     />
                   </div>
                   <figcaption className="px-4 py-3 text-sm font-black">
