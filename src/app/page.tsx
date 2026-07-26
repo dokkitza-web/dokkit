@@ -23,17 +23,6 @@ import {
 
 export const revalidate = 300;
 
-const preferredIndustrySlugs = [
-  "beauty-salons-and-spas",
-  "catering-and-baking",
-  "cleaning-services",
-  "construction-subcontractors",
-  "freelancers-consultants",
-  "landscaping-garden-services",
-  "safety-security",
-  "transport-delivery-services",
-];
-
 const documentPreviews = [
   {
     title: "Client Treatment Intake Form",
@@ -138,27 +127,12 @@ const faqs = [
   },
 ];
 
-function getFeaturedIndustries(
-  industries: Awaited<ReturnType<typeof getCatalogueIndustries>>,
-) {
-  const industryBySlug = new Map(
-    industries.map((industry) => [industry.slug, industry]),
-  );
-
-  return preferredIndustrySlugs
-    .map((slug) => industryBySlug.get(slug))
-    .filter((industry): industry is (typeof industries)[number] =>
-      Boolean(industry),
-    );
-}
-
 export default async function Home() {
   const [industries, packageTiers, singleDocuments] = await Promise.all([
     getCatalogueIndustries(),
     getCataloguePackageTiers(),
     getCatalogueSingleDocuments(),
   ]);
-  const featuredIndustries = getFeaturedIndustries(industries);
   const featuredDocuments = singleDocuments.slice(0, 6);
   const launchOfferPhase = getLaunchOfferPhase();
   const showLaunchOffer = launchOfferPhase !== "ended";
@@ -250,46 +224,39 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="border-y border-black/10 bg-[#f6f4f1] py-16 lg:py-20">
+      <section className="bg-[#f6f4f1] py-16 lg:py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
+          <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
+            <div className="max-w-3xl">
+              <p className="text-sm font-black uppercase text-[#a63d00]">
                 Start with your business
               </p>
-              <h2 className="mt-4 max-w-3xl text-4xl font-black tracking-tight text-[#111111]">
+              <h2 className="mt-3 text-4xl font-black">
                 Which admin pack fits the work you do?
               </h2>
             </div>
             <Link
               href="/industries"
-              className="font-black text-[#ff6a00] hover:text-[#d95400]"
+              className="font-black text-[#a63d00] underline decoration-2 underline-offset-4"
             >
               View all verified industries
             </Link>
           </div>
-          <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {featuredIndustries.map((industry) => (
+          <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {industries.map((industry) => (
               <Link
                 key={industry.slug}
                 href={`/industries/${industry.slug}`}
-                className="group rounded-[1.75rem] border border-black/10 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:border-[#ff6a00] hover:shadow-xl"
+                className="group min-h-56 rounded-[1.75rem] border border-black/10 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-[#c24100] hover:shadow-xl"
               >
-                <div className="mb-5 flex items-center justify-between gap-3">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#111111] text-sm font-black text-white group-hover:bg-[#ff6a00]">
-                    {industry.rank.toString().padStart(2, "0")}
-                  </div>
-                  <p className="text-right text-xs font-black uppercase leading-5 tracking-[0.12em] text-[#a63d00]">
-                    Verified package manifests
-                  </p>
-                </div>
-                <h3 className="text-lg font-black text-[#111111]">
-                  {industry.name}
-                </h3>
+                <p className="text-sm font-black uppercase text-[#a63d00]">
+                  Verified package manifests
+                </p>
+                <h3 className="mt-4 text-2xl font-black">{industry.name}</h3>
                 <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
                   {industry.summary}
                 </p>
-                <p className="mt-5 text-sm font-black text-[#ff6a00]">
+                <p className="mt-5 text-sm font-black text-[#a63d00]">
                   Compare this industry&apos;s packages
                 </p>
               </Link>
