@@ -181,10 +181,10 @@ export default async function Home() {
               from scratch.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-[#4f4f55]">
-              Choose your type of business and get a ready-made admin pack you
-              can edit in Microsoft Word and Excel. Add your details and logo,
-              pay once in rand, and receive your files after successful
-              payment.
+              Choose your industry and get the documents you need to run your
+              business professionally—ready to edit in Word and Excel. Add your
+              business details and logo, pay once, and receive your download
+              link by email after payment. No subscription.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link
