@@ -213,27 +213,26 @@ export default async function Home() {
         <div className="mx-auto grid max-w-7xl gap-6 px-6 lg:grid-cols-3 lg:px-8">
           <div className="rounded-[2rem] bg-[#111111] p-8 text-white">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ffb06f]">
-              The problem
+              The admin problem
             </p>
             <h2 className="mt-4 text-3xl font-black tracking-tight">
-              Admin documents take too long to create from scratch.
+              Blank pages slow down real work.
             </h2>
             <p className="mt-4 text-sm leading-6 text-white/70">
-              Small businesses often use inconsistent formatting, old files,
-              missing terms, and scattered spreadsheets because there is no
-              simple document starting point.
+              Quotes, forms, agreements and trackers take time to structure,
+              format and keep consistent.
             </p>
           </div>
           <div className="rounded-[2rem] border border-black/10 bg-[#fff4eb] p-8">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-[#d95400]">
-              The solution
+              A practical starting point
             </p>
             <h2 className="mt-4 text-3xl font-black tracking-tight">
-              Ready-to-edit packs shaped around how real businesses operate.
+              Start with the document already built.
             </h2>
             <p className="mt-4 text-sm leading-6 text-[#5f5f66]">
-              Choose an industry pack or single document, add it to your cart,
-              pay securely, and download templates you can customise.
+              Open the Word or Excel file, replace the example fields and adapt
+              the content to the way your business operates.
             </p>
           </div>
           <div className="rounded-[2rem] border border-black/10 bg-white p-8 shadow-sm">
@@ -241,11 +240,11 @@ export default async function Home() {
               The outcome
             </p>
             <h2 className="mt-4 text-3xl font-black tracking-tight">
-              Cleaner documents, faster setup, stronger customer confidence.
+              Cleaner admin and clearer customer paperwork.
             </h2>
             <p className="mt-4 text-sm leading-6 text-[#5f5f66]">
-              Spend less time formatting and more time quoting, delivering,
-              tracking, and managing the work.
+              Use a consistent set of working documents from first enquiry to
+              sign-off, recordkeeping and follow-up.
             </p>
           </div>
         </div>
