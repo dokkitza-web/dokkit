@@ -83,33 +83,6 @@ const documentPreviews = [
   },
 ];
 
-const benefits = [
-  {
-    title: "Save admin time",
-    copy: "Start from a structured document instead of building quotes, trackers, and forms from a blank page.",
-  },
-  {
-    title: "Look more professional",
-    copy: "Give customers cleaner documents with consistent wording, headings, sections, and sign-off areas.",
-  },
-  {
-    title: "Industry-specific wording",
-    copy: "Use packs shaped around common small-business workflows, not generic office templates.",
-  },
-  {
-    title: "Editable in Word and Excel",
-    copy: "Word templates and Excel workbooks are designed for practical editing and reuse.",
-  },
-  {
-    title: "Built for South Africa",
-    copy: "Clear, business-friendly templates for local operators, freelancers, service providers, and teams.",
-  },
-  {
-    title: "Easy to customise",
-    copy: "Add your logo, pricing, customer details, scope, terms, and operating notes.",
-  },
-];
-
 const trustItems = [
   "Built for South African small businesses",
   "Editable Word and Excel templates",
@@ -305,33 +278,39 @@ export default async function Home() {
 
       <section className="bg-[#111111] py-16 text-white lg:py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ffb06f]">
-                Benefits
-              </p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight">
-                Built to help owners move faster and look sharper.
-              </h2>
-              <p className="mt-5 text-sm leading-6 text-white/65">
-                DokKit is practical by design: simple files, clear structure,
-                and business-focused wording you can customise quickly.
-              </p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2">
-              {benefits.map((benefit) => (
-                <article
-                  key={benefit.title}
-                  className="rounded-[1.5rem] border border-white/10 bg-white/5 p-5"
-                >
-                  <h3 className="text-lg font-black">{benefit.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-white/65">
-                    {benefit.copy}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
+          <p className="text-sm font-black uppercase text-[#ffb77a]">
+            Three clear steps
+          </p>
+          <h2 className="mt-3 max-w-3xl text-4xl font-black">
+            From the right package to working files.
+          </h2>
+          <ol className="mt-10 grid gap-8 md:grid-cols-3">
+            {[
+              [
+                "1",
+                "Choose and compare",
+                "Select your industry, inspect the exact file manifest and compare only the tiers available for that industry.",
+              ],
+              [
+                "2",
+                "Pay through PayFast",
+                "Review your cart, enter the order email address and continue to the secure PayFast payment page.",
+              ],
+              [
+                "3",
+                "Download after verification",
+                "DokKit verifies the PayFast notification before unlocking the secure files attached to the paid order.",
+              ],
+            ].map(([number, heading, copy]) => (
+              <li key={number} className="border-t border-white/20 pt-5">
+                <span className="text-4xl font-black text-[#ffb77a]">
+                  {number}
+                </span>
+                <h3 className="mt-4 text-2xl font-black">{heading}</h3>
+                <p className="mt-3 text-sm leading-6 text-white/70">{copy}</p>
+              </li>
+            ))}
+          </ol>
         </div>
       </section>
 
