@@ -70,36 +70,59 @@ export default async function IndustryDetailPage({
       : `Launch offer starts ${LAUNCH_OFFER_START_LABEL}: selected packages up to 20% off.`;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
-      <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
-            Industry package
-          </p>
-          <h1 className="mt-4 text-5xl font-black tracking-tight">
-            {industry.name}
-          </h1>
-          <p className="mt-5 text-lg leading-8 text-[#5f5f66]">
-            {industry.summary}
-          </p>
-          {showLaunchOfferNotice ? (
-            <Link
-              href="/launch-offer"
-              className="mt-6 inline-flex rounded-full border border-[#ffcfaa] bg-[#fff4eb] px-4 py-2 text-sm font-black text-[#d95400] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
-            >
-              {launchOfferNotice}
+    <>
+      <section className="border-b border-black/10 bg-[#fff7f0]">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8 lg:py-16">
+          <nav aria-label="Breadcrumb" className="text-sm text-[#5f5f66]">
+            <Link href="/" className="hover:text-[#a63d00]">
+              Home
             </Link>
-          ) : null}
-          <div className="mt-8 rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
-            <h2 className="text-base font-black">Why it is attractive</h2>
-            <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
-              {industry.why}
-            </p>
+            <span aria-hidden="true" className="mx-2">
+              /
+            </span>
+            <Link href="/industries" className="hover:text-[#a63d00]">
+              Industries
+            </Link>
+            <span aria-hidden="true" className="mx-2">
+              /
+            </span>
+            <span aria-current="page">{industry.name}</span>
+          </nav>
+          <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_0.8fr] lg:items-end">
+            <div>
+              <p className="text-sm font-black uppercase text-[#a63d00]">
+                {packageProducts.length} verified package
+                {packageProducts.length === 1 ? "" : "s"} available
+              </p>
+              <h1 className="mt-3 text-5xl font-black">{industry.name}</h1>
+              <p className="mt-5 max-w-3xl text-lg leading-8 text-[#5f5f66]">
+                {industry.summary}
+              </p>
+              {showLaunchOfferNotice ? (
+                <Link
+                  href="/launch-offer"
+                  className="mt-6 inline-flex min-h-11 items-center rounded-md border border-[#e9a36f] bg-white px-4 py-2.5 text-sm font-black text-[#8f3500] hover:border-[#c24100]"
+                >
+                  {launchOfferNotice}
+                </Link>
+              ) : null}
+            </div>
+            <div className="border-l-4 border-[#c24100] bg-white p-6 shadow-sm">
+              <h2 className="text-xl font-black">
+                Built for the admin work you do every week.
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
+                {industry.why}
+              </p>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="grid gap-4">
-          {packageProducts.map((product) => {
+      <section className="bg-white py-16 lg:py-20">
+        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+          <div className="grid gap-4">
+            {packageProducts.map((product) => {
             const pricing = getLaunchOfferPricing({
               priceCents: product.priceCents,
               productType: "industry_package",
@@ -220,32 +243,39 @@ export default async function IndustryDetailPage({
                 </div>
               </article>
             );
-          })}
-        </div>
-      </div>
+            })}
+          </div>
 
-      <div className="mt-12 grid gap-8 lg:grid-cols-2">
-        <section className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-black">Featured documents</h2>
-          <ul className="mt-5 grid gap-3 text-sm text-[#5f5f66]">
-            {industry.featuredDocuments.map((item) => (
-              <li key={item} className="rounded-2xl bg-[#f6f4f1] px-4 py-3">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
-        <section className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-black">Customer use cases</h2>
-          <ul className="mt-5 grid gap-3 text-sm text-[#5f5f66]">
-            {industry.useCases.map((item) => (
-              <li key={item} className="rounded-2xl bg-[#f6f4f1] px-4 py-3">
-                {item}
-              </li>
-            ))}
-          </ul>
-        </section>
-      </div>
-    </section>
+          <div className="mt-12 grid gap-8 lg:grid-cols-2">
+            <section className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
+              <h2 className="text-xl font-black">Featured documents</h2>
+              <ul className="mt-5 grid gap-3 text-sm text-[#5f5f66]">
+                {industry.featuredDocuments.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-2xl bg-[#f6f4f1] px-4 py-3"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+            <section className="rounded-[1.5rem] border border-black/10 bg-white p-6 shadow-sm">
+              <h2 className="text-xl font-black">Customer use cases</h2>
+              <ul className="mt-5 grid gap-3 text-sm text-[#5f5f66]">
+                {industry.useCases.map((item) => (
+                  <li
+                    key={item}
+                    className="rounded-2xl bg-[#f6f4f1] px-4 py-3"
+                  >
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
