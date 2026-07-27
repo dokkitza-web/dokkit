@@ -30,7 +30,7 @@ import {
 export const metadata: Metadata = {
   title: "Launch Offer | DokKit",
   description:
-    "Save up to 20% on selected DokKit industry package packs from 13 July to 31 August 2026. Prices include 15% VAT.",
+    "Save up to 20% on selected DokKit industry package packs from 13 July to 31 August 2026.",
 };
 
 export const revalidate = 300;
@@ -319,9 +319,8 @@ export default async function LaunchOfferPage() {
             </p>
             <p className="mt-5 max-w-2xl text-base leading-7 text-white/72">
               From {LAUNCH_OFFER_DATE_RANGE_LABEL}, selected editable industry
-              package packs are discounted by 10%, 15%, or 20%. Prices include
-              15% VAT and files are supplied as Word templates and Excel
-              workbooks.
+              package packs are discounted by 10%, 15%, or 20%. Files are
+              supplied as Word templates and Excel workbooks.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <a
@@ -469,11 +468,6 @@ export default async function LaunchOfferPage() {
                 question: "Which products are discounted?",
                 answer:
                   "The launch offer applies to selected industry package packs only: Starter, Professional, and Complete. Single documents stay at their normal prices.",
-              },
-              {
-                question: "Are the prices VAT-inclusive?",
-                answer:
-                  "Yes. The listed launch offer prices include 15% VAT.",
               },
               {
                 question: "What happens after payment?",
