@@ -1,4 +1,7 @@
 alter table public.orders
+  add column if not exists download_access_token_hash text,
+  add column if not exists download_access_token_created_at timestamptz,
+  add column if not exists download_access_token_ciphertext text,
   add column if not exists checkout_attempt_id uuid,
   add column if not exists policy_bundle_version text,
   add column if not exists policy_accepted_at timestamptz,
@@ -15,6 +18,14 @@ alter table public.orders
   add column if not exists refund_initiated_at timestamptz,
   add column if not exists refund_completed_at timestamptz,
   add column if not exists refund_customer_notified_at timestamptz;
+
+create unique index if not exists orders_download_access_token_hash_idx
+  on public.orders(download_access_token_hash)
+  where download_access_token_hash is not null;
+
+create unique index if not exists email_logs_order_template_sent_idx
+  on public.email_logs(order_id, template_key)
+  where status = 'sent';
 
 alter table public.orders
   drop constraint if exists orders_download_limit_check,

@@ -45,6 +45,9 @@ test("migration atomically finalises payment and claims order downloads", () => 
   assert.match(migration, /access_expires_at/);
   assert.match(migration, /successful_downloads/);
   assert.match(migration, /download_limit = 5/);
+  assert.match(migration, /download_access_token_hash/);
+  assert.match(migration, /download_access_token_ciphertext/);
+  assert.match(migration, /email_logs_order_template_sent_idx/);
   assert.match(migration, /interval '7 days'/);
   assert.match(
     migration,
