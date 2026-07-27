@@ -1,10 +1,6 @@
 import Link from "next/link";
 import { AdminShell } from "@/components/admin-shell";
-import {
-  VAT_INCLUDED_SUMMARY_LABEL,
-  formatPrice,
-  getVatPortionCents,
-} from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
 import { requireAdmin } from "@/lib/supabase/admin";
 
 export const metadata = {
@@ -174,12 +170,6 @@ export default async function AdminPaymentsPage({
           >
             <p className="text-sm font-bold text-[#5f5f66]">{label}</p>
             <p className="mt-3 text-3xl font-black text-[#111111]">{value}</p>
-            {label === "Verified total" ? (
-              <p className="mt-1 text-xs font-bold text-[#5f5f66]">
-                {VAT_INCLUDED_SUMMARY_LABEL}:{" "}
-                {formatPrice(getVatPortionCents(verifiedTotalCents))}
-              </p>
-            ) : null}
           </article>
         ))}
       </div>
@@ -274,10 +264,6 @@ export default async function AdminPaymentsPage({
                     <td className="px-4 py-3">
                       <p className="font-black text-[#ff6a00]">
                         {formatPrice(payment.amount_cents)}
-                      </p>
-                      <p className="mt-1 text-xs text-[#5f5f66]">
-                        {VAT_INCLUDED_SUMMARY_LABEL}:{" "}
-                        {formatPrice(getVatPortionCents(payment.amount_cents))}
                       </p>
                     </td>
                     <td className="px-4 py-3 text-[#5f5f66]">

@@ -4,12 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useConsent } from "@/components/analytics-provider";
 import { PayfastLogo } from "@/components/payfast-logo";
-import {
-  VAT_INCLUDED_LABEL,
-  VAT_INCLUDED_SUMMARY_LABEL,
-  formatPrice,
-  getVatPortionCents,
-} from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
 import {
   CART_STORAGE_KEY,
   formatCartDiscountTotal,
@@ -84,10 +79,6 @@ export function CheckoutPage() {
   const discountTotalCents = useMemo(
     () => formatCartDiscountTotal(cart),
     [cart],
-  );
-  const vatPortionCents = useMemo(
-    () => getVatPortionCents(totalCents),
-    [totalCents],
   );
 
   useEffect(() => {
@@ -336,7 +327,7 @@ export function CheckoutPage() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-[#5f5f66]">
-                    Qty {item.quantity} | {VAT_INCLUDED_LABEL}
+                    Qty {item.quantity}
                   </p>
                   {hasOfferSaving && item.discountPercent ? (
                     <p className="mt-2 w-fit rounded-full bg-[#fff4eb] px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
@@ -368,14 +359,6 @@ export function CheckoutPage() {
             <span className="text-[#5f5f66]">Total</span>
             <span className="text-xl font-semibold text-[#ff6a00]">
               {formatPrice(totalCents)}
-            </span>
-          </div>
-          <div className="mt-3 flex items-center justify-between text-xs">
-            <span className="font-bold uppercase tracking-[0.12em] text-[#d95400]">
-              {VAT_INCLUDED_SUMMARY_LABEL}
-            </span>
-            <span className="font-semibold text-[#5f5f66]">
-              {formatPrice(vatPortionCents)}
             </span>
           </div>
           <div className="mt-5 rounded-2xl border border-black/10 bg-white px-4 py-3">

@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import {
-  VAT_INCLUDED_LABEL,
   formatDocumentRange,
   formatFileFormats,
   formatPrice,
@@ -154,13 +153,6 @@ function OfferTierCard({
           <p className="text-4xl font-black text-[#ff6a00]">
             {formatPrice(previewPricing.priceCents)}
           </p>
-          <p
-            className={`mt-1 text-xs font-black uppercase tracking-[0.14em] ${
-              isComplete ? "text-[#ffb06f]" : "text-[#d95400]"
-            }`}
-          >
-            {VAT_INCLUDED_LABEL}
-          </p>
         </div>
       ) : null}
       <p
@@ -168,8 +160,7 @@ function OfferTierCard({
           isComplete ? "text-white/60" : "text-[#5f5f66]"
         }`}
       >
-        {formatDocumentRange(tierKey)} Word documents, 1 Excel workbook, PDF
-        coming soon.
+        {formatDocumentRange(tierKey)} Word documents and 1 Excel workbook.
       </p>
     </article>
   );
@@ -245,9 +236,6 @@ function IndustryOfferCard({
                   </p>
                   <p className="text-xl font-black text-[#ff6a00]">
                     {formatPrice(previewPricing.priceCents)}
-                  </p>
-                  <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
-                    {VAT_INCLUDED_LABEL}
                   </p>
                 </div>
                 {offerIsActive ? (
@@ -453,12 +441,13 @@ export default async function LaunchOfferPage() {
           </article>
           <article className="rounded-[1.5rem] border border-white/10 bg-white/5 p-6">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ffb06f]">
-              VAT and files
+              Files
             </p>
-            <h3 className="mt-4 text-2xl font-black">Prices include 15% VAT</h3>
+            <h3 className="mt-4 text-2xl font-black">
+              Editable working formats
+            </h3>
             <p className="mt-3 text-sm leading-6 text-white/65">
               Packages include editable Word documents and an Excel workbook.
-              PDF versions are coming soon.
             </p>
           </article>
         </div>

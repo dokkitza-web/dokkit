@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  VAT_INCLUDED_LABEL,
   formatDocumentRange,
   formatPrice,
 } from "@/data/catalogue";
@@ -79,19 +78,12 @@ export default async function PackagesPage() {
               {formatPrice(tier.priceCents)}
             </p>
             <p
-              className={`mt-1 text-xs font-black uppercase tracking-[0.14em] ${
-                tier.key === "complete" ? "text-[#ffb06f]" : "text-[#d95400]"
-              }`}
-            >
-              {VAT_INCLUDED_LABEL}
-            </p>
-            <p
               className={`mt-2 text-sm ${
                 tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
               }`}
             >
               {formatDocumentRange(tier.key)} Word documents,{" "}
-              {tier.workbookCount} Excel workbook / PDF coming soon
+              {tier.workbookCount} Excel workbook
             </p>
             <p
               className={`mt-2 text-sm ${
@@ -113,15 +105,6 @@ export default async function PackagesPage() {
                   {item}
                 </li>
               ))}
-              <li
-                className={`rounded-2xl px-4 py-3 ${
-                  tier.key === "complete"
-                    ? "bg-white/10 text-white/75"
-                    : "bg-[#fff4eb] text-[#5f5f66]"
-                }`}
-              >
-                PDF versions coming soon
-              </li>
             </ul>
             <Link
               href="/industries"

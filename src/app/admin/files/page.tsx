@@ -198,7 +198,7 @@ export default async function AdminFilesPage({
                   <option value="zip">ZIP</option>
                   <option value="docx">DOCX</option>
                   <option value="xlsx">XLSX</option>
-                  <option value="pdf">PDF (coming soon)</option>
+                  <option value="pdf">PDF</option>
                 </select>
               </label>
               <label className="grid gap-2 text-sm font-bold text-[#111111]">

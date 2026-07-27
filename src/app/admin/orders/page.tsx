@@ -6,11 +6,7 @@ import {
 } from "@/app/admin/orders/actions";
 import { ClearOrderButton } from "@/app/admin/orders/clear-order-button";
 import { getClearedOrderIds } from "@/app/admin/orders/cleared-orders";
-import {
-  VAT_INCLUDED_SUMMARY_LABEL,
-  formatPrice,
-  getVatPortionCents,
-} from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
 import { requireAdmin } from "@/lib/supabase/admin";
 
 export const metadata = {
@@ -315,7 +311,6 @@ export default async function AdminOrdersPage({
           { data: [] },
         ];
   const summary = getOrderSummary(orderRows);
-  const revenueVatPortionCents = getVatPortionCents(summary.revenueCents);
   const customerById = groupCustomers((customers ?? []) as CustomerRow[]);
   const itemsByOrderId = groupByOrderId((orderItems ?? []) as OrderItemRow[]);
   const paymentsByOrderId = groupByOrderId((payments ?? []) as PaymentRow[]);
@@ -396,9 +391,6 @@ export default async function AdminOrdersPage({
           <p className="mt-3 text-3xl font-black">
             {formatPrice(summary.revenueCents)}
           </p>
-          <p className="mt-1 text-xs font-bold text-[#5f5f66]">
-            {VAT_INCLUDED_SUMMARY_LABEL}: {formatPrice(revenueVatPortionCents)}
-          </p>
         </article>
       </div>
 
@@ -448,10 +440,6 @@ export default async function AdminOrdersPage({
                     </p>
                     <p className="mt-1 text-xs text-[#5f5f66]">
                       {order.currency}
-                    </p>
-                    <p className="mt-1 text-xs text-[#5f5f66]">
-                      {VAT_INCLUDED_SUMMARY_LABEL}:{" "}
-                      {formatPrice(getVatPortionCents(order.total_cents))}
                     </p>
                     {isOrderCleared ? (
                       <form

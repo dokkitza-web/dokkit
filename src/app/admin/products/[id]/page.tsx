@@ -307,7 +307,7 @@ export default async function AdminProductEditPage({
                     />
                   </label>
                   <label className="grid gap-2 text-sm font-bold text-[#111111]">
-                    PDF count (coming soon)
+                    PDF count
                     <input
                       name="pdfCount"
                       type="number"
@@ -444,7 +444,7 @@ export default async function AdminProductEditPage({
                     />
                   </label>
                   <label className="grid gap-2 text-sm font-bold text-[#111111]">
-                    PDF (coming soon)
+                    PDF
                     <input
                       name="pdfCount"
                       type="number"

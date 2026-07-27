@@ -1,7 +1,6 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { SingleDocumentPreview } from "@/components/single-document-preview";
 import {
-  VAT_INCLUDED_LABEL,
   formatFileFormats,
   formatPrice,
 } from "@/data/catalogue";
@@ -65,16 +64,13 @@ export default async function SingleDocumentsPage() {
                 <p className="rounded-full bg-[#111111] px-3 py-1 text-sm font-black text-white">
                   {formatPrice(document.priceCents)}
                 </p>
-                <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
-                  {VAT_INCLUDED_LABEL}
-                </p>
               </div>
             </div>
             <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
               {document.description}
             </p>
             <p className="mt-5 text-xs font-black tracking-[0.08em] text-[#ff6a00]">
-              {formatFileFormats(document.fileFormats)} / PDF coming soon
+              {formatFileFormats(document.fileFormats)}
             </p>
             <div className="mt-5">
               <AddToCartButton

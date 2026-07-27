@@ -40,7 +40,7 @@ const fileKindConfig: Record<
   pdf: {
     accept: ".pdf",
     contentTypes: ["application/pdf"],
-    label: "PDF reference (coming soon)",
+    label: "PDF reference",
   },
 };
 

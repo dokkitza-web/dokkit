@@ -3,12 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PayfastLogo } from "@/components/payfast-logo";
-import {
-  VAT_INCLUDED_LABEL,
-  VAT_INCLUDED_SUMMARY_LABEL,
-  formatPrice,
-  getVatPortionCents,
-} from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
@@ -46,10 +41,6 @@ export function CartPage() {
   const discountTotalCents = useMemo(
     () => formatCartDiscountTotal(cart),
     [cart],
-  );
-  const vatPortionCents = useMemo(
-    () => getVatPortionCents(totalCents),
-    [totalCents],
   );
 
   function updateQuantity(slug: string, quantity: number) {
@@ -175,9 +166,6 @@ export function CartPage() {
                       <p className="font-semibold text-[#ff6a00]">
                         {formatPrice(lineTotalCents)}
                       </p>
-                      <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#5f5f66]">
-                        {VAT_INCLUDED_LABEL}
-                      </p>
                     </div>
                   </div>
                 </article>
@@ -214,14 +202,6 @@ export function CartPage() {
                 <span className="font-semibold">{formatPrice(totalCents)}</span>
               </div>
             )}
-            <div className="mt-3 flex items-center justify-between text-xs">
-              <span className="font-bold uppercase tracking-[0.12em] text-[#d95400]">
-                {VAT_INCLUDED_SUMMARY_LABEL}
-              </span>
-              <span className="font-semibold text-[#5f5f66]">
-                {formatPrice(vatPortionCents)}
-              </span>
-            </div>
             <p className="mt-3 text-xs leading-5 text-[#5f5f66]">
               Payment is handled securely through Payfast by Network.
             </p>

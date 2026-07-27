@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  VAT_INCLUDED_LABEL,
   formatDocumentRange,
   formatFileFormats,
   formatPrice,
@@ -359,19 +358,12 @@ export default async function Home() {
                   {formatPrice(tier.priceCents)}
                 </p>
                 <p
-                  className={`mt-1 text-xs font-black uppercase tracking-[0.14em] ${
-                    tier.key === "complete" ? "text-[#ffb06f]" : "text-[#d95400]"
-                  }`}
-                >
-                  {VAT_INCLUDED_LABEL}
-                </p>
-                <p
                   className={`mt-2 text-sm ${
                     tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
                   }`}
                 >
                   {formatDocumentRange(tier.key)} Word documents,{" "}
-                  {tier.workbookCount} Excel workbook / PDF coming soon
+                  {tier.workbookCount} Excel workbook
                 </p>
                 <ul className="mt-7 grid gap-3 text-sm font-bold">
                   {tier.includes.slice(0, 4).map((item) => (
@@ -446,16 +438,12 @@ export default async function Home() {
                   <div>
                     <p className="font-black text-[#111111]">{document.name}</p>
                     <p className="mt-1 text-xs font-bold tracking-[0.08em] text-[#ff6a00]">
-                      {formatFileFormats(document.fileFormats)} / PDF coming
-                      soon
+                      {formatFileFormats(document.fileFormats)}
                     </p>
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-sm font-black text-[#111111]">
                       {formatPrice(document.priceCents)}
-                    </p>
-                    <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
-                      {VAT_INCLUDED_LABEL}
                     </p>
                   </div>
                 </div>

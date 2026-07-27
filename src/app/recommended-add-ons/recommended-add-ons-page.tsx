@@ -4,11 +4,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PayfastLogo } from "@/components/payfast-logo";
 import {
-  VAT_INCLUDED_LABEL,
-  VAT_INCLUDED_SUMMARY_LABEL,
   formatFileFormats,
   formatPrice,
-  getVatPortionCents,
   type SingleDocument,
 } from "@/data/catalogue";
 import {
@@ -154,10 +151,6 @@ export function RecommendedAddOnsPage({
   );
   const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
   const discountCents = useMemo(() => formatCartDiscountTotal(cart), [cart]);
-  const vatPortionCents = useMemo(
-    () => getVatPortionCents(totalCents),
-    [totalCents],
-  );
 
   function addDocument(document: SingleDocument) {
     const existingItem = cart.find((item) => item.slug === document.slug);
@@ -255,16 +248,13 @@ export function RecommendedAddOnsPage({
                       <p className="rounded-full bg-[#111111] px-3 py-1 text-sm font-black text-white">
                         {formatPrice(document.priceCents)}
                       </p>
-                      <p className="mt-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
-                        {VAT_INCLUDED_LABEL}
-                      </p>
                     </div>
                   </div>
                   <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
                     {document.description}
                   </p>
                   <p className="mt-5 text-xs font-black tracking-[0.08em] text-[#ff6a00]">
-                    {formatFileFormats(document.fileFormats)} / PDF coming soon
+                    {formatFileFormats(document.fileFormats)}
                   </p>
                   <button
                     type="button"
@@ -306,14 +296,6 @@ export function RecommendedAddOnsPage({
             <span className="text-[#5f5f66]">Total</span>
             <span className="text-xl font-semibold text-[#ff6a00]">
               {formatPrice(totalCents)}
-            </span>
-          </div>
-          <div className="mt-3 flex items-center justify-between text-xs">
-            <span className="font-bold uppercase tracking-[0.12em] text-[#d95400]">
-              {VAT_INCLUDED_SUMMARY_LABEL}
-            </span>
-            <span className="font-semibold text-[#5f5f66]">
-              {formatPrice(vatPortionCents)}
             </span>
           </div>
           <div className="mt-5 rounded-md border border-black/10 p-4">

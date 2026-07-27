@@ -25,7 +25,7 @@ export default async function IndustriesPage() {
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
           Choose from editable Word document and Excel workbook packages built
           for practical South African small-business administration. Available
-          package levels vary by category, and PDF versions are coming soon.
+          package levels vary by category.
         </p>
       </div>
       <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">

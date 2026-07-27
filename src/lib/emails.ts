@@ -1,9 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import {
-  VAT_INCLUDED_SUMMARY_LABEL,
-  formatPrice,
-  getVatPortionCents,
-} from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
 import { getSiteUrl } from "@/lib/site-url";
 
 type EmailOrderItem = {
@@ -267,7 +263,6 @@ export async function sendOrderConfirmationEmail({
 }) {
   const orderUrl = `${getSiteUrl()}/checkout/success?order=${encodeURIComponent(orderNumber)}&access=${encodeURIComponent(accessToken)}`;
   const subject = `DokKit order ${orderNumber} received`;
-  const vatPortionCents = getVatPortionCents(totalCents);
   const html = renderEmailLayout({
     title: "Order received",
     intro:
@@ -282,10 +277,6 @@ export async function sendOrderConfirmationEmail({
           <td style="padding:14px 0 0;font-weight:700;">Total</td>
           <td style="padding:14px 0 0;text-align:right;font-weight:700;">${formatPrice(totalCents)}</td>
         </tr>
-        <tr>
-          <td style="padding:6px 0 0;color:#5f5f66;font-size:12px;">${VAT_INCLUDED_SUMMARY_LABEL}</td>
-          <td style="padding:6px 0 0;color:#5f5f66;font-size:12px;text-align:right;">${formatPrice(vatPortionCents)}</td>
-        </tr>
       </table>
     `,
   });
@@ -294,7 +285,6 @@ export async function sendOrderConfirmationEmail({
     "",
     `Order: ${orderNumber}`,
     `Total: ${formatPrice(totalCents)}`,
-    `${VAT_INCLUDED_SUMMARY_LABEL}: ${formatPrice(vatPortionCents)}`,
     "",
     renderItemsText(items),
     "",
@@ -335,7 +325,6 @@ export async function sendDownloadReadyEmail({
 }) {
   const downloadUrl = `${getSiteUrl()}/checkout/success?order=${encodeURIComponent(orderNumber)}&access=${encodeURIComponent(accessToken)}`;
   const subject = `Your DokKit downloads are ready`;
-  const vatPortionCents = getVatPortionCents(totalCents);
   const html = renderEmailLayout({
     title: "Your downloads are ready",
     intro:
@@ -350,10 +339,6 @@ export async function sendDownloadReadyEmail({
           <td style="padding:14px 0 0;font-weight:700;">Paid total</td>
           <td style="padding:14px 0 0;text-align:right;font-weight:700;">${formatPrice(totalCents)}</td>
         </tr>
-        <tr>
-          <td style="padding:6px 0 0;color:#5f5f66;font-size:12px;">${VAT_INCLUDED_SUMMARY_LABEL}</td>
-          <td style="padding:6px 0 0;color:#5f5f66;font-size:12px;text-align:right;">${formatPrice(vatPortionCents)}</td>
-        </tr>
       </table>
     `,
   });
@@ -362,7 +347,6 @@ export async function sendDownloadReadyEmail({
     "",
     `Order: ${orderNumber}`,
     `Paid total: ${formatPrice(totalCents)}`,
-    `${VAT_INCLUDED_SUMMARY_LABEL}: ${formatPrice(vatPortionCents)}`,
     "",
     renderItemsText(items),
     "",
@@ -405,7 +389,6 @@ export async function sendAdminPaidOrderNotificationEmail({
     "support@dokkit.co.za";
   const adminUrl = `${getSiteUrl()}/admin/orders`;
   const subject = `New paid DokKit order: ${orderNumber}`;
-  const vatPortionCents = getVatPortionCents(totalCents);
   const html = renderEmailLayout({
     title: "New paid order",
     intro:
@@ -421,10 +404,6 @@ export async function sendAdminPaidOrderNotificationEmail({
           <td style="padding:14px 0 0;font-weight:700;">Paid total</td>
           <td style="padding:14px 0 0;text-align:right;font-weight:700;">${formatPrice(totalCents)}</td>
         </tr>
-        <tr>
-          <td style="padding:6px 0 0;color:#5f5f66;font-size:12px;">${VAT_INCLUDED_SUMMARY_LABEL}</td>
-          <td style="padding:6px 0 0;color:#5f5f66;font-size:12px;text-align:right;">${formatPrice(vatPortionCents)}</td>
-        </tr>
       </table>
     `,
   });
@@ -434,7 +413,6 @@ export async function sendAdminPaidOrderNotificationEmail({
     `Order: ${orderNumber}`,
     `Customer email: ${customerEmail}`,
     `Paid total: ${formatPrice(totalCents)}`,
-    `${VAT_INCLUDED_SUMMARY_LABEL}: ${formatPrice(vatPortionCents)}`,
     "",
     renderItemsText(items),
     "",

@@ -43,10 +43,6 @@ export type IndustryPackageProduct = {
   fileFormats: string[];
 };
 
-export const VAT_RATE_PERCENT = 15;
-export const VAT_INCLUDED_LABEL = `Includes ${VAT_RATE_PERCENT}% VAT`;
-export const VAT_INCLUDED_SUMMARY_LABEL = `VAT included at ${VAT_RATE_PERCENT}%`;
-
 export const packageTiers: PackageTier[] = [
   {
     key: "starter",
@@ -873,10 +869,4 @@ export function formatPrice(cents: number) {
     minimumFractionDigits: hasCents ? 2 : 0,
     maximumFractionDigits: hasCents ? 2 : 0,
   })}`;
-}
-
-export function getVatPortionCents(vatInclusiveCents: number) {
-  return Math.round(
-    (vatInclusiveCents * VAT_RATE_PERCENT) / (100 + VAT_RATE_PERCENT),
-  );
 }
