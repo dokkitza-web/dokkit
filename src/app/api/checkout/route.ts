@@ -1,14 +1,24 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { createOrderAccessToken } from "@/lib/downloads";
-import { sendOrderConfirmationEmail } from "@/lib/emails";
 import {
-  LAUNCH_OFFER_DATE_RANGE_LABEL,
-  LAUNCH_OFFER_END_ISO,
-  LAUNCH_OFFER_LABEL,
-  LAUNCH_OFFER_START_ISO,
-  getLaunchOfferPricing,
-} from "@/lib/launch-offer";
+  CheckoutPricingError,
+  checkoutItemsSchema,
+  getCheckoutPricing,
+} from "@/lib/checkout-pricing";
+import { POLICY_BUNDLE_VERSION } from "@/data/legal-policies";
+import {
+  CONSENT_COOKIE_NAME,
+  hashConsentKey,
+  readCookie,
+} from "@/lib/consent";
+import {
+  createOrderAccessCookieName,
+  createOrderAccessToken,
+  decryptDownloadAccessToken,
+  encryptDownloadAccessToken,
+  hashDownloadToken,
+} from "@/lib/downloads";
+import { sendOrderConfirmationEmail } from "@/lib/emails";
 import { createPayFastPayment } from "@/lib/payfast";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
@@ -20,15 +30,10 @@ const checkoutSchema = z.object({
     fullName: z.string().trim().min(2).max(120).optional().or(z.literal("")),
     phone: z.string().trim().max(40).optional().or(z.literal("")),
   }),
-  items: z
-    .array(
-      z.object({
-        slug: z.string().trim().min(1),
-        quantity: z.number().int().min(1).max(20),
-      }),
-    )
-    .min(1)
-    .max(50),
+  items: checkoutItemsSchema,
+  quotedTotalCents: z.number().int().nonnegative(),
+  checkoutAttemptId: z.uuid(),
+  policyAccepted: z.literal(true),
   attribution: z
     .object({
       fbp: z.string().trim().min(1).max(255).optional(),
@@ -36,20 +41,6 @@ const checkoutSchema = z.object({
     })
     .optional(),
 });
-
-type ProductRow = {
-  id: string;
-  slug: string;
-  name: string;
-  description: string;
-  product_type: string;
-  package_tier: string | null;
-  price_cents: number;
-  document_count: number;
-  workbook_count: number;
-  pdf_count: number;
-  metadata: Record<string, unknown>;
-};
 
 function createOrderNumber() {
   const datePart = new Date().toISOString().slice(0, 10).replaceAll("-", "");
@@ -95,76 +86,156 @@ export async function POST(request: Request) {
     );
   }
 
-  const { attribution, customer, items } = parsedBody.data;
-  const slugs = [...new Set(items.map((item) => item.slug))];
-  const { data: products, error: productsError } = await supabase
-    .from("products")
-    .select(
-      "id,slug,name,description,product_type,package_tier,price_cents,document_count,workbook_count,pdf_count,metadata",
-    )
-    .in("slug", slugs)
-    .eq("is_live", true);
+  const {
+    attribution,
+    customer,
+    items,
+    checkoutAttemptId,
+    quotedTotalCents,
+  } = parsedBody.data;
+  let checkoutPricing;
 
-  if (productsError) {
-    return NextResponse.json({ error: productsError.message }, { status: 500 });
-  }
+  try {
+    checkoutPricing = await getCheckoutPricing({ supabase, items });
+  } catch (error) {
+    if (error instanceof CheckoutPricingError) {
+      return NextResponse.json(
+        {
+          error: error.message,
+          missingProducts: error.missingProducts,
+        },
+        { status: error.status },
+      );
+    }
 
-  const productRows = (products ?? []) as ProductRow[];
-  const productBySlug = new Map(productRows.map((product) => [product.slug, product]));
-  const missingProducts = slugs.filter((slug) => !productBySlug.has(slug));
-
-  if (missingProducts.length) {
     return NextResponse.json(
-      {
-        error: "Some cart items are no longer available.",
-        missingProducts,
-      },
-      { status: 400 },
+      { error: "Could not verify the order total." },
+      { status: 500 },
     );
   }
 
-  const normalisedItems = items.map((item) => {
-    const product = productBySlug.get(item.slug);
+  const {
+    items: normalisedItems,
+    subtotalCents,
+    discountCents,
+    totalCents,
+  } = checkoutPricing;
 
-    if (!product) {
-      throw new Error(`Missing product ${item.slug}`);
+  if (quotedTotalCents !== totalCents) {
+    return NextResponse.json(
+      {
+        error:
+          "The order total changed before payment. Review the updated total and try again.",
+        totalCents,
+      },
+      { status: 409 },
+    );
+  }
+
+  const cleanEmail = customer.email.toLowerCase().trim();
+  const acceptedAtUtc = new Date().toISOString();
+  const consentKey = readCookie(request, CONSENT_COOKIE_NAME);
+  const { data: existingOrder, error: existingOrderError } = await supabase
+    .from("orders")
+    .select(
+      "id,order_number,email,total_cents,discount_cents,download_access_token_ciphertext",
+    )
+    .eq("checkout_attempt_id", checkoutAttemptId)
+    .maybeSingle();
+
+  if (existingOrderError) {
+    return NextResponse.json(
+      { error: existingOrderError.message },
+      { status: 500 },
+    );
+  }
+
+  if (existingOrder) {
+    if (
+      existingOrder.email !== cleanEmail ||
+      existingOrder.total_cents !== totalCents
+    ) {
+      return NextResponse.json(
+        {
+          error:
+            "This checkout attempt changed. Review the order and start payment again.",
+        },
+        { status: 409 },
+      );
     }
 
-    const pricing = getLaunchOfferPricing({
-      priceCents: product.price_cents,
-      productType: product.product_type,
-      packageTier: product.package_tier,
-    });
-    const unitPriceCents = pricing.priceCents;
+    const existingAccessToken = decryptDownloadAccessToken(
+      existingOrder.download_access_token_ciphertext,
+    );
 
-    return {
-      product,
-      quantity: item.quantity,
-      pricing,
-      unitPriceCents,
-      subtotalCents: product.price_cents * item.quantity,
-      discountCents: pricing.discountCents * item.quantity,
-      totalCents: unitPriceCents * item.quantity,
-    };
-  });
-  const subtotalCents = normalisedItems.reduce(
-    (total, item) => total + item.subtotalCents,
-    0,
-  );
-  const discountCents = normalisedItems.reduce(
-    (total, item) => total + item.discountCents,
-    0,
-  );
-  const totalCents = normalisedItems.reduce(
-    (total, item) => total + item.totalCents,
-    0,
-  );
+    if (!existingAccessToken) {
+      return NextResponse.json(
+        { error: "The existing secure order session could not be restored." },
+        { status: 500 },
+      );
+    }
+
+    const [
+      { count: existingItemCount },
+      { data: existingPaymentRow },
+    ] = await Promise.all([
+      supabase
+        .from("order_items")
+        .select("id", { count: "exact", head: true })
+        .eq("order_id", existingOrder.id),
+      supabase
+        .from("payments")
+        .select("id")
+        .eq("order_id", existingOrder.id)
+        .eq("provider", "payfast")
+        .maybeSingle(),
+    ]);
+
+    if (!existingItemCount || !existingPaymentRow) {
+      return NextResponse.json(
+        {
+          error:
+            "This checkout attempt is still being prepared. Wait a moment and try the payment button again.",
+        },
+        { status: 409 },
+      );
+    }
+
+    const existingPayment = createPayFastPayment({
+      orderNumber: existingOrder.order_number,
+      email: cleanEmail,
+      amountCents: totalCents,
+      itemName:
+        normalisedItems.length === 1
+          ? normalisedItems[0].product.name
+          : `DokKit order ${existingOrder.order_number}`,
+    });
+    const existingResponse = NextResponse.json({
+      orderNumber: existingOrder.order_number,
+      discountCents: existingOrder.discount_cents,
+      totalCents: existingOrder.total_cents,
+      payment: existingPayment,
+    });
+
+    existingResponse.cookies.set(
+      createOrderAccessCookieName(existingOrder.order_number),
+      existingAccessToken,
+      {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 8 * 24 * 60 * 60,
+      },
+    );
+
+    return existingResponse;
+  }
+
   const orderNumber = createOrderNumber();
-  const orderAccessToken = createOrderAccessToken(orderNumber);
-  const cleanEmail = customer.email.toLowerCase().trim();
+  const orderAccessToken = createOrderAccessToken();
   const payment = createPayFastPayment({
     orderNumber,
-    orderAccessToken,
     email: cleanEmail,
     amountCents: totalCents,
     itemName:
@@ -207,11 +278,27 @@ export async function POST(request: Request) {
       total_cents: totalCents,
       currency: "ZAR",
       payfast_m_payment_id: orderNumber,
+      checkout_attempt_id: checkoutAttemptId,
+      policy_bundle_version: POLICY_BUNDLE_VERSION,
+      policy_accepted_at: acceptedAtUtc,
+      download_access_token_hash: hashDownloadToken(orderAccessToken),
+      download_access_token_ciphertext:
+        encryptDownloadAccessToken(orderAccessToken),
     })
     .select("id,order_number,total_cents")
     .single();
 
   if (orderError) {
+    if (orderError.code === "23505") {
+      return NextResponse.json(
+        {
+          error:
+            "This checkout attempt is already being prepared. Wait a moment and try the payment button again.",
+        },
+        { status: 409 },
+      );
+    }
+
     return NextResponse.json({ error: orderError.message }, { status: 500 });
   }
 
@@ -229,23 +316,7 @@ export async function POST(request: Request) {
         workbook_count: item.product.workbook_count,
         pdf_count: item.product.pdf_count,
         metadata: item.product.metadata,
-        pricing: {
-          standard_price_cents: item.product.price_cents,
-          unit_price_cents: item.unitPriceCents,
-          line_discount_cents: item.discountCents,
-          offer_label: item.pricing.isApplied ? LAUNCH_OFFER_LABEL : null,
-          offer_applied: item.pricing.isApplied,
-          offer_discount_percent: item.pricing.isApplied
-            ? item.pricing.discountPercent
-            : 0,
-          offer_period: item.pricing.isApplied
-            ? LAUNCH_OFFER_DATE_RANGE_LABEL
-            : null,
-          offer_starts_at: item.pricing.isApplied
-            ? LAUNCH_OFFER_START_ISO
-            : null,
-          offer_ends_at: item.pricing.isApplied ? LAUNCH_OFFER_END_ISO : null,
-        },
+        pricing: item.snapshotPricing,
       },
       quantity: item.quantity,
       unit_price_cents: item.unitPriceCents,
@@ -262,17 +333,27 @@ export async function POST(request: Request) {
     provider: "payfast",
     status: "initiated",
     amount_cents: totalCents,
-    raw_payload: attribution
-      ? {
-          _meta_attribution: {
-            fbp: attribution.fbp,
-            fbc: attribution.fbc,
-            client_ip_address: getClientIp(request),
-            client_user_agent:
-              request.headers.get("user-agent")?.slice(0, 500) ?? undefined,
-          },
-        }
-      : {},
+    raw_payload: {
+      _policy_acceptance: {
+        policy_bundle_version: POLICY_BUNDLE_VERSION,
+        accepted_at_utc: acceptedAtUtc,
+        customer_id: customerRow.id,
+      },
+      ...(attribution
+        ? {
+            _meta_attribution: {
+              fbp: attribution.fbp,
+              fbc: attribution.fbc,
+              client_ip_address: getClientIp(request),
+              client_user_agent:
+                request.headers.get("user-agent")?.slice(0, 500) ?? undefined,
+              consent_key_hash: consentKey
+                ? hashConsentKey(consentKey)
+                : undefined,
+            },
+          }
+        : {}),
+    },
   });
 
   if (paymentError) {
@@ -294,7 +375,7 @@ export async function POST(request: Request) {
     })),
   });
 
-  return NextResponse.json(
+  const response = NextResponse.json(
     {
       orderNumber: order.order_number,
       discountCents,
@@ -303,4 +384,18 @@ export async function POST(request: Request) {
     },
     { status: 201 },
   );
+
+  response.cookies.set(
+    createOrderAccessCookieName(orderNumber),
+    orderAccessToken,
+    {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 8 * 24 * 60 * 60,
+    },
+  );
+
+  return response;
 }

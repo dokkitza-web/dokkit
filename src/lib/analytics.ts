@@ -165,6 +165,14 @@ export function persistConsentPreferences(
   }
 
   window.dispatchEvent(new Event(CONSENT_CHANGED_EVENT));
+  void fetch("/api/consent", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(preferences),
+    keepalive: true,
+  }).catch(() => {
+    // The local choice remains effective if the audit record is temporarily unavailable.
+  });
 
   return nextPreferences;
 }

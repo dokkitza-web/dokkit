@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  CONSENT_COOKIE_NAME,
+  hashConsentKey,
+  readCookie,
+} from "@/lib/consent";
 import { sendMetaConversionEvent } from "@/lib/meta-conversions";
+import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
 
@@ -54,6 +60,24 @@ function hasAllowedOrigin(request: Request, eventSourceUrl: string) {
   );
 }
 
+async function hasMarketingConsent(request: Request) {
+  const consentKey = readCookie(request, CONSENT_COOKIE_NAME);
+
+  if (!consentKey) {
+    return false;
+  }
+
+  const { data, error } = await createSupabaseServiceClient()
+    .from("consent_records")
+    .select("marketing_allowed")
+    .eq("consent_key_hash", hashConsentKey(consentKey))
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return !error && data?.marketing_allowed === true;
+}
+
 export async function POST(request: Request) {
   const parsedBody = metaEventSchema.safeParse(await request.json());
 
@@ -64,6 +88,10 @@ export async function POST(request: Request) {
   const { eventName, eventId, eventSourceUrl, customData } = parsedBody.data;
 
   if (!hasAllowedOrigin(request, eventSourceUrl)) {
+    return NextResponse.json({ accepted: false }, { status: 403 });
+  }
+
+  if (!(await hasMarketingConsent(request))) {
     return NextResponse.json({ accepted: false }, { status: 403 });
   }
 

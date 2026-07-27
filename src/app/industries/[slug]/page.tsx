@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { ProductInformationBox } from "@/components/product-information-box";
 import {
   formatPrice,
   type IndustryPackageProduct,
@@ -431,6 +432,8 @@ export default async function IndustryDetailPage({
                     ) : null}
                   </div>
                 </div>
+
+                <ProductInformationBox className="mx-6 mt-6 lg:mx-8" />
 
                 <div className="grid gap-8 p-6 lg:grid-cols-[0.72fr_1.28fr] lg:p-8">
                   <div className="grid content-start gap-7">

@@ -75,6 +75,8 @@ function renderEmailLayout({
   actionUrl: string;
   children: string;
 }) {
+  const siteUrl = getSiteUrl();
+
   return `
     <!doctype html>
     <html>
@@ -100,9 +102,18 @@ function renderEmailLayout({
               If the button does not open, copy and paste this link into your browser:<br />
               <a href="${escapeHtml(actionUrl)}" style="color:#ff6a00;">${escapeHtml(actionUrl)}</a>
             </p>
+            <p style="margin:24px 0 0;color:#5f5f66;font-size:12px;line-height:1.8;">
+              <a href="${siteUrl}/terms" style="color:#005f73;">Website Terms</a> |
+              <a href="${siteUrl}/licence" style="color:#005f73;">Template Licence</a> |
+              <a href="${siteUrl}/digital-delivery" style="color:#005f73;">Digital Delivery Policy</a> |
+              <a href="${siteUrl}/refunds" style="color:#005f73;">Refund and Remedy Policy</a> |
+              <a href="${siteUrl}/privacy" style="color:#005f73;">Privacy and Cookies Policy</a>
+            </p>
           </div>
           <p style="margin:18px 0 0;color:#6b7772;font-size:12px;line-height:1.6;text-align:center;">
-            DokKit sends this email because an order was placed on the DokKit website.
+            DokKit is operated by DokKit (Pty) Ltd, registration number 2026/470231/07.<br />
+            177 Springbok Road, Bloemfontein, Free State, 9301, South Africa.<br />
+            +27 83 976 0291 | support@dokkit.co.za. DokKit is not VAT-registered and does not charge VAT.
           </p>
         </div>
       </body>
@@ -261,7 +272,7 @@ export async function sendOrderConfirmationEmail({
   items: EmailOrderItem[];
   accessToken: string;
 }) {
-  const orderUrl = `${getSiteUrl()}/checkout/success?order=${encodeURIComponent(orderNumber)}&access=${encodeURIComponent(accessToken)}`;
+  const orderUrl = `${getSiteUrl()}/checkout/success?order=${encodeURIComponent(orderNumber)}`;
   const subject = `DokKit order ${orderNumber} received`;
   const html = renderEmailLayout({
     title: "Order received",
@@ -271,6 +282,7 @@ export async function sendOrderConfirmationEmail({
     actionUrl: orderUrl,
     children: `
       <p style="margin:0 0 12px;font-size:15px;"><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
+      <p style="margin:0 0 12px;font-size:15px;"><strong>Secure access code:</strong> ${escapeHtml(accessToken)}</p>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:14px;">
         ${renderItemsHtml(items)}
         <tr>
@@ -285,11 +297,18 @@ export async function sendOrderConfirmationEmail({
     "",
     `Order: ${orderNumber}`,
     `Total: ${formatPrice(totalCents)}`,
+    `Secure access code: ${accessToken}`,
     "",
     renderItemsText(items),
     "",
     "View order status:",
     orderUrl,
+    "",
+    `Website Terms: ${getSiteUrl()}/terms`,
+    `Template Licence: ${getSiteUrl()}/licence`,
+    `Digital Delivery Policy: ${getSiteUrl()}/digital-delivery`,
+    `Refund and Remedy Policy: ${getSiteUrl()}/refunds`,
+    `Privacy and Cookies Policy: ${getSiteUrl()}/privacy`,
   ].join("\n");
 
   return sendTransactionalEmail({
@@ -313,6 +332,7 @@ export async function sendDownloadReadyEmail({
   totalCents,
   items,
   accessToken,
+  templateKey = "download_ready",
 }: {
   supabase: SupabaseClient;
   orderId: string;
@@ -322,8 +342,9 @@ export async function sendDownloadReadyEmail({
   totalCents: number;
   items: EmailOrderItem[];
   accessToken: string;
+  templateKey?: string;
 }) {
-  const downloadUrl = `${getSiteUrl()}/checkout/success?order=${encodeURIComponent(orderNumber)}&access=${encodeURIComponent(accessToken)}`;
+  const downloadUrl = `${getSiteUrl()}/checkout/success?order=${encodeURIComponent(orderNumber)}`;
   const subject = `Your DokKit downloads are ready`;
   const html = renderEmailLayout({
     title: "Your downloads are ready",
@@ -333,6 +354,7 @@ export async function sendDownloadReadyEmail({
     actionUrl: downloadUrl,
     children: `
       <p style="margin:0 0 12px;font-size:15px;"><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
+      <p style="margin:0 0 12px;font-size:15px;"><strong>Secure access code:</strong> ${escapeHtml(accessToken)}</p>
       <table style="width:100%;border-collapse:collapse;margin-top:12px;font-size:14px;">
         ${renderItemsHtml(items)}
         <tr>
@@ -347,11 +369,18 @@ export async function sendDownloadReadyEmail({
     "",
     `Order: ${orderNumber}`,
     `Paid total: ${formatPrice(totalCents)}`,
+    `Secure access code: ${accessToken}`,
     "",
     renderItemsText(items),
     "",
     "Open secure downloads:",
     downloadUrl,
+    "",
+    `Website Terms: ${getSiteUrl()}/terms`,
+    `Template Licence: ${getSiteUrl()}/licence`,
+    `Digital Delivery Policy: ${getSiteUrl()}/digital-delivery`,
+    `Refund and Remedy Policy: ${getSiteUrl()}/refunds`,
+    `Privacy and Cookies Policy: ${getSiteUrl()}/privacy`,
   ].join("\n");
 
   return sendTransactionalEmail({
@@ -359,7 +388,7 @@ export async function sendDownloadReadyEmail({
     orderId,
     customerId,
     to,
-    templateKey: "download_ready",
+    templateKey,
     subject,
     html,
     text,
@@ -426,6 +455,77 @@ export async function sendAdminPaidOrderNotificationEmail({
     customerId,
     to: adminEmail,
     templateKey: "admin_paid_order_notification",
+    subject,
+    html,
+    text,
+  });
+}
+
+export async function sendRefundStatusEmail({
+  supabase,
+  orderId,
+  customerId,
+  orderNumber,
+  to,
+  refundStatus,
+  reason,
+}: {
+  supabase: SupabaseClient;
+  orderId: string;
+  customerId?: string | null;
+  orderNumber: string;
+  to: string;
+  refundStatus: "requested" | "approved" | "initiated" | "completed" | "declined";
+  reason?: string | null;
+}) {
+  const statusCopy = {
+    requested:
+      "DokKit has recorded your refund or remedy request for review.",
+    approved:
+      "DokKit has approved the recorded refund or remedy request. The next processing step will be recorded separately.",
+    initiated:
+      "DokKit has initiated the approved refund to the original payment method. PayFast and your bank may take additional time to reflect the credit.",
+    completed:
+      "DokKit has recorded the approved refund as completed. Contact support if the credit does not appear after your payment provider's normal processing time.",
+    declined:
+      "DokKit has completed its review and did not approve the recorded voluntary refund request. This does not remove any mandatory statutory right or remedy.",
+  }[refundStatus];
+  const contactUrl = `${getSiteUrl()}/contact`;
+  const subject = `DokKit order ${orderNumber}: refund status ${refundStatus}`;
+  const html = renderEmailLayout({
+    title: "Refund and remedy update",
+    intro: statusCopy,
+    actionLabel: "Contact DokKit",
+    actionUrl: contactUrl,
+    children: `
+      <p style="margin:0 0 12px;font-size:15px;"><strong>Order:</strong> ${escapeHtml(orderNumber)}</p>
+      <p style="margin:0 0 12px;font-size:15px;"><strong>Status:</strong> ${escapeHtml(refundStatus)}</p>
+      ${
+        reason
+          ? `<p style="margin:0;font-size:15px;"><strong>Note:</strong> ${escapeHtml(reason)}</p>`
+          : ""
+      }
+    `,
+  });
+  const text = [
+    "DokKit refund and remedy update",
+    "",
+    `Order: ${orderNumber}`,
+    `Status: ${refundStatus}`,
+    statusCopy,
+    reason ? `Note: ${reason}` : "",
+    "",
+    `Contact DokKit: ${contactUrl}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return sendTransactionalEmail({
+    supabase,
+    orderId,
+    customerId,
+    to,
+    templateKey: `refund_status_${refundStatus}`,
     subject,
     html,
     text,

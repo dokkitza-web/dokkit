@@ -126,13 +126,11 @@ function createSignature(fields: PayFastFields, passphrase?: string) {
 
 export function createPayFastPayment({
   orderNumber,
-  orderAccessToken,
   email,
   amountCents,
   itemName,
 }: {
   orderNumber: string;
-  orderAccessToken: string;
   email: string;
   amountCents: number;
   itemName: string;
@@ -161,8 +159,8 @@ export function createPayFastPayment({
   const fields: PayFastFields = {
     merchant_id: merchantId,
     merchant_key: merchantKey,
-    return_url: `${siteUrl}/checkout/success?order=${encodeURIComponent(orderNumber)}&access=${encodeURIComponent(orderAccessToken)}`,
-    cancel_url: `${siteUrl}/checkout/cancelled?order=${encodeURIComponent(orderNumber)}&access=${encodeURIComponent(orderAccessToken)}`,
+    return_url: `${siteUrl}/checkout/success?order=${encodeURIComponent(orderNumber)}`,
+    cancel_url: `${siteUrl}/checkout/cancelled?order=${encodeURIComponent(orderNumber)}`,
     notify_url: `${siteUrl}/api/payfast/itn`,
     email_address: email,
     m_payment_id: orderNumber,

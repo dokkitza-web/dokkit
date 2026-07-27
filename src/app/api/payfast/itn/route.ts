@@ -2,7 +2,7 @@ import crypto from "node:crypto";
 import dns from "node:dns/promises";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
-import { createOrderAccessToken } from "@/lib/downloads";
+import { decryptDownloadAccessToken } from "@/lib/downloads";
 import {
   sendAdminPaidOrderNotificationEmail,
   sendDownloadReadyEmail,
@@ -23,6 +23,7 @@ type VerifiedOrderRow = {
   status: string;
   email: string;
   customer_id: string | null;
+  download_access_token_ciphertext: string | null;
 };
 
 type OrderEmailItemRow = {
@@ -39,6 +40,7 @@ type StoredMetaAttribution = {
   fbc?: string;
   client_ip_address?: string;
   client_user_agent?: string;
+  consent_key_hash?: string;
 };
 
 function encodePayFastValue(value: string) {
@@ -166,7 +168,13 @@ async function sendDownloadEmailForOrder({
   supabase: SupabaseClient;
   order: VerifiedOrderRow;
 }) {
-  const accessToken = createOrderAccessToken(order.order_number);
+  const accessToken = decryptDownloadAccessToken(
+    order.download_access_token_ciphertext,
+  );
+
+  if (!accessToken) {
+    throw new Error("Secure order access code is unavailable.");
+  }
 
   const { data: orderItems } = await supabase
     .from("order_items")
@@ -226,6 +234,10 @@ function getStoredMetaAttribution(rawPayload: unknown) {
       typeof candidate.client_user_agent === "string"
         ? candidate.client_user_agent
         : undefined,
+    consent_key_hash:
+      typeof candidate.consent_key_hash === "string"
+        ? candidate.consent_key_hash
+        : undefined,
   };
 }
 
@@ -243,6 +255,22 @@ async function sendMetaPurchaseForOrder({
   }
 
   try {
+    if (!attribution.consent_key_hash) {
+      return;
+    }
+
+    const { data: consentRecord, error: consentError } = await supabase
+      .from("consent_records")
+      .select("marketing_allowed")
+      .eq("consent_key_hash", attribution.consent_key_hash)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (consentError || consentRecord?.marketing_allowed !== true) {
+      return;
+    }
+
     const { data: orderItems, error: orderItemsError } = await supabase
       .from("order_items")
       .select("quantity,total_cents,product_snapshot")
@@ -323,7 +351,9 @@ export async function POST(request: Request) {
     const supabase = createSupabaseServiceClient();
     const { data: order, error: orderError } = await supabase
       .from("orders")
-      .select("id,order_number,total_cents,status,email,customer_id")
+      .select(
+        "id,order_number,total_cents,status,email,customer_id,download_access_token_ciphertext",
+      )
       .eq("order_number", orderNumber)
       .single();
 
@@ -390,6 +420,7 @@ export async function POST(request: Request) {
             status: "invalid",
             provider_payment_id: pfPaymentId ?? payment?.provider_payment_id,
             raw_payload: {
+              ...(payment?.raw_payload ?? {}),
               ...data,
               _payfast_environment: payFastConfig.mode,
               _meta_attribution: metaAttribution,
@@ -402,48 +433,35 @@ export async function POST(request: Request) {
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
-    const verifiedOrder = order as VerifiedOrderRow;
+    if (!paymentId) {
+      throw new Error("PayFast payment row not found.");
+    }
 
-    if (order.status === "paid" || payment?.status === "verified") {
-      await sendMetaPurchaseForOrder({
-        supabase,
-        order: verifiedOrder,
-        attribution: metaAttribution,
-      });
+    const { data: newlyVerified, error: finaliseError } = await supabase.rpc(
+      "finalise_verified_payfast_order",
+      {
+        p_order_id: order.id,
+        p_payment_id: paymentId,
+        p_provider_payment_id:
+          pfPaymentId ?? payment?.provider_payment_id ?? null,
+        p_raw_payload: {
+          ...(payment?.raw_payload ?? {}),
+          ...data,
+          _payfast_environment: payFastConfig.mode,
+          _meta_attribution: metaAttribution,
+        },
+      },
+    );
 
-      await sendDownloadEmailForOrder({
-        supabase,
-        order: verifiedOrder,
-      });
+    if (finaliseError) {
+      throw new Error(finaliseError.message);
+    }
 
+    if (!newlyVerified) {
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
-    if (paymentId) {
-      await supabase
-        .from("payments")
-        .update({
-          status: "verified",
-          provider_payment_id: pfPaymentId ?? payment?.provider_payment_id,
-          raw_payload: {
-            ...data,
-            _payfast_environment: payFastConfig.mode,
-            _meta_attribution: metaAttribution,
-          },
-          verified_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        })
-        .eq("id", paymentId);
-    }
-
-    await supabase
-      .from("orders")
-      .update({
-        status: "paid",
-        paid_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", order.id);
+    const verifiedOrder = order as VerifiedOrderRow;
 
     await sendMetaPurchaseForOrder({
       supabase,

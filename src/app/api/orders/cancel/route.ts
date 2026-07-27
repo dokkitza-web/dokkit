@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import {
+  getOrderAccessTokenFromRequest,
+  verifyOrderAccessToken,
+} from "@/lib/downloads";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
 export const runtime = "nodejs";
@@ -18,12 +22,27 @@ export async function POST(request: Request) {
   const supabase = createSupabaseServiceClient();
   const { data: order, error: orderError } = await supabase
     .from("orders")
-    .select("id,status,order_number")
+    .select("id,status,order_number,download_access_token_hash")
     .eq("order_number", parsedBody.data.orderNumber)
     .single();
 
   if (orderError || !order) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });
+  }
+
+  if (
+    !verifyOrderAccessToken({
+      suppliedToken: getOrderAccessTokenFromRequest(
+        request,
+        order.order_number,
+      ),
+      storedHash: order.download_access_token_hash,
+    })
+  ) {
+    return NextResponse.json(
+      { error: "This secure order session is not valid." },
+      { status: 403 },
+    );
   }
 
   if (order.status === "paid") {

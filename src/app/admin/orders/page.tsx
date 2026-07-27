@@ -2,6 +2,8 @@ import Link from "next/link";
 import { AdminShell } from "@/components/admin-shell";
 import {
   clearOrderFromDashboard,
+  recordRefundStatus,
+  reissueOrderAccess,
   restoreOrderToDashboard,
 } from "@/app/admin/orders/actions";
 import { ClearOrderButton } from "@/app/admin/orders/clear-order-button";
@@ -26,6 +28,19 @@ type OrderRow = {
   currency: string;
   paid_at: string | null;
   created_at: string;
+  access_expires_at: string | null;
+  successful_downloads: number;
+  download_limit: number;
+  access_reissue_count: number;
+  refund_status:
+    | "not_requested"
+    | "requested"
+    | "approved"
+    | "initiated"
+    | "completed"
+    | "declined";
+  refund_reason: string | null;
+  refund_customer_notified_at: string | null;
 };
 
 type CustomerRow = {
@@ -168,6 +183,8 @@ function StatusMessage({
 }) {
   const cleared = getSearchParam(searchParams, "cleared");
   const restored = getSearchParam(searchParams, "restored");
+  const reissued = getSearchParam(searchParams, "reissued");
+  const refundUpdated = getSearchParam(searchParams, "refund-updated");
   const error = getSearchParam(searchParams, "error");
 
   if (error) {
@@ -191,6 +208,23 @@ function StatusMessage({
     return (
       <div className="mb-6 rounded-2xl border border-[#ffd8bd] bg-[#fff4eb] p-5 text-sm font-bold text-[#d95400]">
         Order restored to the active dashboard.
+      </div>
+    );
+  }
+
+  if (reissued) {
+    return (
+      <div className="mb-6 rounded-2xl border border-[#ffd8bd] bg-[#fff4eb] p-5 text-sm font-bold text-[#d95400]">
+        Seven-day secure access was reissued and the customer notification was
+        sent.
+      </div>
+    );
+  }
+
+  if (refundUpdated) {
+    return (
+      <div className="mb-6 rounded-2xl border border-[#ffd8bd] bg-[#fff4eb] p-5 text-sm font-bold text-[#d95400]">
+        Refund status, audit history and customer notification were updated.
       </div>
     );
   }
@@ -226,7 +260,7 @@ export default async function AdminOrdersPage({
         ? await supabase
             .from("orders")
             .select(
-              "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at",
+              "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at,access_expires_at,successful_downloads,download_limit,access_reissue_count,refund_status,refund_reason,refund_customer_notified_at",
             )
             .in("id", clearedOrderIds)
             .order("created_at", { ascending: false })
@@ -234,7 +268,7 @@ export default async function AdminOrdersPage({
         : await supabase
             .from("orders")
             .select(
-              "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at",
+              "id,order_number,email,customer_id,status,total_cents,currency,paid_at,created_at,access_expires_at,successful_downloads,download_limit,access_reissue_count,refund_status,refund_reason,refund_customer_notified_at",
             )
             .order("created_at", { ascending: false })
             .limit(100);
@@ -441,6 +475,20 @@ export default async function AdminOrdersPage({
                     <p className="mt-1 text-xs text-[#5f5f66]">
                       {order.currency}
                     </p>
+                    {order.status === "paid" ? (
+                      <form
+                        action={reissueOrderAccess}
+                        className="mt-3 lg:flex lg:justify-end"
+                      >
+                        <input type="hidden" name="orderId" value={order.id} />
+                        <button
+                          type="submit"
+                          className="rounded-md border border-[#c24100] px-3 py-2 text-xs font-black text-[#a63d00] transition hover:bg-[#fff4eb]"
+                        >
+                          Reissue 7-day access
+                        </button>
+                      </form>
+                    ) : null}
                     {isOrderCleared ? (
                       <form
                         action={restoreOrderToDashboard}
@@ -522,6 +570,16 @@ export default async function AdminOrdersPage({
                     <p className="mt-1 text-sm text-[#5f5f66]">
                       Latest ITN: {latestItn?.status_text ?? "-"}
                     </p>
+                    <p className="mt-1 text-sm text-[#5f5f66]">
+                      Access expires: {formatDate(order.access_expires_at)}
+                    </p>
+                    <p className="mt-1 text-sm text-[#5f5f66]">
+                      Successful downloads: {order.successful_downloads} /{" "}
+                      {order.download_limit}
+                    </p>
+                    <p className="mt-1 text-sm text-[#5f5f66]">
+                      Reissues: {order.access_reissue_count}
+                    </p>
                   </div>
                 </div>
 
@@ -597,6 +655,56 @@ export default async function AdminOrdersPage({
                     </div>
                   </div>
                 </div>
+
+                <form
+                  action={recordRefundStatus}
+                  className="mt-5 border-t border-black/10 pt-5"
+                >
+                  <input type="hidden" name="orderId" value={order.id} />
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-end">
+                    <label className="grid flex-1 gap-2 text-sm font-semibold">
+                      Refund or remedy status
+                      <select
+                        name="refundStatus"
+                        defaultValue={
+                          order.refund_status === "not_requested"
+                            ? "requested"
+                            : order.refund_status
+                        }
+                        className="rounded-md border border-black/15 bg-white px-3 py-2"
+                      >
+                        <option value="requested">Requested</option>
+                        <option value="approved">Approved</option>
+                        <option value="initiated">Refund initiated</option>
+                        <option value="completed">Refund completed</option>
+                        <option value="declined">Declined</option>
+                      </select>
+                    </label>
+                    <label className="grid flex-[2] gap-2 text-sm font-semibold">
+                      Customer-facing note
+                      <input
+                        name="reason"
+                        type="text"
+                        maxLength={1000}
+                        defaultValue={order.refund_reason ?? ""}
+                        className="rounded-md border border-black/15 bg-white px-3 py-2"
+                      />
+                    </label>
+                    <button
+                      type="submit"
+                      className="min-h-10 rounded-md bg-[#111111] px-4 py-2 text-sm font-black text-white transition hover:bg-[#333333]"
+                    >
+                      Record and notify
+                    </button>
+                  </div>
+                  <p className="mt-2 text-xs leading-5 text-[#5f5f66]">
+                    Current: {order.refund_status}. Customer notified:{" "}
+                    {formatDate(order.refund_customer_notified_at)}. This records
+                    the controlled action and email; complete any required
+                    PayFast dashboard refund separately before marking it
+                    initiated or completed.
+                  </p>
+                </form>
               </article>
             );
           })}

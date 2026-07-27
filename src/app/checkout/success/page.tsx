@@ -9,9 +9,9 @@ export const metadata = {
 export default async function CheckoutSuccessPage({
   searchParams,
 }: {
-  searchParams: Promise<{ order?: string; access?: string }>;
+  searchParams: Promise<{ order?: string }>;
 }) {
-  const { order, access } = await searchParams;
+  const { order } = await searchParams;
 
   return (
     <section className="mx-auto max-w-3xl px-6 py-14 lg:px-8">
@@ -27,7 +27,7 @@ export default async function CheckoutSuccessPage({
           payment notification confirms the order.
         </p>
         {order ? (
-          <OrderStatusPoll orderNumber={order} accessToken={access ?? ""} />
+          <OrderStatusPoll orderNumber={order} />
         ) : null}
         <Link
           href="/industries"

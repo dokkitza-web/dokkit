@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { verifyOrderAccessToken } from "@/lib/downloads";
+import {
+  getOrderAccessTokenFromRequest,
+  verifyOrderAccessToken,
+} from "@/lib/downloads";
 import { hasVerifiedLivePayFastPayment } from "@/lib/payment-verification";
 import { createSupabaseServiceClient } from "@/lib/supabase/service";
 
@@ -8,7 +11,6 @@ export const runtime = "nodejs";
 
 const orderQuerySchema = z.object({
   order: z.string().trim().min(1).max(40),
-  access: z.string().trim().min(20).max(200).optional().or(z.literal("")),
 });
 
 type OrderItemRow = {
@@ -35,7 +37,6 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const parsedQuery = orderQuerySchema.safeParse({
     order: url.searchParams.get("order"),
-    access: url.searchParams.get("access") ?? "",
   });
 
   if (!parsedQuery.success) {
@@ -45,12 +46,26 @@ export async function GET(request: Request) {
   const supabase = createSupabaseServiceClient();
   const { data: order, error: orderError } = await supabase
     .from("orders")
-    .select("id,order_number,status,total_cents,paid_at,created_at")
+    .select(
+      "id,order_number,status,total_cents,paid_at,created_at,email,access_issued_at,access_expires_at,download_limit,successful_downloads,download_access_token_hash",
+    )
     .eq("order_number", parsedQuery.data.order)
     .single();
 
   if (orderError || !order) {
     return NextResponse.json({ error: "Order not found." }, { status: 404 });
+  }
+
+  const hasOrderAccess = verifyOrderAccessToken({
+    suppliedToken: getOrderAccessTokenFromRequest(request, order.order_number),
+    storedHash: order.download_access_token_hash,
+  });
+
+  if (!hasOrderAccess) {
+    return NextResponse.json(
+      { error: "This secure order link is not valid." },
+      { status: 403 },
+    );
   }
 
   const { data: items, error: itemsError } = await supabase
@@ -87,10 +102,9 @@ export async function GET(request: Request) {
   const downloadsUnlocked =
     order.status === "paid" &&
     hasLivePayment &&
-    verifyOrderAccessToken({
-      orderNumber: order.order_number,
-      suppliedToken: parsedQuery.data.access,
-    });
+    Boolean(order.access_expires_at) &&
+    new Date(order.access_expires_at).getTime() > Date.now() &&
+    order.successful_downloads < order.download_limit;
   const productIds = [
     ...new Set(
       orderItems
@@ -126,8 +140,17 @@ export async function GET(request: Request) {
     orderNumber: order.order_number,
     status: order.status,
     totalCents: order.total_cents,
+    customerEmail: order.email,
     paidAt: order.paid_at,
     createdAt: order.created_at,
+    accessIssuedAt: order.access_issued_at,
+    accessExpiresAt: order.access_expires_at,
+    successfulDownloads: order.successful_downloads,
+    downloadLimit: order.download_limit,
+    remainingDownloads: Math.max(
+      order.download_limit - order.successful_downloads,
+      0,
+    ),
     downloadsUnlocked,
     items: orderItems.map((item) => {
       const snapshot = item.product_snapshot;

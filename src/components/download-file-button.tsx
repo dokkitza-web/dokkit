@@ -13,13 +13,11 @@ function formatFileKind(kind: string) {
 
 export function DownloadFileButton({
   orderNumber,
-  accessToken,
   productFileId,
   fileKind,
   versionLabel,
 }: {
   orderNumber: string;
-  accessToken: string;
   productFileId: string;
   fileKind: string;
   versionLabel: string;
@@ -39,7 +37,6 @@ export function DownloadFileButton({
         },
         body: JSON.stringify({
           orderNumber,
-          accessToken,
           productFileId,
         }),
       });

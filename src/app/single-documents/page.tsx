@@ -1,4 +1,5 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { ProductInformationBox } from "@/components/product-information-box";
 import { SingleDocumentPreview } from "@/components/single-document-preview";
 import {
   formatFileFormats,
@@ -31,6 +32,7 @@ export default async function SingleDocumentsPage() {
           industry package.
         </p>
       </div>
+      <ProductInformationBox className="mt-8 max-w-4xl" />
       <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {singleDocuments.map((document) => (
           <article

@@ -2,6 +2,9 @@ import crypto from "node:crypto";
 
 export const DOWNLOAD_LINK_TTL_SECONDS = 10 * 60;
 export const SUPABASE_SIGNED_URL_TTL_SECONDS = 60;
+export const ORDER_ACCESS_TTL_SECONDS = 7 * 24 * 60 * 60;
+export const ORDER_DOWNLOAD_LIMIT = 5;
+export const ACCESS_REISSUE_SUPPORT_SECONDS = 365 * 24 * 60 * 60;
 
 function getDownloadTokenSecret() {
   const secret =
@@ -21,39 +24,18 @@ function getEncryptionKey() {
   return crypto.createHash("sha256").update(getDownloadTokenSecret()).digest();
 }
 
-function timingSafeStringEqual(left: string, right: string) {
-  const leftBuffer = Buffer.from(left);
-  const rightBuffer = Buffer.from(right);
-
-  if (leftBuffer.length !== rightBuffer.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
-}
-
-export function createOrderAccessToken(orderNumber: string) {
-  return crypto
-    .createHmac("sha256", getDownloadTokenSecret())
-    .update(orderNumber)
-    .digest("base64url");
+export function createOrderAccessToken() {
+  return crypto.randomBytes(24).toString("base64url");
 }
 
 export function verifyOrderAccessToken({
-  orderNumber,
   suppliedToken,
+  storedHash,
 }: {
-  orderNumber: string;
   suppliedToken?: string | null;
+  storedHash?: string | null;
 }) {
-  if (!suppliedToken) {
-    return false;
-  }
-
-  return timingSafeStringEqual(
-    suppliedToken,
-    createOrderAccessToken(orderNumber),
-  );
+  return verifyDownloadAccessToken({ suppliedToken, storedHash });
 }
 
 export function createDownloadAccessToken() {
@@ -125,6 +107,38 @@ export function verifyDownloadAccessToken({
     Buffer.from(suppliedHash, "hex"),
     Buffer.from(storedHash, "hex"),
   );
+}
+
+export function createOrderAccessCookieName(orderNumber: string) {
+  const suffix = crypto
+    .createHash("sha256")
+    .update(orderNumber)
+    .digest("hex")
+    .slice(0, 16);
+
+  return `dokkit_order_access_${suffix}`;
+}
+
+export function getOrderAccessTokenFromRequest(
+  request: Request,
+  orderNumber: string,
+) {
+  const cookieName = createOrderAccessCookieName(orderNumber);
+  const cookieHeader = request.headers.get("cookie") ?? "";
+
+  for (const part of cookieHeader.split(";")) {
+    const [rawName, ...rawValue] = part.trim().split("=");
+
+    if (rawName === cookieName) {
+      try {
+        return decodeURIComponent(rawValue.join("="));
+      } catch {
+        return null;
+      }
+    }
+  }
+
+  return null;
 }
 
 export function getClientIp(request: Request) {

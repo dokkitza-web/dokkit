@@ -1,10 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useConsent } from "@/components/analytics-provider";
 import { PayfastLogo } from "@/components/payfast-logo";
 import { formatPrice } from "@/data/catalogue";
+import {
+  CHECKOUT_DISCLOSURE_COPY,
+  policyLinks,
+  supplierIdentity,
+} from "@/data/legal-policies";
+import {
+  getMetaAttribution,
+  toAnalyticsItem,
+  trackCommerceEvent,
+} from "@/lib/analytics";
 import {
   CART_STORAGE_KEY,
   formatCartDiscountTotal,
@@ -14,11 +24,6 @@ import {
   getCartItemOriginalLineTotalCents,
   type CartItem,
 } from "@/lib/cart";
-import {
-  getMetaAttribution,
-  toAnalyticsItem,
-  trackCommerceEvent,
-} from "@/lib/analytics";
 
 type CheckoutResponse = {
   orderNumber: string;
@@ -33,6 +38,19 @@ type CheckoutResponse = {
         mode: "configuration_required";
         message: string;
       };
+};
+
+type CheckoutQuote = {
+  subtotalCents: number;
+  discountCents: number;
+  totalCents: number;
+  items: {
+    slug: string;
+    name: string;
+    quantity: number;
+    unitPriceCents: number;
+    totalCents: number;
+  }[];
 };
 
 function readCart() {
@@ -68,10 +86,18 @@ export function CheckoutPage() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [pendingOrder, setPendingOrder] = useState<CheckoutResponse | null>(null);
+  const [pendingOrder, setPendingOrder] = useState<CheckoutResponse | null>(
+    null,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [policyAccepted, setPolicyAccepted] = useState(false);
+  const [acceptanceError, setAcceptanceError] = useState<string | null>(null);
+  const [quote, setQuote] = useState<CheckoutQuote | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteLoading, setQuoteLoading] = useState(true);
+  const checkoutAttemptId = useRef(crypto.randomUUID());
   const { preferences, ready } = useConsent();
-  const totalCents = useMemo(() => formatCartTotal(cart), [cart]);
+  const cartTotalCents = useMemo(() => formatCartTotal(cart), [cart]);
   const originalTotalCents = useMemo(
     () => formatCartOriginalTotal(cart),
     [cart],
@@ -80,6 +106,67 @@ export function CheckoutPage() {
     () => formatCartDiscountTotal(cart),
     [cart],
   );
+  const cartSignature = useMemo(
+    () =>
+      cart
+        .map((item) => `${item.slug}:${item.quantity}`)
+        .sort()
+        .join(","),
+    [cart],
+  );
+
+  useEffect(() => {
+    if (!cart.length) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    void fetch("/api/checkout/quote", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: cart.map((item) => ({
+          slug: item.slug,
+          quantity: item.quantity,
+        })),
+      }),
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        const payload = await response.json().catch(() => null);
+
+        if (!response.ok || !payload) {
+          throw new Error(
+            payload?.error ?? "Could not verify the order total.",
+          );
+        }
+
+        setQuote(payload as CheckoutQuote);
+      })
+      .catch((quoteRequestError) => {
+        if (
+          quoteRequestError instanceof DOMException &&
+          quoteRequestError.name === "AbortError"
+        ) {
+          return;
+        }
+
+        setQuote(null);
+        setQuoteError(
+          quoteRequestError instanceof Error
+            ? quoteRequestError.message
+            : "Could not verify the order total.",
+        );
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) {
+          setQuoteLoading(false);
+        }
+      });
+
+    return () => controller.abort();
+  }, [cart, cartSignature]);
 
   useEffect(() => {
     if (
@@ -90,29 +177,43 @@ export function CheckoutPage() {
       return;
     }
 
-    const cartSignature = cart
-      .map((item) => `${item.slug}:${item.quantity}`)
-      .sort()
-      .join(",");
-
     trackCommerceEvent({
       name: "begin_checkout",
       items: cart.map(toAnalyticsItem),
-      valueCents: totalCents,
+      valueCents: quote?.totalCents ?? cartTotalCents,
       dedupeKey: `begin_checkout:${cartSignature}`,
     });
   }, [
     cart,
+    cartSignature,
+    cartTotalCents,
     preferences?.analytics,
     preferences?.marketing,
+    quote?.totalCents,
     ready,
-    totalCents,
   ]);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
     setPendingOrder(null);
+
+    if (!policyAccepted) {
+      setAcceptanceError(
+        "Select the policy agreement before continuing to PayFast.",
+      );
+      return;
+    }
+
+    if (!quote) {
+      setError(
+        quoteError ??
+          "The server-verified total is not ready. Please wait and try again.",
+      );
+      return;
+    }
+
+    setAcceptanceError(null);
     setIsSubmitting(true);
 
     try {
@@ -131,12 +232,21 @@ export function CheckoutPage() {
             slug: item.slug,
             quantity: item.quantity,
           })),
+          quotedTotalCents: quote.totalCents,
+          checkoutAttemptId: checkoutAttemptId.current,
+          policyAccepted,
           attribution: getMetaAttribution(),
         }),
       });
       const payload = await response.json().catch(() => null);
 
-      if (!response.ok) {
+      if (!response.ok || !payload) {
+        if (response.status === 409 && Number.isInteger(payload?.totalCents)) {
+          setQuote((current) =>
+            current ? { ...current, totalCents: payload.totalCents } : current,
+          );
+        }
+
         setError(
           payload?.error ??
             "Checkout could not be started. Your cart is still saved.",
@@ -166,15 +276,13 @@ export function CheckoutPage() {
     return (
       <section className="mx-auto max-w-3xl px-6 py-14 lg:px-8">
         <div className="rounded-lg border border-[#ece7df] bg-white p-8 shadow-sm">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            Checkout needs a cart
-          </h1>
+          <h1 className="text-3xl font-semibold">Checkout needs a cart</h1>
           <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
             Add at least one DokKit product before checkout.
           </p>
           <Link
             href="/industries"
-            className="mt-6 inline-flex rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
+            className="mt-6 inline-flex min-h-12 items-center rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412]"
           >
             Browse industries
           </Link>
@@ -186,10 +294,10 @@ export function CheckoutPage() {
   return (
     <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
       <div className="max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.18em] text-[#ff6a00]">
+        <p className="text-sm font-semibold uppercase text-[#a63d00]">
           Secure checkout
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight">Checkout</h1>
+        <h1 className="mt-3 text-4xl font-semibold">Checkout</h1>
         <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
           Enter the email address that should receive the order confirmation and
           secure download link. Payment is completed on PayFast.
@@ -260,47 +368,96 @@ export function CheckoutPage() {
           ) : null}
 
           <div className="mt-6 border-l-4 border-[#c24100] bg-[#fff7f0] p-5">
-            <h2 className="font-black">What happens next</h2>
-            <ol className="mt-3 grid gap-2 text-sm leading-6 text-[#5f5f66]">
-              <li>1. DokKit creates your order and sends you to PayFast.</li>
-              <li>
-                2. Downloads stay locked until PayFast verifies the payment.
-              </li>
-              <li>
-                3. Your secure order page unlocks and the access link is emailed
-                to you.
-              </li>
-            </ol>
-            <p className="mt-3 text-sm font-semibold text-[#111111]">
-              One payment in South African rand. No subscription.
+            <p className="text-sm leading-6 text-[#3f3f43]">
+              {CHECKOUT_DISCLOSURE_COPY.replace(
+                "[CUSTOMER EMAIL]",
+                email || "your order email",
+              )}
             </p>
-            <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
-              Need help? Email{" "}
-              <Link
-                href="mailto:support@dokkit.co.za"
-                className="font-black text-[#005f73] underline underline-offset-4"
+          </div>
+
+          <div className="mt-6">
+            <label className="flex cursor-pointer items-start gap-3 text-sm leading-6 text-[#3f3f43]">
+              <input
+                type="checkbox"
+                name="policyAccepted"
+                checked={policyAccepted}
+                onChange={(event) => {
+                  setPolicyAccepted(event.target.checked);
+                  if (event.target.checked) {
+                    setAcceptanceError(null);
+                  }
+                }}
+                required
+                aria-describedby={
+                  acceptanceError ? "policy-acceptance-error" : undefined
+                }
+                className="mt-1 h-5 w-5 shrink-0 accent-[#c24100]"
+              />
+              <span>
+                I have reviewed my order and agree to the{" "}
+                <Link
+                  href="/terms"
+                  className="font-semibold text-[#005f73] underline underline-offset-4"
+                >
+                  Website Terms
+                </Link>
+                ,{" "}
+                <Link
+                  href="/licence"
+                  className="font-semibold text-[#005f73] underline underline-offset-4"
+                >
+                  Template Licence
+                </Link>
+                ,{" "}
+                <Link
+                  href="/digital-delivery"
+                  className="font-semibold text-[#005f73] underline underline-offset-4"
+                >
+                  Digital Delivery Policy
+                </Link>
+                ,{" "}
+                <Link
+                  href="/refunds"
+                  className="font-semibold text-[#005f73] underline underline-offset-4"
+                >
+                  Refund and Remedy Policy
+                </Link>{" "}
+                and{" "}
+                <Link
+                  href="/privacy"
+                  className="font-semibold text-[#005f73] underline underline-offset-4"
+                >
+                  Privacy and Cookies Policy
+                </Link>
+                . I understand that the Products are editable digital
+                templates, not bespoke legal or professional advice, and that
+                my statutory rights are not excluded.
+              </span>
+            </label>
+            {acceptanceError ? (
+              <p
+                id="policy-acceptance-error"
+                className="mt-2 text-sm font-semibold text-red-700"
+                role="alert"
               >
-                support@dokkit.co.za
-              </Link>
-              {" or "}
-              <Link
-                href="/privacy"
-                className="font-black text-[#005f73] underline underline-offset-4"
-              >
-                review our privacy policy
-              </Link>
-              .
-            </p>
+                {acceptanceError}
+              </p>
+            ) : null}
           </div>
 
           <button
             type="submit"
-            disabled={isSubmitting || cart.length === 0}
+            disabled={isSubmitting || quoteLoading || !quote}
             className="mt-6 min-h-12 rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting
               ? "Opening secure payment..."
-              : "Continue securely to PayFast"}
+              : quoteLoading
+                ? "Verifying order total..."
+                : `Pay securely with PayFast — ${formatPrice(
+                    quote?.totalCents ?? cartTotalCents,
+                  )}`}
           </button>
         </form>
 
@@ -308,7 +465,11 @@ export function CheckoutPage() {
           <h2 className="text-xl font-semibold">Order summary</h2>
           <div className="mt-5 grid gap-4">
             {cart.map((item) => {
-              const lineTotalCents = getCartItemLineTotalCents(item);
+              const quotedItem = quote?.items.find(
+                (candidate) => candidate.slug === item.slug,
+              );
+              const lineTotalCents =
+                quotedItem?.totalCents ?? getCartItemLineTotalCents(item);
               const originalLineTotalCents =
                 getCartItemOriginalLineTotalCents(item);
               const hasOfferSaving = originalLineTotalCents > lineTotalCents;
@@ -327,50 +488,77 @@ export function CheckoutPage() {
                     </span>
                   </div>
                   <p className="mt-1 text-xs text-[#5f5f66]">
-                    Qty {item.quantity}
+                    Qty {item.quantity}{" "}
+                    <Link
+                      href="/cart"
+                      className="ml-2 font-semibold text-[#005f73] underline underline-offset-4"
+                    >
+                      Edit
+                    </Link>
                   </p>
-                  {hasOfferSaving && item.discountPercent ? (
-                    <p className="mt-2 w-fit rounded-full bg-[#fff4eb] px-3 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#d95400]">
-                      {item.offerLabel ?? "Launch offer"} -{" "}
-                      {item.discountPercent}% off
-                    </p>
-                  ) : null}
                 </div>
               );
             })}
           </div>
-          {discountTotalCents > 0 ? (
+          {(quote?.discountCents ?? discountTotalCents) > 0 ? (
             <>
               <div className="mt-5 flex items-center justify-between text-sm">
                 <span className="text-[#5f5f66]">Standard price</span>
                 <span className="font-semibold">
-                  {formatPrice(originalTotalCents)}
+                  {formatPrice(quote?.subtotalCents ?? originalTotalCents)}
                 </span>
               </div>
               <div className="mt-3 flex items-center justify-between text-sm">
                 <span className="text-[#5f5f66]">Launch offer saving</span>
                 <span className="font-semibold text-[#d95400]">
-                  -{formatPrice(discountTotalCents)}
+                  -{formatPrice(quote?.discountCents ?? discountTotalCents)}
                 </span>
               </div>
             </>
           ) : null}
           <div className="mt-5 flex items-center justify-between text-sm">
             <span className="text-[#5f5f66]">Total</span>
-            <span className="text-xl font-semibold text-[#ff6a00]">
-              {formatPrice(totalCents)}
+            <span className="text-xl font-semibold text-[#a63d00]">
+              {formatPrice(quote?.totalCents ?? cartTotalCents)}
             </span>
           </div>
-          <div className="mt-5 rounded-2xl border border-black/10 bg-white px-4 py-3">
-            <p className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#5f5f66]">
+          <p className="mt-3 text-xs font-bold uppercase text-[#5f5f66]">
+            {quote
+              ? "Server-verified total in South African rand"
+              : "Verifying total in South African rand"}
+          </p>
+          {quoteError ? (
+            <p className="mt-3 text-sm text-red-700">{quoteError}</p>
+          ) : null}
+          <div className="mt-5 rounded-md border border-black/10 bg-white px-4 py-3">
+            <p className="mb-2 text-xs font-black uppercase text-[#5f5f66]">
               Secure payment
             </p>
             <PayfastLogo className="h-8 w-auto" />
           </div>
-          <p className="mt-3 text-xs leading-5 text-[#5f5f66]">
-            Secure PayFast payment. No subscription. Download access follows
-            verified payment.
-          </p>
+          <div className="mt-5 border-t border-black/10 pt-4 text-xs leading-5 text-[#5f5f66]">
+            <p className="font-semibold text-[#111111]">
+              {supplierIdentity.legalOperator}
+            </p>
+            <p>
+              Registration {supplierIdentity.registrationNumber}.{" "}
+              {supplierIdentity.vatStatus}
+            </p>
+            <p className="mt-2">
+              {supplierIdentity.address} | {supplierIdentity.telephone}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-x-3 gap-y-2">
+              {policyLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="font-semibold text-[#005f73] underline underline-offset-4"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </aside>
       </div>
     </section>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
+import { policyLinks, supplierIdentity } from "@/data/legal-policies";
 
 export function SiteFooter() {
   const pathname = usePathname();
@@ -23,6 +24,13 @@ export function SiteFooter() {
             businesses that need sharper admin, faster setup, and professional
             customer-facing documents.
           </p>
+          <p className="mt-5 max-w-xl text-xs leading-6 text-white/65">
+            DokKit is operated by DokKit (Pty) Ltd, a South African private
+            company (registration number 2026/470231/07). 177 Springbok Road,
+            Bloemfontein, Free State, 9301, South Africa. +27 83 976 0291 |{" "}
+            support@dokkit.co.za. DokKit is not VAT-registered and does not
+            charge VAT.
+          </p>
           <div className="mt-5 flex flex-col gap-2 text-sm font-bold text-white/75 sm:flex-row sm:flex-wrap sm:gap-x-6">
             <Link
               href="mailto:support@dokkit.co.za"
@@ -32,11 +40,11 @@ export function SiteFooter() {
               support@dokkit.co.za
             </Link>
             <Link
-              href="https://dokkit.co.za"
+              href={`tel:${supplierIdentity.telephone.replaceAll(" ", "")}`}
               className="transition hover:text-[#ffb06f]"
             >
-              <span className="mr-2 text-white/40">Website</span>
-              dokkit.co.za
+              <span className="mr-2 text-white/40">Telephone</span>
+              {supplierIdentity.telephone}
             </Link>
           </div>
         </div>
@@ -60,9 +68,15 @@ export function SiteFooter() {
             <Link href="/cart" className="transition hover:text-[#ff6a00]">
               Cart
             </Link>
-            <Link href="/privacy" className="transition hover:text-[#ff6a00]">
-              Privacy
-            </Link>
+            {policyLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="transition hover:text-[#ff6a00]"
+              >
+                {link.label}
+              </Link>
+            ))}
             <CookieSettingsButton className="w-fit text-left transition hover:text-[#ff6a00]" />
           </div>
         </nav>
