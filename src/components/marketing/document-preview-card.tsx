@@ -8,6 +8,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import { PreviewProtectionOverlay } from "@/components/preview-protection-overlay";
 
 const MIN_ZOOM = 0.75;
 const MAX_ZOOM = 2.5;
@@ -199,7 +200,7 @@ export function DocumentPreviewCard({
         <div className="flex-1 overflow-auto overscroll-contain bg-[#e9e7e3] p-3 sm:p-6">
           <div className="flex min-h-full min-w-full items-start justify-center">
             <div
-              className="flex-none overflow-hidden rounded-md bg-white shadow-lg"
+              className="relative flex-none overflow-hidden rounded-md bg-white shadow-lg"
               style={{
                 width: `${zoom * 100}%`,
                 maxWidth: `${zoom * 48}rem`,
@@ -214,6 +215,7 @@ export function DocumentPreviewCard({
                 className="h-auto w-full"
                 priority
               />
+              <PreviewProtectionOverlay variant="full" />
             </div>
           </div>
         </div>
@@ -239,12 +241,13 @@ export function DocumentPreviewCard({
               sizes="(min-width: 1024px) 22vw, (min-width: 640px) 45vw, 90vw"
               className="object-contain object-top transition duration-300 group-hover:scale-[1.02]"
             />
-            <span className="absolute left-3 top-3 rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black tracking-[0.08em] text-white shadow-sm">
+            <PreviewProtectionOverlay />
+            <span className="absolute left-3 top-3 z-20 rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black tracking-[0.08em] text-white shadow-sm">
               {format}
             </span>
             <span
               aria-hidden="true"
-              className="absolute bottom-3 right-3 flex h-11 w-11 items-center justify-center rounded-md bg-[#111111] text-xl font-black text-white shadow-lg transition group-hover:bg-[#ff6a00] group-hover:text-[#111111]"
+              className="absolute bottom-10 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-md bg-[#111111] text-xl font-black text-white shadow-lg transition group-hover:bg-[#ff6a00] group-hover:text-[#111111]"
             >
               +
             </span>

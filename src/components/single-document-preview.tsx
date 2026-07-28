@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import { PreviewProtectionOverlay } from "@/components/preview-protection-overlay";
 
 export function SingleDocumentPreview({
   imageSrc,
@@ -90,7 +91,7 @@ export function SingleDocumentPreview({
           </button>
         </div>
         <div className="overflow-auto overscroll-contain bg-[#f6f4f1] p-4">
-          <div className="mx-auto w-full max-w-3xl overflow-hidden rounded-lg bg-white shadow-sm">
+          <div className="relative mx-auto w-full max-w-3xl overflow-hidden rounded-lg bg-white shadow-sm">
             <Image
               src={imageSrc}
               alt={`${name} preview`}
@@ -99,6 +100,7 @@ export function SingleDocumentPreview({
               sizes="(min-width: 1024px) 768px, 95vw"
               className="h-auto w-full"
             />
+            <PreviewProtectionOverlay variant="full" />
           </div>
         </div>
       </div>
@@ -127,12 +129,13 @@ export function SingleDocumentPreview({
             }
             className="object-contain object-top"
           />
+          <PreviewProtectionOverlay compactOnMobile={compactOnMobile} />
         </span>
         <span
-          className={`absolute rounded-md bg-[#111111] font-black uppercase text-white shadow-lg transition group-hover:bg-[#ff6a00] ${
+          className={`absolute z-20 rounded-md bg-[#111111] font-black uppercase text-white shadow-lg transition group-hover:bg-[#ff6a00] ${
             compactOnMobile
-              ? "bottom-2 right-2 px-2 py-1 text-[10px] md:bottom-6 md:right-6 md:px-4 md:py-2 md:text-xs md:tracking-[0.12em]"
-              : "bottom-6 right-6 px-4 py-2 text-xs tracking-[0.12em]"
+              ? "bottom-7 right-2 px-2 py-1 text-[10px] md:bottom-10 md:right-6 md:px-4 md:py-2 md:text-xs md:tracking-[0.12em]"
+              : "bottom-10 right-6 px-4 py-2 text-xs tracking-[0.12em]"
           }`}
         >
           Preview

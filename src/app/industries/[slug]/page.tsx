@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { PreviewProtectionOverlay } from "@/components/preview-protection-overlay";
 import { ProductInformationBox } from "@/components/product-information-box";
 import {
   formatPrice,
@@ -361,6 +362,7 @@ export default async function IndustryDetailPage({
                       sizes="(min-width: 640px) 45vw, 92vw"
                       className="object-contain object-top"
                     />
+                    <PreviewProtectionOverlay />
                   </div>
                   <figcaption className="px-4 py-3 text-sm font-black">
                     {preview.label}
