@@ -1,10 +1,8 @@
 import Link from "next/link";
 import { formatFileFormats, formatPrice } from "@/data/catalogue";
 import { AdminPackPricingSection } from "@/components/admin-pack-pricing-section";
-import {
-  DocumentPreviewCard,
-  ProductMockup,
-} from "@/components/marketing/product-mockup";
+import { DocumentPreviewCard } from "@/components/marketing/document-preview-card";
+import { ProductMockup } from "@/components/marketing/product-mockup";
 import { PayfastLogo } from "@/components/payfast-logo";
 import {
   getCatalogueIndustries,
