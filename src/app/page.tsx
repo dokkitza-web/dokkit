@@ -1,19 +1,11 @@
 import Link from "next/link";
-import {
-  formatDocumentRange,
-  formatFileFormats,
-  formatPrice,
-} from "@/data/catalogue";
+import { formatFileFormats, formatPrice } from "@/data/catalogue";
+import { AdminPackPricingSection } from "@/components/admin-pack-pricing-section";
 import {
   DocumentPreviewCard,
   ProductMockup,
 } from "@/components/marketing/product-mockup";
 import { PayfastLogo } from "@/components/payfast-logo";
-import {
-  LAUNCH_OFFER_END_LABEL,
-  LAUNCH_OFFER_START_LABEL,
-  getLaunchOfferPhase,
-} from "@/lib/launch-offer";
 import {
   getCatalogueIndustries,
   getCataloguePackageTiers,
@@ -120,12 +112,6 @@ export default async function Home() {
       Boolean(industry),
     );
   const featuredDocuments = singleDocuments.slice(0, 6);
-  const launchOfferPhase = getLaunchOfferPhase();
-  const showLaunchOffer = launchOfferPhase !== "ended";
-  const launchOfferCopy =
-    launchOfferPhase === "active"
-      ? `Launch offer now live until ${LAUNCH_OFFER_END_LABEL}: selected packages up to 20% off.`
-      : `Launch offer starts ${LAUNCH_OFFER_START_LABEL}: selected packages up to 20% off.`;
 
   return (
     <>
@@ -314,87 +300,10 @@ export default async function Home() {
         </div>
       </section>
 
-      <section className="bg-[#fffaf5] py-12 lg:py-20">
-        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
-              Pricing
-            </p>
-            <h2 className="mt-3 text-3xl font-black sm:mt-4 sm:text-4xl">
-              Simple package options for different business stages.
-            </h2>
-            {showLaunchOffer ? (
-              <Link
-                href="/launch-offer"
-                className="mt-5 inline-flex min-h-11 items-center rounded-md border border-[#ffcfaa] bg-white px-4 py-2 text-sm font-black text-[#d95400] shadow-sm transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
-              >
-                {launchOfferCopy}
-              </Link>
-            ) : null}
-          </div>
-          <div className="mt-8 grid gap-4 sm:mt-10 sm:gap-5 lg:grid-cols-3">
-            {packageTiers.map((tier) => (
-              <article
-                key={tier.key}
-                className={`relative rounded-md border p-5 shadow-sm sm:p-7 ${
-                  tier.key === "complete"
-                    ? "border-[#ff6a00] bg-[#111111] text-white orange-glow"
-                    : "border-black/10 bg-white text-[#111111]"
-                }`}
-              >
-                {tier.key === "complete" ? (
-                  <span className="absolute right-5 top-5 rounded-full bg-[#ff6a00] px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-white">
-                    Best value
-                  </span>
-                ) : null}
-                <h3 className="text-2xl font-black">{tier.name} Pack</h3>
-                <p
-                  className={`mt-3 text-sm leading-6 ${
-                    tier.key === "complete" ? "text-white/65" : "text-[#5f5f66]"
-                  }`}
-                >
-                  {tier.summary}
-                </p>
-                <p className="mt-7 text-4xl font-black">
-                  {formatPrice(tier.priceCents)}
-                </p>
-                <p
-                  className={`mt-2 text-sm ${
-                    tier.key === "complete" ? "text-white/60" : "text-[#5f5f66]"
-                  }`}
-                >
-                  {formatDocumentRange(tier.key)} Word documents,{" "}
-                  {tier.workbookCount} Excel workbook
-                </p>
-                <ul className="mt-6 grid gap-2 text-sm font-bold sm:mt-7 sm:gap-3">
-                  {tier.includes.slice(0, 4).map((item) => (
-                    <li
-                      key={item}
-                      className={`rounded-md px-4 py-3 ${
-                        tier.key === "complete"
-                          ? "bg-white/10 text-white/75"
-                          : "bg-[#fff4eb] text-[#5f5f66]"
-                      }`}
-                    >
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <Link
-                  href="/industries"
-                  className={`mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-md px-5 py-3 text-sm font-black transition ${
-                    tier.key === "complete"
-                      ? "bg-[#ff6a00] text-white hover:bg-[#d95400]"
-                      : "bg-[#111111] text-white hover:bg-[#2b2b2b]"
-                  }`}
-                >
-                  Choose an industry
-                </Link>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      <AdminPackPricingSection
+        industries={homepageIndustries}
+        packageTiers={packageTiers}
+      />
 
       <section className="bg-white py-12 lg:py-20">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-10 lg:px-8">
