@@ -3,6 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import {
+  FileFormatIcon,
+  FileFormatIcons,
+} from "@/components/file-format-icon";
 import { PreviewProtectionOverlay } from "@/components/preview-protection-overlay";
 import { ProductInformationBox } from "@/components/product-information-box";
 import {
@@ -266,7 +270,10 @@ export default async function IndustryDetailPage({
                     <p className="font-black">{product.tierLabel}</p>
                     <p className="mt-1 text-sm text-[#5f5f66]">
                       {product.fileCount} files &bull;{" "}
-                      {formatFileFormats(product.fileFormats)}
+                      <FileFormatIcons
+                        formats={product.fileFormats}
+                        size="sm"
+                      />
                     </p>
                     <p className="mt-2 text-sm font-black text-[#a63d00]">
                       Inspect files
@@ -317,7 +324,10 @@ export default async function IndustryDetailPage({
                       </th>
                       <td className="px-4 py-4">{product.fileCount} files</td>
                       <td className="px-4 py-4">
-                        {formatFileFormats(product.fileFormats)}
+                        <FileFormatIcons
+                          formats={product.fileFormats}
+                          size="sm"
+                        />
                       </td>
                       <td className="px-4 py-4 font-black">
                         {formatPrice(pricing.priceCents)}
@@ -562,9 +572,10 @@ export default async function IndustryDetailPage({
                                 className="flex items-start justify-between gap-4 border-b border-black/5 py-2 text-sm last:border-0"
                               >
                                 <span>{file.name}</span>
-                                <span className="shrink-0 font-black text-[#a63d00]">
-                                  {file.format}
-                                </span>
+                                <FileFormatIcon
+                                  format={file.format}
+                                  size="sm"
+                                />
                               </li>
                             ))}
                           </ul>

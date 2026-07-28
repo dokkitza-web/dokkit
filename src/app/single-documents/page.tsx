@@ -1,10 +1,8 @@
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { FileFormatIcons } from "@/components/file-format-icon";
 import { ProductInformationBox } from "@/components/product-information-box";
 import { SingleDocumentPreview } from "@/components/single-document-preview";
-import {
-  formatFileFormats,
-  formatPrice,
-} from "@/data/catalogue";
+import { formatPrice } from "@/data/catalogue";
 import { getCatalogueSingleDocuments } from "@/lib/supabase/catalogue";
 
 export const metadata = {
@@ -75,9 +73,11 @@ export default async function SingleDocumentsPage() {
               <p className="mobile-line-clamp mt-2 text-sm leading-5 text-[#5f5f66] md:mt-3 md:leading-6">
                 {document.description}
               </p>
-              <p className="mt-3 text-xs font-black tracking-[0.08em] text-[#ff6a00] md:mt-5">
-                {formatFileFormats(document.fileFormats)}
-              </p>
+              <FileFormatIcons
+                formats={document.fileFormats}
+                size="sm"
+                className="mt-3 md:mt-5"
+              />
               <div className="mt-3 md:mt-5">
                 <AddToCartButton
                   className="min-h-11 w-full rounded-md px-4 py-2.5 md:w-auto md:px-5 md:py-3"

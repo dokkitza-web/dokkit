@@ -8,6 +8,7 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { createPortal } from "react-dom";
+import { FileFormatIcon } from "@/components/file-format-icon";
 import { PreviewProtectionOverlay } from "@/components/preview-protection-overlay";
 
 const MIN_ZOOM = 0.75;
@@ -242,9 +243,11 @@ export function DocumentPreviewCard({
               className="object-contain object-top transition duration-300 group-hover:scale-[1.02]"
             />
             <PreviewProtectionOverlay />
-            <span className="absolute left-3 top-3 z-20 rounded-full bg-[#111111] px-3 py-1 text-[11px] font-black tracking-[0.08em] text-white shadow-sm">
-              {format}
-            </span>
+            <FileFormatIcon
+              format={format}
+              size="lg"
+              className="absolute left-2 top-2 z-20 rounded-md bg-white p-1 shadow-md sm:left-3 sm:top-3"
+            />
             <span
               aria-hidden="true"
               className="absolute bottom-10 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-md bg-[#111111] text-xl font-black text-white shadow-lg transition group-hover:bg-[#ff6a00] group-hover:text-[#111111]"

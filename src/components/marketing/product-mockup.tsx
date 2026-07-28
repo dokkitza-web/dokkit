@@ -1,6 +1,11 @@
 import Image from "next/image";
+import { FileFormatIcon } from "@/components/file-format-icon";
 
-const formatBadges = ["Word templates", "Excel trackers", "Business packs"];
+const formatBadges = [
+  { format: "Word", label: "templates" },
+  { format: "Excel", label: "trackers" },
+  { format: null, label: "Business packs" },
+];
 
 export function ProductMockup() {
   return (
@@ -19,10 +24,13 @@ export function ProductMockup() {
       <div className="mt-3 flex flex-wrap justify-center gap-1.5 sm:mt-4 sm:gap-2">
         {formatBadges.map((label) => (
           <span
-            key={label}
-            className="rounded-md border border-black/10 bg-white px-3 py-2 text-xs font-black text-[#111111] shadow-sm sm:px-4"
+            key={label.label}
+            className="inline-flex min-h-11 items-center gap-2 rounded-md border border-black/10 bg-white px-3 py-2 text-xs font-black text-[#111111] shadow-sm sm:px-4"
           >
-            {label}
+            {label.format ? (
+              <FileFormatIcon format={label.format} size="sm" />
+            ) : null}
+            {label.label}
           </span>
         ))}
       </div>
