@@ -147,16 +147,16 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
 
       {ready && !hasChoice && !isAdmin ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-50 border-t border-[#d9d2ca] bg-white px-6 py-5 shadow-[0_-12px_30px_rgba(17,17,17,0.12)] lg:px-8"
+          className="fixed inset-x-0 bottom-0 z-50 border-t border-[#d9d2ca] bg-white px-4 py-3 shadow-[0_-12px_30px_rgba(17,17,17,0.12)] sm:px-6 sm:py-4 lg:px-8"
           role="region"
           aria-label="Cookie consent"
         >
-          <div className="mx-auto flex max-w-7xl flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-5">
             <div className="max-w-3xl">
-              <p className="text-base font-bold text-[#111111]">
+              <p className="text-sm font-bold text-[#111111] sm:text-base">
                 Your privacy choices
               </p>
-              <p className="mt-1 text-sm leading-6 text-[#5f5f66]">
+              <p className="mt-1 text-xs leading-5 text-[#5f5f66] sm:text-sm sm:leading-6">
                 DokKit uses essential storage for the cart and secure checkout.
                 With your permission, analytics helps us improve the shop and
                 marketing cookies help measure campaigns.{" "}
@@ -168,25 +168,25 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
                 </Link>
               </p>
             </div>
-            <div className="flex flex-wrap gap-3">
+            <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <button
                 type="button"
                 onClick={() => savePreferences(false, false)}
-                className="rounded-md border border-[#cfc7bd] bg-white px-4 py-2.5 text-sm font-bold text-[#111111] transition hover:bg-[#f6f4f1]"
+                className="min-h-11 rounded-md border border-[#cfc7bd] bg-white px-2 py-2 text-xs font-bold text-[#111111] transition hover:bg-[#f6f4f1] sm:px-4 sm:py-2.5 sm:text-sm"
               >
                 Essential only
               </button>
               <button
                 type="button"
                 onClick={openSettings}
-                className="rounded-md border border-[#005f73] bg-white px-4 py-2.5 text-sm font-bold text-[#005f73] transition hover:bg-[#eef7f7]"
+                className="min-h-11 rounded-md border border-[#005f73] bg-white px-2 py-2 text-xs font-bold text-[#005f73] transition hover:bg-[#eef7f7] sm:px-4 sm:py-2.5 sm:text-sm"
               >
                 Manage
               </button>
               <button
                 type="button"
                 onClick={() => savePreferences(true, true)}
-                className="rounded-md bg-[#ff6a00] px-4 py-2.5 text-sm font-bold text-white transition hover:bg-[#d95400]"
+                className="min-h-11 rounded-md bg-[#ff6a00] px-2 py-2 text-xs font-bold text-white transition hover:bg-[#d95400] sm:px-4 sm:py-2.5 sm:text-sm"
               >
                 Accept all
               </button>

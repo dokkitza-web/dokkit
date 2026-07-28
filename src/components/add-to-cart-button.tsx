@@ -106,7 +106,7 @@ export function AddToCartButton({
       ref={buttonRef}
       type="button"
       onClick={addToCart}
-      className={`rounded-full bg-[#ff6a00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#ff6a00]/20 transition hover:bg-[#d95400] ${className}`}
+      className={`min-h-11 rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#ff6a00]/20 transition hover:bg-[#d95400] ${className}`}
     >
       {wasAdded ? "Added" : "Add to cart"}
     </button>

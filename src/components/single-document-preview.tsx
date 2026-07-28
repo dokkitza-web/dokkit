@@ -7,9 +7,11 @@ import { createPortal } from "react-dom";
 export function SingleDocumentPreview({
   imageSrc,
   name,
+  compactOnMobile = false,
 }: {
   imageSrc: string;
   name: string;
+  compactOnMobile?: boolean;
 }) {
   const [isMounted, setIsMounted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -71,8 +73,8 @@ export function SingleDocumentPreview({
         }
       }}
     >
-      <div className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-[1.25rem] bg-white shadow-2xl">
-        <div className="flex items-center justify-between gap-4 border-b border-black/10 px-5 py-4">
+      <div className="flex max-h-full w-full max-w-5xl flex-col overflow-hidden rounded-md bg-white shadow-2xl">
+        <div className="flex items-center justify-between gap-3 border-b border-black/10 px-4 py-3 sm:gap-4 sm:px-5 sm:py-4">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.16em] text-[#ff6a00]">
               Document preview
@@ -82,7 +84,7 @@ export function SingleDocumentPreview({
           <button
             type="button"
             onClick={closePreview}
-            className="rounded-full border border-black/10 px-4 py-2 text-sm font-black text-[#111111] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
+            className="inline-flex min-h-11 items-center rounded-md border border-black/10 px-4 py-2 text-sm font-black text-[#111111] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
           >
             Close
           </button>
@@ -96,7 +98,6 @@ export function SingleDocumentPreview({
               height={1420}
               sizes="(min-width: 1024px) 768px, 95vw"
               className="h-auto w-full"
-              unoptimized
             />
           </div>
         </div>
@@ -109,20 +110,31 @@ export function SingleDocumentPreview({
       <button
         type="button"
         onClick={() => setIsMounted(true)}
-        className="group relative mb-5 block aspect-[3/4] w-full overflow-hidden rounded-2xl border border-black/10 bg-[#fff4eb] p-3 text-left shadow-sm transition hover:border-[#ff6a00]"
+        className={`group relative block aspect-[3/4] w-full overflow-hidden rounded-md border border-black/10 bg-[#fff4eb] text-left shadow-sm transition hover:border-[#ff6a00] ${
+          compactOnMobile ? "p-1.5 md:mb-5 md:p-3" : "mb-5 p-3"
+        }`}
         aria-label={`Preview ${name}`}
       >
-        <span className="relative block h-full overflow-hidden rounded-xl bg-white shadow-sm">
+        <span className="relative block h-full overflow-hidden rounded-md bg-white shadow-sm">
           <Image
             src={imageSrc}
             alt=""
             fill
-            sizes="(min-width: 1280px) 360px, (min-width: 768px) 50vw, 100vw"
+            sizes={
+              compactOnMobile
+                ? "(min-width: 1280px) 360px, (min-width: 768px) 50vw, 108px"
+                : "(min-width: 1280px) 360px, (min-width: 768px) 50vw, 100vw"
+            }
             className="object-contain object-top"
-            unoptimized
           />
         </span>
-        <span className="absolute bottom-6 right-6 rounded-full bg-[#111111] px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-white shadow-lg transition group-hover:bg-[#ff6a00]">
+        <span
+          className={`absolute rounded-md bg-[#111111] font-black uppercase text-white shadow-lg transition group-hover:bg-[#ff6a00] ${
+            compactOnMobile
+              ? "bottom-2 right-2 px-2 py-1 text-[10px] md:bottom-6 md:right-6 md:px-4 md:py-2 md:text-xs md:tracking-[0.12em]"
+              : "bottom-6 right-6 px-4 py-2 text-xs tracking-[0.12em]"
+          }`}
+        >
           Preview
         </span>
       </button>

@@ -28,15 +28,15 @@ export default async function PackagesPage() {
       : `Launch offer starts ${LAUNCH_OFFER_START_LABEL}: selected packages up to 20% off.`;
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8 lg:py-20">
+    <section className="mx-auto max-w-7xl px-5 py-10 sm:px-6 sm:py-14 lg:px-8 lg:py-20">
       <div className="max-w-3xl">
         <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ff6a00]">
           Package comparison
         </p>
-        <h1 className="mt-4 text-5xl font-black tracking-tight">
+        <h1 className="mt-3 text-4xl font-black sm:mt-4 sm:text-5xl">
           Starter, Professional, and Complete
         </h1>
-        <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
+        <p className="mt-4 text-base leading-7 text-[#5f5f66] sm:text-lg sm:leading-8">
           Choose one clear package level across the ready industry packs.
           Exact Word document counts vary by industry and are shown on each industry
           page.
@@ -44,18 +44,18 @@ export default async function PackagesPage() {
         {showLaunchOffer ? (
           <Link
             href="/launch-offer"
-            className="mt-6 inline-flex rounded-full border border-[#ffcfaa] bg-[#fff4eb] px-4 py-2 text-sm font-black text-[#d95400] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
+            className="mt-6 inline-flex min-h-11 items-center rounded-md border border-[#ffcfaa] bg-[#fff4eb] px-4 py-2 text-sm font-black text-[#d95400] transition hover:border-[#ff6a00] hover:text-[#ff6a00]"
           >
             {launchOfferCopy}
           </Link>
         ) : null}
       </div>
 
-      <div className="mt-10 grid gap-4 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:mt-10 lg:grid-cols-3">
         {packageTiers.map((tier) => (
           <article
             key={tier.key}
-            className={`relative rounded-[2rem] border p-7 shadow-sm ${
+            className={`relative rounded-md border p-5 shadow-sm sm:p-7 ${
               tier.key === "complete"
                 ? "border-[#ff6a00] bg-[#111111] text-white orange-glow"
                 : "border-black/10 bg-white"
@@ -92,11 +92,11 @@ export default async function PackagesPage() {
             >
               {tier.bestFor}
             </p>
-            <ul className="mt-6 grid gap-3 text-sm font-bold">
+            <ul className="mt-6 grid gap-2 text-sm font-bold sm:gap-3">
               {tier.includes.map((item) => (
                 <li
                   key={item}
-                  className={`rounded-2xl px-4 py-3 ${
+                  className={`rounded-md px-4 py-3 ${
                     tier.key === "complete"
                       ? "bg-white/10 text-white/75"
                       : "bg-[#fff4eb] text-[#5f5f66]"
@@ -108,7 +108,7 @@ export default async function PackagesPage() {
             </ul>
             <Link
               href="/industries"
-              className={`mt-7 inline-flex w-full justify-center rounded-full px-5 py-3 text-sm font-black transition ${
+              className={`mt-7 inline-flex min-h-12 w-full items-center justify-center rounded-md px-5 py-3 text-sm font-black transition ${
                 tier.key === "complete"
                   ? "bg-[#ff6a00] text-white hover:bg-[#d95400]"
                   : "bg-[#111111] text-white hover:bg-[#2b2b2b]"

@@ -274,8 +274,8 @@ export function CheckoutPage() {
 
   if (!cart.length && !pendingOrder) {
     return (
-      <section className="mx-auto max-w-3xl px-6 py-14 lg:px-8">
-        <div className="rounded-lg border border-[#ece7df] bg-white p-8 shadow-sm">
+      <section className="mx-auto max-w-3xl px-5 py-9 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
+        <div className="rounded-md border border-[#ece7df] bg-white p-6 shadow-sm sm:p-8">
           <h1 className="text-3xl font-semibold">Checkout needs a cart</h1>
           <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
             Add at least one DokKit product before checkout.
@@ -292,13 +292,13 @@ export function CheckoutPage() {
   }
 
   return (
-    <section className="mx-auto max-w-7xl px-6 py-14 lg:px-8">
+    <section className="mx-auto max-w-7xl px-5 py-9 sm:px-6 sm:py-12 lg:px-8 lg:py-14">
       <div className="max-w-3xl">
         <p className="text-sm font-semibold uppercase text-[#a63d00]">
           Secure checkout
         </p>
         <h1 className="mt-3 text-4xl font-semibold">Checkout</h1>
-        <p className="mt-4 text-lg leading-8 text-[#5f5f66]">
+        <p className="mt-3 text-base leading-7 text-[#5f5f66] sm:mt-4 sm:text-lg sm:leading-8">
           Enter the email address that should receive the order confirmation and
           secure download link. Payment is completed on PayFast.
         </p>
@@ -309,10 +309,10 @@ export function CheckoutPage() {
         </div>
       </div>
 
-      <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_360px]">
+      <div className="mt-7 grid gap-6 sm:mt-10 lg:grid-cols-[1fr_360px] lg:gap-8">
         <form
           onSubmit={handleSubmit}
-          className="rounded-lg border border-[#ece7df] bg-white p-6 shadow-sm"
+          className="order-2 rounded-md border border-[#ece7df] bg-white p-5 shadow-sm sm:p-6 lg:order-1"
         >
           <h2 className="text-xl font-semibold">Customer details</h2>
           <div className="mt-6 grid gap-5">
@@ -449,7 +449,7 @@ export function CheckoutPage() {
           <button
             type="submit"
             disabled={isSubmitting || quoteLoading || !quote}
-            className="mt-6 min-h-12 rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412] disabled:cursor-not-allowed disabled:opacity-70"
+            className="mt-6 min-h-12 w-full rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412] disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting
               ? "Opening secure payment..."
@@ -461,7 +461,7 @@ export function CheckoutPage() {
           </button>
         </form>
 
-        <aside className="h-fit rounded-lg border border-[#ece7df] bg-white p-6 shadow-sm">
+        <aside className="order-1 h-fit rounded-md border border-[#ece7df] bg-white p-5 shadow-sm sm:p-6 lg:order-2 lg:sticky lg:top-24">
           <h2 className="text-xl font-semibold">Order summary</h2>
           <div className="mt-5 grid gap-4">
             {cart.map((item) => {

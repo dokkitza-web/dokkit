@@ -31,6 +31,8 @@ body {
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  -webkit-text-size-adjust: 100%;
 }
 
 button,
@@ -39,6 +41,45 @@ input,
 select,
 textarea {
   outline-color: var(--brand-orange);
+}
+
+button,
+a {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(255, 106, 0, 0.16);
+}
+
+:focus-visible {
+  outline: 3px solid var(--brand-orange);
+  outline-offset: 3px;
+}
+
+@media (max-width: 639px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  .mobile-line-clamp {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 
 .premium-card {
