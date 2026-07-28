@@ -71,7 +71,7 @@ const tierPresentation: Record<
 
 const valueItems = [
   "Editable Word & Excel files",
-  "Once-off payment in rand",
+  "Once-off payment in Rand",
   "Secure digital delivery",
   "Made for SA small businesses",
 ];

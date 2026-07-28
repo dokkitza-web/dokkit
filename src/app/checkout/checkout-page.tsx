@@ -524,8 +524,8 @@ export function CheckoutPage() {
           </div>
           <p className="mt-3 text-xs font-bold uppercase text-[#5f5f66]">
             {quote
-              ? "Server-verified total in South African rand"
-              : "Verifying total in South African rand"}
+              ? "Server-verified total in South African Rand"
+              : "Verifying total in South African Rand"}
           </p>
           {quoteError ? (
             <p className="mt-3 text-sm text-red-700">{quoteError}</p>

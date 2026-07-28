@@ -86,7 +86,7 @@ export const termsPolicy: LegalPolicy = {
     {
       heading: "Prices and VAT",
       paragraphs: [
-        "Prices are displayed in South African rand. DokKit is not currently registered for VAT, so no VAT is charged. The final payable amount and any fee charged by DokKit will be shown before you place the order. A bank or payment provider may separately charge fees outside DokKit’s control.",
+        "Prices are displayed in South African Rand. DokKit is not currently registered for VAT, so no VAT is charged. The final payable amount and any fee charged by DokKit will be shown before you place the order. A bank or payment provider may separately charge fees outside DokKit’s control.",
         "References to “VAT-ready” or “VAT-compliant” in a Product title describe fields or functionality in the template; they do not mean VAT is included in DokKit’s selling price.",
       ],
     },
@@ -637,7 +637,7 @@ export const legalPolicies = [
 ] as const;
 
 export const PRODUCT_INFORMATION_COPY =
-  "EDITABLE FILES — Includes the Microsoft Word and/or Excel formats listed on this page. Add your business details, wording and logo using compatible software. LICENCE — One purchasing business may use the files for its own operations. You may not resell or share reusable source templates. DELIVERY — Pay once in rand. After PayFast confirms payment, secure access is shown and emailed, normally within 15 minutes. SUPPORT — If files do not arrive, are corrupt or do not match the description, contact support@dokkit.co.za. Your statutory rights are not excluded.";
+  "EDITABLE FILES — Includes the Microsoft Word and/or Excel formats listed on this page. Add your business details, wording and logo using compatible software. LICENCE — One purchasing business may use the files for its own operations. You may not resell or share reusable source templates. DELIVERY — Pay once in Rand. After PayFast confirms payment, secure access is shown and emailed, normally within 15 minutes. SUPPORT — If files do not arrive, are corrupt or do not match the description, contact support@dokkit.co.za. Your statutory rights are not excluded.";
 
 export const CHECKOUT_DISCLOSURE_COPY =
   "Your order is a once-off payment; there is no subscription. After PayFast confirms successful payment, we will show secure access on the confirmation page and email it to [CUSTOMER EMAIL], normally within 15 minutes. The file formats and software requirements are listed on each Product page. This purchase includes a single-business licence.";
