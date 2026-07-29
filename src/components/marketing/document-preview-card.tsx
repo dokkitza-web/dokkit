@@ -243,11 +243,6 @@ export function DocumentPreviewCard({
               className="object-contain object-top transition duration-300 group-hover:scale-[1.02]"
             />
             <PreviewProtectionOverlay />
-            <FileFormatIcon
-              format={format}
-              size="lg"
-              className="absolute left-2 top-2 z-20 rounded-md bg-white p-1 shadow-md sm:left-3 sm:top-3"
-            />
             <span
               aria-hidden="true"
               className="absolute bottom-10 right-3 z-20 flex h-11 w-11 items-center justify-center rounded-md bg-[#111111] text-xl font-black text-white shadow-lg transition group-hover:bg-[#ff6a00] group-hover:text-[#111111]"
@@ -258,8 +253,13 @@ export function DocumentPreviewCard({
           <span className="mt-4 block text-sm font-black text-[#111111]">
             {title}
           </span>
-          <span className="mt-1 block text-xs font-bold leading-5 text-[#5f5f66]">
-            {industry}
+          <span className="mt-2 flex items-center gap-2 text-xs font-bold leading-5 text-[#5f5f66]">
+            <FileFormatIcon
+              format={format}
+              size="sm"
+              className="shrink-0"
+            />
+            <span>{industry}</span>
           </span>
         </button>
       </article>
