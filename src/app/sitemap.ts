@@ -9,6 +9,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/industries",
     "/packages",
     "/single-documents",
+    "/free-business-admin-checklist",
     "/launch-offer",
     "/terms",
     "/licence",

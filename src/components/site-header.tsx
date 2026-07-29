@@ -10,6 +10,7 @@ const navigation = [
   { href: "/industries", label: "Industries" },
   { href: "/packages", label: "Packages" },
   { href: "/single-documents", label: "Templates" },
+  { href: "/free-business-admin-checklist", label: "Free checklist" },
   { href: "/#faq", label: "FAQ" },
   { href: "/launch-offer", label: "Launch offer" },
 ];

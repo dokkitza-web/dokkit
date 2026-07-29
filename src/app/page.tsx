@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { formatFileFormats, formatPrice } from "@/data/catalogue";
 import { AdminPackPricingSection } from "@/components/admin-pack-pricing-section";
@@ -191,6 +192,67 @@ export default async function Home() {
               sign-off, recordkeeping and follow-up.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="border-y border-black/10 bg-[#fff4eb] py-12 lg:py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 sm:px-6 lg:grid-cols-[1fr_22rem] lg:gap-14 lg:px-8">
+          <div>
+            <p className="text-xs font-black uppercase text-[#a63d00]">
+              Free business admin checklist
+            </p>
+            <h2 className="mt-3 max-w-3xl text-3xl font-black sm:text-4xl">
+              Find the admin gaps that are slowing your business down.
+            </h2>
+            <p className="mt-4 max-w-2xl text-base leading-7 text-[#5f5f66]">
+              Complete 48 practical checks across pricing, customer records,
+              cash control, daily operations, staff administration, POPIA and
+              monthly routines. Then turn the result into a focused 30-day
+              action plan.
+            </p>
+            <div className="mt-5 flex flex-wrap gap-2 text-xs font-black text-[#333338]">
+              {["6 pages", "Fillable PDF", "Editable Word", "No checkout"].map(
+                (item) => (
+                  <span
+                    key={item}
+                    className="rounded-md border border-black/10 bg-white px-3 py-2"
+                  >
+                    {item}
+                  </span>
+                ),
+              )}
+            </div>
+            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+              <Link
+                href="/free-business-admin-checklist"
+                className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#c24100] px-6 py-3 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412]"
+              >
+                Get the free checklist
+              </Link>
+              <Link
+                href="/free-business-admin-checklist#preview"
+                className="inline-flex min-h-12 items-center justify-center rounded-md border border-black/20 bg-white px-6 py-3 text-sm font-black text-[#111111] transition hover:border-[#c24100] hover:text-[#a63d00]"
+              >
+                Preview all 6 pages
+              </Link>
+            </div>
+          </div>
+          <Link
+            href="/free-business-admin-checklist#preview"
+            className="group relative mx-auto block aspect-[210/297] w-full max-w-sm overflow-hidden rounded-md border border-black/10 bg-white shadow-xl transition hover:-translate-y-1 hover:border-[#ff6a00] hover:shadow-2xl"
+            aria-label="Preview the free Small-Business Administration Readiness Checklist"
+          >
+            <Image
+              src="/images/free-checklist/page-1.png"
+              alt="First page of the free DokKit Small-Business Administration Readiness Checklist"
+              fill
+              sizes="(min-width: 1024px) 352px, 90vw"
+              className="object-contain object-top"
+            />
+            <span className="absolute bottom-3 left-3 right-3 rounded-md bg-[#111111] px-4 py-3 text-center text-sm font-black text-white transition group-hover:bg-[#ff6a00] group-hover:text-[#111111]">
+              Free preview
+            </span>
+          </Link>
         </div>
       </section>
 

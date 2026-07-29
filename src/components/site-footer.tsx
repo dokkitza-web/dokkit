@@ -65,6 +65,9 @@ export function SiteFooter() {
             <Link href="/single-documents" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
               Templates
             </Link>
+            <Link href="/free-business-admin-checklist" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
+              Free Checklist
+            </Link>
             <Link href="/cart" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
               Cart
             </Link>
