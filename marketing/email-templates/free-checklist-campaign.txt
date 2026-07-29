@@ -1,0 +1,39 @@
+Subject: A free admin checklist for {{business_name}}
+
+Hi {{first_name}},
+
+I am trying to reach the person responsible for administration or daily operations at {{business_name}}. If that is not you, would you mind forwarding this email to the owner or manager?
+
+DokKit has created a free Small-Business Administration Readiness Checklist to help South African businesses identify weak records, missing routines and everyday admin risks.
+
+The free checklist includes:
+
+- 48 practical readiness checks
+- A simple scoring system
+- A focused 30-day action plan
+- A fillable PDF and editable Word file
+
+Preview and get the free checklist:
+https://www.dokkit.co.za/free-business-admin-checklist?utm_source=cold_email&utm_medium=email&utm_campaign=free_checklist_campaign
+
+Free resource. No checkout or subscription.
+
+DokKit also provides editable Word templates and Excel workbooks for beauty businesses, caterers and bakers, freelancers and consultants, employers, landscaping services, and transport and delivery operators. Every package can be inspected before purchase.
+
+Browse the available industry packs:
+https://www.dokkit.co.za/industries?utm_source=cold_email&utm_medium=email&utm_campaign=free_checklist_campaign
+
+Kind regards,
+
+Elzano Cox
+DokKit
+support@dokkit.co.za
++27 83 976 0291
+
+This promotional email was sent because {{business_name}} may benefit from practical small-business administration resources.
+
+DokKit (Pty) Ltd, registration number 2026/470231/07
+177 Springbok Road, Bloemfontein, Free State, 9301, South Africa
+
+Unsubscribe: {{unsubscribe_url}}
+Privacy Policy: https://www.dokkit.co.za/privacy
