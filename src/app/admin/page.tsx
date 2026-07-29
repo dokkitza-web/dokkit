@@ -15,6 +15,7 @@ const countCards = [
   { table: "product_files", label: "Product files" },
   { table: "payments", label: "Payments" },
   { table: "email_logs", label: "Email logs" },
+  { table: "free_checklist_leads", label: "Free checklist leads" },
 ];
 
 const launchTargets = [
@@ -93,9 +94,28 @@ async function getLaunchReadiness(
   });
 }
 
+type ChecklistLead = {
+  id: string;
+  full_name: string;
+  business_name: string;
+  email: string;
+  industry: string;
+  marketing_consent: boolean;
+  pdf_downloaded_at: string | null;
+  docx_downloaded_at: string | null;
+  created_at: string;
+};
+
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat("en-ZA", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value));
+}
+
 export default async function AdminDashboardPage() {
   const { supabase, user } = await requireAdmin();
-  const [counts, launchReadiness] = await Promise.all([
+  const [counts, launchReadiness, checklistLeadResult] = await Promise.all([
     Promise.all(
       countCards.map(async (card) => ({
         ...card,
@@ -103,7 +123,16 @@ export default async function AdminDashboardPage() {
       })),
     ),
     getLaunchReadiness(supabase),
+    supabase
+      .from("free_checklist_leads")
+      .select(
+        "id,full_name,business_name,email,industry,marketing_consent,pdf_downloaded_at,docx_downloaded_at,created_at",
+      )
+      .order("created_at", { ascending: false })
+      .limit(5),
   ]);
+  const recentChecklistLeads =
+    (checklistLeadResult.data as ChecklistLead[] | null) ?? [];
   const readinessIssues = launchReadiness.filter(
     (item) => item.error || item.missing > 0,
   );
@@ -143,6 +172,94 @@ export default async function AdminDashboardPage() {
           </article>
         ))}
       </div>
+
+      <section className="mt-8 overflow-hidden rounded-md border border-black/10 bg-white shadow-sm">
+        <div className="flex flex-col gap-4 border-b border-black/10 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase text-[#a63d00]">
+              Free checklist activity
+            </p>
+            <h2 className="mt-2 text-2xl font-black text-[#111111]">
+              Recent download requests
+            </h2>
+          </div>
+          <Link
+            href="/admin/free-checklist-leads"
+            className="inline-flex min-h-11 items-center justify-center rounded-md bg-[#111111] px-4 py-2 text-sm font-black text-white transition hover:bg-[#c24100]"
+          >
+            View all free leads
+          </Link>
+        </div>
+
+        {checklistLeadResult.error ? (
+          <p className="p-5 text-sm font-bold text-red-700">
+            {checklistLeadResult.error.message}
+          </p>
+        ) : recentChecklistLeads.length ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-black/10 text-sm">
+              <thead className="bg-[#f6f4f1] text-left text-xs font-black uppercase text-[#5f5f66]">
+                <tr>
+                  <th className="px-4 py-3">Business</th>
+                  <th className="px-4 py-3">Contact</th>
+                  <th className="px-4 py-3">Industry</th>
+                  <th className="px-4 py-3">Download</th>
+                  <th className="px-4 py-3">Marketing</th>
+                  <th className="px-4 py-3">Requested</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-black/5">
+                {recentChecklistLeads.map((lead) => (
+                  <tr key={lead.id} className="transition hover:bg-[#fff4eb]">
+                    <td className="px-4 py-3">
+                      <p className="font-black text-[#111111]">
+                        {lead.business_name}
+                      </p>
+                      <p className="mt-1 text-xs text-[#5f5f66]">
+                        {lead.full_name}
+                      </p>
+                    </td>
+                    <td className="px-4 py-3">
+                      <a
+                        href={`mailto:${lead.email}`}
+                        className="text-[#a63d00] underline underline-offset-2"
+                      >
+                        {lead.email}
+                      </a>
+                    </td>
+                    <td className="px-4 py-3 text-[#5f5f66]">
+                      {lead.industry}
+                    </td>
+                    <td className="px-4 py-3 text-xs font-bold text-[#5f5f66]">
+                      {lead.pdf_downloaded_at || lead.docx_downloaded_at
+                        ? "Started"
+                        : "Not yet"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span
+                        className={`rounded-md px-2 py-1 text-xs font-black ${
+                          lead.marketing_consent
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-[#f1f0ee] text-[#5f5f66]"
+                        }`}
+                      >
+                        {lead.marketing_consent ? "Opted in" : "No"}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-[#5f5f66]">
+                      {formatDate(lead.created_at)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="p-5 text-sm font-bold text-[#5f5f66]">
+            No free checklist requests have been submitted yet.
+          </p>
+        )}
+      </section>
 
       <div
         className={`mt-8 rounded-[1.75rem] border p-6 shadow-sm ${
