@@ -25,7 +25,7 @@
 .DS_Store
 *.pem
 *.docx
-!/public/downloads/free/*.docx
+!/private/free-checklist/*.docx
 .appdata/
 .localappdata/
 .config/

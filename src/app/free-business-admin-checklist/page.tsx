@@ -1,13 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
-import { FileFormatIcon } from "@/components/file-format-icon";
+import { FreeChecklistDownloadForm } from "@/components/free-checklist-download-form";
 import { FreeChecklistPreview } from "@/components/free-checklist-preview";
-
-const pdfDownload =
-  "/downloads/free/DokKit-Free-Small-Business-Administration-Readiness-Checklist-Fillable.pdf";
-const wordDownload =
-  "/downloads/free/DokKit-Free-Small-Business-Administration-Readiness-Checklist.docx";
 
 export const metadata: Metadata = {
   title:
@@ -41,7 +35,7 @@ export default function FreeBusinessAdminChecklistPage() {
   return (
     <>
       <section className="border-b border-black/10 bg-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-8 px-5 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1fr_0.72fr] lg:gap-14 lg:px-8 lg:py-20">
+        <div className="mx-auto grid max-w-7xl items-start gap-8 px-5 py-10 sm:px-6 sm:py-14 lg:grid-cols-[1fr_0.86fr] lg:gap-14 lg:px-8 lg:py-20">
           <div>
             <p className="text-xs font-black uppercase text-[#a63d00] sm:text-sm">
               Free South African SME resource
@@ -69,45 +63,17 @@ export default function FreeBusinessAdminChecklistPage() {
               )}
             </div>
 
-            <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-              <a
-                href={pdfDownload}
-                download
-                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-md bg-[#c24100] px-5 py-3 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412]"
-              >
-                <FileFormatIcon format="PDF" size="sm" />
-                Download fillable PDF
-              </a>
-              <a
-                href={wordDownload}
-                download
-                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-md border border-black/20 bg-white px-5 py-3 text-sm font-black text-[#111111] transition hover:border-[#c24100] hover:text-[#a63d00]"
-              >
-                <FileFormatIcon format="Word" size="sm" />
-                Download editable Word file
-              </a>
-            </div>
+            <a
+              href="#preview"
+              className="mt-7 inline-flex min-h-12 items-center justify-center rounded-md border border-black/20 bg-white px-5 py-3 text-sm font-black text-[#111111] transition hover:border-[#c24100] hover:text-[#a63d00]"
+            >
+              Preview all 6 pages first
+            </a>
             <p className="mt-4 text-sm font-bold text-[#5f5f66]">
-              Free download. No checkout and no email address required.
+              Free download. No checkout or subscription.
             </p>
           </div>
-
-          <Link
-            href="#preview"
-            className="group relative mx-auto block aspect-[210/297] w-full max-w-sm overflow-hidden rounded-md border border-black/10 bg-white shadow-xl transition hover:-translate-y-1 hover:border-[#ff6a00] hover:shadow-2xl"
-            aria-label="Preview all six checklist pages"
-          >
-            <Image
-              src="/images/free-checklist/page-1.png"
-              alt="First page of the DokKit Small-Business Administration Readiness Checklist"
-              fill
-              sizes="(min-width: 1024px) 384px, 90vw"
-              className="object-contain object-top"
-            />
-            <span className="absolute bottom-3 left-3 right-3 rounded-md bg-[#111111] px-4 py-3 text-center text-sm font-black text-white transition group-hover:bg-[#ff6a00] group-hover:text-[#111111]">
-              Preview all 6 pages
-            </span>
-          </Link>
+          <FreeChecklistDownloadForm />
         </div>
       </section>
 
@@ -220,11 +186,10 @@ export default function FreeBusinessAdminChecklistPage() {
             </p>
           </div>
           <a
-            href={pdfDownload}
-            download
+            href="#download-form"
             className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#c24100] px-6 py-3 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412]"
           >
-            Download the free PDF
+            Complete the form to download
           </a>
         </div>
       </section>

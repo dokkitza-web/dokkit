@@ -6,9 +6,8 @@ import test from "node:test";
 const projectRoot = process.cwd();
 const freeDownloadRoot = path.join(
   projectRoot,
-  "public",
-  "downloads",
-  "free",
+  "private",
+  "free-checklist",
 );
 const previewRoot = path.join(
   projectRoot,
@@ -17,7 +16,7 @@ const previewRoot = path.join(
   "free-checklist",
 );
 
-test("free checklist publishes the approved PDF, Word file and six previews", async () => {
+test("free checklist protects the approved files and publishes six previews", async () => {
   const pdf = await readFile(
     path.join(
       freeDownloadRoot,
@@ -43,7 +42,7 @@ test("free checklist publishes the approved PDF, Word file and six previews", as
   }
 });
 
-test("free checklist page links to both approved download formats", async () => {
+test("free checklist page uses the gated download form", async () => {
   const pageSource = await readFile(
     path.join(
       projectRoot,
@@ -55,12 +54,6 @@ test("free checklist page links to both approved download formats", async () => 
     "utf8",
   );
 
-  assert.match(
-    pageSource,
-    /DokKit-Free-Small-Business-Administration-Readiness-Checklist-Fillable\.pdf/,
-  );
-  assert.match(
-    pageSource,
-    /DokKit-Free-Small-Business-Administration-Readiness-Checklist\.docx/,
-  );
+  assert.match(pageSource, /FreeChecklistDownloadForm/);
+  assert.doesNotMatch(pageSource, /\/downloads\/free\//);
 });

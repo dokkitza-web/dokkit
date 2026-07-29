@@ -10,6 +10,7 @@ const adminLinks = [
   { href: "/admin/files", label: "Upload Templates" },
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/customers", label: "Customers" },
+  { href: "/admin/free-checklist-leads", label: "Free leads" },
   { href: "/admin/downloads", label: "Downloads" },
   { href: "/admin/payments", label: "Payments" },
   { href: "/admin/settings", label: "Settings" },
