@@ -1,24 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState } from "react";
 import {
   formatDocumentRange,
   formatPrice,
-  type IndustryPackageProduct,
   type PackageTier,
   type PackageTierKey,
 } from "@/data/catalogue";
-
-export type PricingIndustry = {
-  slug: string;
-  name: string;
-  products: IndustryPackageProduct[];
-};
+import {
+  getLaunchOfferPhase,
+  getLaunchOfferPricing,
+  LAUNCH_OFFER_END_LABEL,
+} from "@/lib/launch-offer";
 
 type AdminPackPricingSectionClientProps = {
   headingLevel: "h1" | "h2";
-  industries: PricingIndustry[];
   packageTiers: PackageTier[];
 };
 
@@ -32,224 +28,165 @@ const tierPresentation: Record<
   }
 > = {
   starter: {
-    headline: "Set up the essentials",
+    headline: "Start with the essentials",
     description:
-      "For new or informal businesses that need credible admin basics without unnecessary paperwork.",
-    listLabel: "Core documents include:",
+      "For new or informal businesses that need credible documents without heavy admin.",
+    listLabel: "Best if you need to:",
     features: [
-      "Quotation template",
-      "Invoice workbook",
-      "Customer intake form",
-      "Basic terms and conditions",
+      "Quote and invoice customers professionally",
+      "Capture customer and job information",
+      "Set clear basic terms and keep records",
     ],
   },
   professional: {
-    headline: "Run jobs more professionally",
+    headline: "Run jobs with less admin",
     description:
-      "For growing businesses that quote often, onboard customers and need better control of recurring work.",
-    listLabel: "Everything in Starter, plus:",
+      "For businesses that quote often, onboard customers and manage repeat work.",
+    listLabel: "Everything in Starter, plus tools to:",
     features: [
-      "CRM tracker",
-      "Service agreement",
-      "Client onboarding pack",
-      "Additional operational documents",
+      "Track customers, follow-ups and recurring work",
+      "Use stronger service and onboarding documents",
+      "Standardise daily operations and handovers",
     ],
   },
   complete: {
-    headline: "Build a complete admin system",
+    headline: "Build a full admin system",
     description:
-      "For owners who want one connected document library from first enquiry through delivery and review.",
-    listLabel: "Everything in Professional, plus:",
+      "For established operations that need connected records, procedures and management tools.",
+    listLabel: "Everything in Professional, plus tools to:",
     features: [
-      "Advanced reporting workbook",
-      "Standard operating procedures",
-      "Risk and compliance checklists",
-      "Full operational document library",
+      "Document repeatable procedures and quality checks",
+      "Manage operational risks and team records",
+      "Review performance with advanced reporting",
     ],
   },
 };
 
 const valueItems = [
   "Editable Word & Excel files",
-  "Once-off payment in Rand",
-  "Secure digital delivery",
+  "Secure PayFast checkout",
+  "Download after verified payment",
   "Made for SA small businesses",
 ];
 
-function getFileSummary(
-  tier: PackageTier,
-  product?: IndustryPackageProduct,
-) {
-  const documentCount = product?.documentCount;
-  const workbookCount = product?.workbookCount ?? tier.workbookCount;
-  const documentLabel =
-    documentCount === undefined
-      ? `${formatDocumentRange(tier.key)} editable Word documents`
-      : `${documentCount} editable Word document${documentCount === 1 ? "" : "s"}`;
+function getFileSummary(tier: PackageTier) {
+  const workbookCount = tier.workbookCount;
+  const workbookSummary =
+    workbookCount > 0
+      ? ` + ${workbookCount} Excel workbook${workbookCount === 1 ? "" : "s"}`
+      : "";
 
-  if (workbookCount < 1) {
-    return documentLabel;
-  }
-
-  return `${documentLabel} + ${workbookCount} Excel workbook${
-    workbookCount === 1 ? "" : "s"
-  }`;
+  return `${formatDocumentRange(tier.key)} Word templates${workbookSummary}`;
 }
 
 export function AdminPackPricingSectionClient({
   headingLevel,
-  industries,
   packageTiers,
 }: AdminPackPricingSectionClientProps) {
-  const [selectedIndustrySlug, setSelectedIndustrySlug] = useState("");
-  const selectRef = useRef<HTMLSelectElement>(null);
   const Heading = headingLevel;
-  const selectedIndustry = industries.find(
-    (industry) => industry.slug === selectedIndustrySlug,
-  );
-  const selectedProducts = new Map(
-    selectedIndustry?.products.map((product) => [product.key, product]) ?? [],
-  );
-
-  function focusIndustrySelect() {
-    selectRef.current?.focus();
-    selectRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "center",
-    });
-  }
+  const offerActive = getLaunchOfferPhase() === "active";
 
   return (
     <section
       aria-labelledby="admin-pack-pricing-heading"
-      className="bg-[#fffaf5] py-12 lg:py-20"
+      className="bg-[#f8f6f2] py-12 lg:py-20"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
-        <div className="grid gap-7 lg:grid-cols-[minmax(0,1.75fr)_minmax(320px,0.95fr)] lg:items-start lg:gap-12">
-          <div className="max-w-4xl">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-[#c24100]">
-              DokKit admin packs
-            </p>
-            <Heading
-              id="admin-pack-pricing-heading"
-              className="mt-3 text-3xl font-black leading-tight text-[#111111] sm:text-4xl lg:text-[2.65rem]"
-            >
-              Choose the right admin pack for your business
-            </Heading>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-[#5f5f66] sm:text-lg">
-              Select your industry first, then compare the exact documents
-              included in each pack. Every file is editable and built for
-              practical South African business use.
-            </p>
-          </div>
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-[#c24100] sm:text-sm">
+            Choose your package level
+          </p>
+          <Heading
+            id="admin-pack-pricing-heading"
+            className="mt-3 text-3xl font-black leading-tight text-[#111111] sm:text-4xl lg:text-[2.65rem]"
+          >
+            How much admin support does your business need?
+          </Heading>
+          <p className="mx-auto mt-4 max-w-3xl text-base leading-7 text-[#5f5f66] sm:text-lg">
+            Pick a level, then choose your industry. Every pack contains
+            editable Word templates and an Excel workbook built around the work
+            your business actually does.
+          </p>
 
-          <div className="rounded-md border border-[#ffb77a] bg-white p-4 sm:p-5">
-            <label
-              htmlFor="pricing-industry"
-              className="block text-sm font-black text-[#111111]"
-            >
-              What type of business do you run?
-            </label>
-            <select
-              ref={selectRef}
-              id="pricing-industry"
-              value={selectedIndustrySlug}
-              onChange={(event) => setSelectedIndustrySlug(event.target.value)}
-              className="mt-2 min-h-12 w-full rounded-md border border-black/20 bg-white px-4 text-base font-bold text-[#303038] outline-none transition focus:border-[#ff6a00] focus:ring-2 focus:ring-[#ff6a00]/20"
-            >
-              <option value="">Select your industry</option>
-              {industries.map((industry) => (
-                <option key={industry.slug} value={industry.slug}>
-                  {industry.name}
-                </option>
-              ))}
-            </select>
-            <p className="mt-2 text-xs leading-5 text-[#6b6b72]">
-              You will see the full document list before you pay.
-            </p>
-          </div>
-        </div>
-
-        <ul className="mt-8 grid gap-2.5 sm:grid-cols-2 lg:mt-10 lg:grid-cols-4">
-          {valueItems.map((item) => (
-            <li
-              key={item}
-              className="flex min-h-11 items-center gap-3 rounded-md border border-black/10 bg-white px-3.5 py-2.5 text-sm font-bold text-[#3f3f46]"
-            >
+          {offerActive ? (
+            <div className="mx-auto mt-7 flex max-w-xl items-center gap-3 rounded-md border border-[#ffb995] bg-[#fff4ed] px-4 py-3 text-left text-sm font-black text-[#983600] sm:justify-center">
               <span
                 aria-hidden="true"
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#eaf8f1] text-xs font-black text-[#16865a]"
-              >
-                &#10003;
-              </span>
-              {item}
-            </li>
-          ))}
-        </ul>
+                className="h-2 w-2 shrink-0 rounded-full bg-[#f15a2b]"
+              />
+              Launch prices end {LAUNCH_OFFER_END_LABEL} - discounts apply
+              automatically
+            </div>
+          ) : null}
+        </div>
 
-        <div className="mt-7 grid gap-4 lg:grid-cols-3 lg:items-stretch">
+        <div className="mt-14 grid gap-5 lg:grid-cols-3 lg:items-stretch">
           {packageTiers.map((tier) => {
             const presentation = tierPresentation[tier.key];
-            const product = selectedProducts.get(tier.key);
-            const unavailable = Boolean(selectedIndustry && !product);
-            const packageHref =
-              selectedIndustry && product
-                ? `/industries/${selectedIndustry.slug}#${product.slug}`
-                : "/industries";
-            const displayPrice = product?.priceCents ?? tier.priceCents;
+            const pricing = getLaunchOfferPricing({
+              priceCents: tier.priceCents,
+              productType: "industry_package",
+              packageTier: tier.key,
+            });
+            const hasOfferSaving =
+              pricing.isApplied && pricing.discountCents > 0;
+            const recommended = tier.key === "professional";
 
             return (
               <article
                 key={tier.key}
-                className={`flex min-h-full flex-col rounded-md border bg-white p-5 shadow-sm sm:p-7 ${
-                  tier.key === "complete"
-                    ? "border-2 border-[#ff6a00] shadow-[0_16px_40px_rgba(194,65,0,0.10)]"
-                    : "border-black/10"
-                } ${unavailable ? "bg-black/[0.02]" : ""}`}
+                className={`relative flex min-h-full flex-col rounded-md bg-white p-5 shadow-[0_5px_0_rgba(17,17,17,0.08)] sm:p-7 ${
+                  recommended
+                    ? "border-2 border-[#f15a2b]"
+                    : "border border-black/10"
+                }`}
               >
-                <div className="flex min-h-6 items-start justify-between gap-3">
-                  <p className="text-xs font-black uppercase tracking-[0.16em] text-[#c24100]">
-                    {tier.name}
-                  </p>
-                  {tier.key === "complete" ? (
-                    <span className="rounded-full border border-[#ffb77a] px-2.5 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-[#9d3800]">
-                      Most comprehensive
-                    </span>
-                  ) : null}
-                </div>
+                {recommended ? (
+                  <span className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-[#f15a2b] px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-white">
+                    Recommended for growing businesses
+                  </span>
+                ) : null}
 
-                <h3 className="mt-3 max-w-xs text-2xl font-black leading-tight text-[#111111]">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-[#c24100]">
+                  {tier.name}
+                </p>
+                <h3 className="mt-3 text-2xl font-black leading-tight text-[#111111]">
                   {presentation.headline}
                 </h3>
-                <p className="mt-6 text-sm leading-6 text-[#66666d]">
+                <p className="mt-6 min-h-16 text-sm leading-6 text-[#66666d]">
                   {presentation.description}
                 </p>
 
-                {unavailable ? (
-                  <div className="mt-3 rounded-md border border-[#ffcfaa] bg-[#fff4eb] px-3 py-2 text-sm font-bold text-[#8f3500]">
-                    This tier is not offered for {selectedIndustry?.name}.
-                  </div>
-                ) : (
-                  <>
-                    <p className="mt-2 flex flex-wrap items-end gap-x-2 text-[#111111]">
-                      <span className="text-4xl font-black">
-                        {formatPrice(displayPrice)}
+                <div className="mt-4">
+                  <p className="flex flex-wrap items-end gap-x-4 gap-y-1 text-[#111111]">
+                    <span className="text-4xl font-black">
+                      {formatPrice(pricing.priceCents)}
+                    </span>
+                    {hasOfferSaving ? (
+                      <span className="pb-1 text-sm text-[#7a7774] line-through">
+                        {formatPrice(pricing.originalPriceCents)}
                       </span>
-                      <span className="pb-1 text-xs font-bold text-[#68686f]">
-                        once-off
-                      </span>
+                    ) : null}
+                  </p>
+                  {hasOfferSaving ? (
+                    <p className="mt-1 text-sm font-black text-[#13835a]">
+                      Save {pricing.discountPercent}% during the launch offer
                     </p>
-                    <p className="mt-2 text-xs leading-5 text-[#55555c]">
-                      {getFileSummary(tier, product)}
-                    </p>
-                  </>
-                )}
+                  ) : null}
+                  <p className="mt-1 text-sm font-bold text-[#5b5855]">
+                    Once-off payment &bull; No subscription
+                  </p>
+                </div>
+
+                <p className="mt-5 rounded-md bg-[#f4f2ef] px-4 py-3 text-sm font-black leading-6 text-[#3f3f46]">
+                  {getFileSummary(tier)}
+                </p>
 
                 <div className="my-5 h-px bg-black/10" />
-                <p className="text-sm font-black text-[#3f3f46]">
+                <p className="text-sm font-black text-[#242428]">
                   {presentation.listLabel}
                 </p>
-                <ul className="mt-4 grid gap-4 text-sm font-bold text-[#404047]">
+                <ul className="mt-4 grid gap-3 text-sm font-bold text-[#404047]">
                   {presentation.features.map((feature) => (
                     <li key={feature} className="flex items-start gap-2.5">
                       <span
@@ -264,71 +201,45 @@ export function AdminPackPricingSectionClient({
                 </ul>
 
                 <div className="mt-8 flex flex-1 flex-col justify-end">
-                  {selectedIndustry ? (
-                    <Link
-                      href={
-                        product
-                          ? packageHref
-                          : `/industries/${selectedIndustry.slug}`
-                      }
-                      className="inline-flex min-h-11 w-fit items-center text-sm font-black text-[#3f3f46] underline decoration-black/35 underline-offset-4 transition hover:text-[#c24100]"
-                    >
-                      {product
-                        ? `See full ${tier.name} contents`
-                        : `See available ${selectedIndustry.name} packs`}
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={focusIndustrySelect}
-                      className="min-h-11 w-fit text-left text-sm font-black text-[#3f3f46] underline decoration-black/35 underline-offset-4 transition hover:text-[#c24100]"
-                    >
-                      See full {tier.name} contents
-                    </button>
-                  )}
-
-                  {selectedIndustry && product ? (
-                    <Link
-                      href={packageHref}
-                      className={`mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-md px-4 py-3 text-sm font-black transition ${
-                        tier.key === "complete"
-                          ? "bg-[#ff6a00] text-[#111111] hover:bg-[#e45e00]"
-                          : "bg-[#161616] text-white hover:bg-[#303030]"
-                      }`}
-                    >
-                      Choose {tier.name}
-                    </Link>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={
-                        selectedIndustry
-                          ? undefined
-                          : focusIndustrySelect
-                      }
-                      disabled={unavailable}
-                      className={`mt-3 min-h-12 w-full rounded-md px-4 py-3 text-sm font-black ${
-                        unavailable
-                          ? "cursor-not-allowed bg-black/10 text-black/45"
-                          : tier.key === "complete"
-                            ? "bg-[#ff6a00] text-[#111111] hover:bg-[#e45e00]"
-                            : "bg-[#161616] text-white hover:bg-[#303030]"
-                      }`}
-                    >
-                      {unavailable
-                        ? "Not available"
-                        : "Select industry first"}
-                    </button>
-                  )}
+                  <Link
+                    href={`/industries?tier=${tier.key}`}
+                    className={`inline-flex min-h-12 w-full items-center justify-center rounded-md border-2 px-4 py-3 text-sm font-black transition ${
+                      recommended
+                        ? "border-[#f15a2b] bg-[#f15a2b] text-white hover:border-[#c24100] hover:bg-[#c24100]"
+                        : "border-[#111111] bg-white text-[#111111] hover:bg-[#111111] hover:text-white"
+                    }`}
+                  >
+                    View {tier.name} packs
+                  </Link>
+                  <p className="mt-2 text-center text-xs font-bold text-[#625f5c]">
+                    Compare exact contents by industry
+                  </p>
                 </div>
               </article>
             );
           })}
         </div>
 
-        <p className="mx-auto mt-6 max-w-3xl text-center text-xs leading-5 text-[#66666d]">
-          Exact document counts and contents vary by industry. The full pack
-          contents are shown before payment.
+        <ul className="mt-5 grid overflow-hidden rounded-md border border-black/10 bg-white sm:grid-cols-2 lg:grid-cols-4">
+          {valueItems.map((item) => (
+            <li
+              key={item}
+              className="flex min-h-14 items-center gap-3 border-b border-black/10 px-4 py-3 text-sm font-bold text-[#3f3f46] last:border-b-0 sm:[&:nth-child(3)]:border-b-0 sm:[&:nth-child(4)]:border-b-0 lg:border-b-0"
+            >
+              <span
+                aria-hidden="true"
+                className="text-sm font-black text-[#16865a]"
+              >
+                &#10003;
+              </span>
+              {item}
+            </li>
+          ))}
+        </ul>
+
+        <p className="mx-auto mt-3 max-w-3xl text-center text-xs leading-5 text-[#66666d]">
+          Package size varies by industry. The exact file list is shown before
+          you add a pack to your cart.
         </p>
       </div>
     </section>
