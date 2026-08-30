@@ -420,7 +420,7 @@ export default async function AdminOrdersPage({
         </article>
         <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
           <p className="text-sm font-bold text-[#5f5f66]">
-            Paid revenue incl. VAT
+            Paid revenue (VAT not charged)
           </p>
           <p className="mt-3 text-3xl font-black">
             {formatPrice(summary.revenueCents)}

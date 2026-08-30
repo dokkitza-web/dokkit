@@ -4,7 +4,7 @@ import type { PackageTierKey } from "@/data/catalogue";
 export type PackageManifestFile = {
   path: string;
   name: string;
-  format: "DOCX" | "XLSX" | "PDF";
+  format: "DOCX" | "XLSX" | "PDF" | "TXT";
   group: string;
 };
 

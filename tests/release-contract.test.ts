@@ -100,12 +100,12 @@ test("legal pages are discoverable and provide a print-friendly version", () => 
 });
 
 test("product pages carry the approved purchase information box", () => {
-  const industryPage = source("src/app/industries/[slug]/page.tsx");
-  const singleDocumentsPage = source("src/app/single-documents/page.tsx");
+  const packagesPage = source("src/app/packages/page.tsx");
+  const tradePackCard = source("src/components/trade-pack-card.tsx");
   const informationBox = source("src/components/product-information-box.tsx");
 
-  assert.match(industryPage, /ProductInformationBox/);
-  assert.match(singleDocumentsPage, /ProductInformationBox/);
+  assert.match(packagesPage, /TradePackCard/);
+  assert.match(tradePackCard, /ProductInformationBox/);
   assert.match(informationBox, /PRODUCT_INFORMATION_COPY/);
   assert.match(informationBox, /\/licence/);
   assert.match(informationBox, /\/digital-delivery/);

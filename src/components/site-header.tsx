@@ -7,12 +7,9 @@ import { BrandLogo } from "@/components/brand-logo";
 import { CartLink } from "@/components/cart-link";
 
 const navigation = [
-  { href: "/industries", label: "Industries" },
-  { href: "/packages", label: "Packages" },
-  { href: "/single-documents", label: "Templates" },
+  { href: "/packages", label: "Trade packs" },
   { href: "/free-business-admin-checklist", label: "Free checklist" },
   { href: "/#faq", label: "FAQ" },
-  { href: "/launch-offer", label: "Launch offer" },
 ];
 
 export function SiteHeader() {
@@ -40,10 +37,10 @@ export function SiteHeader() {
         </nav>
         <div className="hidden items-center gap-3 lg:flex">
           <Link
-            href="/industries"
+            href="/packages"
             className="rounded-md bg-[#c24100] px-5 py-2.5 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412]"
           >
-            Choose your business
+            Browse trade packs
           </Link>
           <CartLink />
         </div>
@@ -78,11 +75,11 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              href="/industries"
+              href="/packages"
               onClick={() => setMenuOpen(false)}
               className="col-span-2 flex min-h-12 items-center justify-center rounded-md bg-[#c24100] px-4 py-3 text-center font-black text-white"
             >
-              Choose your business
+              Browse trade packs
             </Link>
           </nav>
         </div>

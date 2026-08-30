@@ -98,7 +98,7 @@ export default async function AdminProductsPage({
     <AdminShell
       email={user.email ?? "Admin user"}
       eyebrow="Catalogue admin"
-      title="Templates"
+      title="Products"
       description="Review product records, open the editor, adjust pricing, and manage live catalogue status."
       actions={
         <Link
@@ -172,7 +172,7 @@ export default async function AdminProductsPage({
                   <th className="px-4 py-3">Type</th>
                   <th className="px-4 py-3">Industry</th>
                   <th className="px-4 py-3">Tier</th>
-                  <th className="px-4 py-3">Price incl. VAT</th>
+                  <th className="px-4 py-3">Price</th>
                   <th className="px-4 py-3">Files</th>
                   <th className="px-4 py-3">Status</th>
                   <th className="px-4 py-3">Action</th>

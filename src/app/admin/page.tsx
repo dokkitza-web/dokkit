@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AdminShell } from "@/components/admin-shell";
+import { tradePackSlugs } from "@/data/trade-packs";
 import { requireAdmin } from "@/lib/supabase/admin";
 
 export const metadata = {
@@ -19,10 +20,9 @@ const countCards = [
 ];
 
 const launchTargets = [
-  { key: "industries", label: "Live industries", expected: 8 },
-  { key: "packageTiers", label: "Live package tiers", expected: 3 },
-  { key: "industryProducts", label: "Live industry packages", expected: 24 },
-  { key: "singleDocuments", label: "Live single templates", expected: 20 },
+  { key: "industries", label: "Live trade categories", expected: 4 },
+  { key: "tradePacks", label: "Live trade packs", expected: 4 },
+  { key: "activeFiles", label: "Active pack ZIP files", expected: 4 },
 ];
 
 async function getCount(
@@ -51,34 +51,28 @@ async function getLaunchReadiness(
 ) {
   const [
     liveIndustries,
-    livePackageTiers,
-    liveIndustryProducts,
-    liveSingleDocuments,
+    liveTradePacks,
+    activeFiles,
   ] = await Promise.all([
     supabase
       .from("industries")
       .select("id", { count: "exact", head: true })
       .eq("is_live", true),
     supabase
-      .from("package_tiers")
-      .select("id", { count: "exact", head: true })
-      .eq("is_live", true),
-    supabase
       .from("products")
       .select("id", { count: "exact", head: true })
       .eq("is_live", true)
-      .eq("product_type", "industry_package"),
+      .in("slug", tradePackSlugs),
     supabase
-      .from("products")
+      .from("product_files")
       .select("id", { count: "exact", head: true })
-      .eq("is_live", true)
-      .eq("product_type", "single_document"),
+      .eq("is_active", true)
+      .eq("file_kind", "zip"),
   ]);
   const countByKey = {
     industries: liveIndustries,
-    packageTiers: livePackageTiers,
-    industryProducts: liveIndustryProducts,
-    singleDocuments: liveSingleDocuments,
+    tradePacks: liveTradePacks,
+    activeFiles,
   };
 
   return launchTargets.map((target) => {
@@ -277,9 +271,8 @@ export default async function AdminDashboardPage() {
               Live catalogue against local seed targets
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-[#5f5f66]">
-              The approved launch catalogue expects 8 ready industries, 3
-              package tiers, 24 industry package products, and 20 single
-              templates to be live.
+              The approved catalogue expects four live trade categories, four
+              trade packs and one active ZIP delivery file for each pack.
             </p>
           </div>
           <span

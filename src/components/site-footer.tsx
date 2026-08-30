@@ -53,17 +53,8 @@ export function SiteFooter() {
             Explore
           </p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm font-bold text-white/70 md:grid-cols-1 md:gap-3">
-            <Link href="/launch-offer" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
-              Launch Offer
-            </Link>
-            <Link href="/industries" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
-              Industries
-            </Link>
             <Link href="/packages" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
-              Packages
-            </Link>
-            <Link href="/single-documents" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
-              Templates
+              Trade Packs
             </Link>
             <Link href="/free-business-admin-checklist" className="flex min-h-11 items-center transition hover:text-[#ff6a00]">
               Free Checklist

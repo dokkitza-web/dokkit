@@ -273,7 +273,7 @@ export default async function AdminProductEditPage({
             {productRow.product_type === "single_document" ? (
               <>
                 <label className="grid gap-2 text-sm font-bold text-[#111111]">
-                  VAT-inclusive price in Rand
+                  Price in Rand (DokKit does not charge VAT)
                   <input
                     name="price"
                     defaultValue={formatPriceInput(productRow.price_cents)}
@@ -410,7 +410,7 @@ export default async function AdminProductEditPage({
                 </label>
 
                 <label className="grid gap-2 text-sm font-bold text-[#111111]">
-                  VAT-inclusive tier price in Rand
+                  Tier price in Rand (DokKit does not charge VAT)
                   <input
                     name="price"
                     defaultValue={formatPriceInput(packageTierRow.price_cents)}

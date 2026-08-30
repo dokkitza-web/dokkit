@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
@@ -38,6 +39,26 @@ def sha256(path: Path) -> str:
 
 
 def package_pack(pack: dict[str, Any], output_dir: Path) -> dict[str, Any]:
+    source_archive = pack.get("sourceArchive")
+    if source_archive:
+        archive_path = Path(source_archive)
+
+        if not archive_path.exists() or not archive_path.is_file():
+            raise FileNotFoundError(f"Source pack archive not found: {archive_path}")
+
+        output_dir.mkdir(parents=True, exist_ok=True)
+        packaged_archive = output_dir / pack["archiveName"]
+        shutil.copy2(archive_path, packaged_archive)
+
+        return {
+            "slug": pack["slug"],
+            "archive": str(packaged_archive),
+            "sourceArchive": str(archive_path),
+            "fileCount": 1,
+            "sizeBytes": packaged_archive.stat().st_size,
+            "sha256": sha256(packaged_archive),
+        }
+
     source_dir = Path(pack["sourceDir"])
 
     if not source_dir.exists() or not source_dir.is_dir():

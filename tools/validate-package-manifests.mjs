@@ -12,7 +12,7 @@ const manifestPath = path.join(
 );
 
 const manifests = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-const supportedFormats = new Set(["DOCX", "XLSX", "PDF"]);
+const supportedFormats = new Set(["DOCX", "XLSX", "PDF", "TXT"]);
 const tiers = ["starter", "professional", "complete"];
 const normaliseFilename = (value) =>
   path

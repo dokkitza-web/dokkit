@@ -4,7 +4,7 @@ import Link from "next/link";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { useConsent } from "@/components/analytics-provider";
 import { PayfastLogo } from "@/components/payfast-logo";
-import { formatPrice } from "@/data/catalogue";
+import { formatPrice } from "@/data/trade-packs";
 import {
   CHECKOUT_DISCLOSURE_COPY,
   policyLinks,
@@ -281,10 +281,10 @@ export function CheckoutPage() {
             Add at least one DokKit product before checkout.
           </p>
           <Link
-            href="/industries"
+            href="/packages"
             className="mt-6 inline-flex min-h-12 items-center rounded-md bg-[#c24100] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#9a3412]"
           >
-            Browse industries
+            Browse trade packs
           </Link>
         </div>
       </section>

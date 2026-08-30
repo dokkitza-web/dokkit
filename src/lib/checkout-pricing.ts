@@ -7,6 +7,7 @@ import {
   LAUNCH_OFFER_START_ISO,
   getLaunchOfferPricing,
 } from "@/lib/launch-offer";
+import { tradePackSlugs } from "@/data/trade-packs";
 
 export const checkoutItemsSchema = z
   .array(
@@ -50,12 +51,13 @@ export async function getCheckoutPricing({
   items: z.infer<typeof checkoutItemsSchema>;
 }) {
   const slugs = [...new Set(items.map((item) => item.slug))];
+  const sellableSlugs = slugs.filter((slug) => tradePackSlugs.includes(slug));
   const { data: products, error: productsError } = await supabase
     .from("products")
     .select(
       "id,slug,name,description,product_type,package_tier,price_cents,document_count,workbook_count,pdf_count,metadata",
     )
-    .in("slug", slugs)
+    .in("slug", sellableSlugs)
     .eq("is_live", true);
 
   if (productsError) {

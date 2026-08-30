@@ -12,7 +12,9 @@ export type CartItem = {
   offerEndsAt?: string;
 };
 
-export const CART_STORAGE_KEY = "dokkit-cart-v1";
+// A new cart namespace prevents retired catalogue items from appearing in a
+// customer cart after the trade-pack catalogue change.
+export const CART_STORAGE_KEY = "dokkit-cart-v2";
 export const CART_UPDATED_EVENT = "dokkit-cart-updated";
 
 export function formatCartCount(items: CartItem[]) {

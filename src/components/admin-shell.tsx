@@ -6,8 +6,8 @@ import { BrandLogo } from "@/components/brand-logo";
 const adminLinks = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/categories", label: "Categories" },
-  { href: "/admin/products", label: "Templates" },
-  { href: "/admin/files", label: "Upload Templates" },
+  { href: "/admin/products", label: "Products" },
+  { href: "/admin/files", label: "Upload product files" },
   { href: "/admin/orders", label: "Orders" },
   { href: "/admin/customers", label: "Customers" },
   { href: "/admin/free-checklist-leads", label: "Free leads" },

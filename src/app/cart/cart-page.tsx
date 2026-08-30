@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { PayfastLogo } from "@/components/payfast-logo";
-import { formatPrice } from "@/data/catalogue";
+import { formatPrice } from "@/data/trade-packs";
 import {
   CART_STORAGE_KEY,
   CART_UPDATED_EVENT,
@@ -80,13 +80,13 @@ export function CartPage() {
         <div className="mt-7 rounded-md border border-[#ece7df] bg-white p-6 shadow-sm sm:mt-10 sm:p-8">
           <h2 className="text-xl font-semibold">Your cart is empty</h2>
           <p className="mt-3 text-sm leading-6 text-[#5f5f66]">
-            Browse an industry package or single document to add products.
+            Browse the trade packs to add a product.
           </p>
           <Link
-            href="/industries"
+            href="/packages"
             className="mt-6 inline-flex min-h-12 items-center rounded-md bg-[#ff6a00] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#d95400]"
           >
-            Browse industries
+            Browse trade packs
           </Link>
         </div>
       ) : (
@@ -107,8 +107,8 @@ export function CartPage() {
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#ff6a00]">
                         {item.category === "industry_package"
-                          ? "Industry package"
-                          : "Single document"}
+                          ? "Trade pack"
+                          : "Product"}
                       </p>
                       <h2 className="mt-2 text-xl font-semibold">
                         {item.name}
@@ -220,12 +220,6 @@ export function CartPage() {
               Pay securely with PayFast. Downloads unlock after payment
               verification and are also sent by email.
             </p>
-            <Link
-              href="/recommended-add-ons"
-              className="mt-4 flex min-h-12 w-full items-center justify-center rounded-md border border-[#111111] px-5 py-3 text-sm font-semibold text-[#111111] transition hover:bg-[#111111] hover:text-white"
-            >
-              Review up to 3 optional add-ons
-            </Link>
             <button
               type="button"
               onClick={clearCart}

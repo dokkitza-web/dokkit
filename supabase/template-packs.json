@@ -1,91 +1,11 @@
 {
-  "versionLabel": "v1",
+  "versionLabel": "starter-packs-v1",
   "storageBucket": "product-files",
   "outputDir": ".localappdata/product-packs",
   "packs": [
-    {
-      "slug": "beauty-salons-and-spas-starter",
-      "industrySlug": "beauty-salons-and-spas",
-      "name": "Beauty Salons and Spas Starter Package",
-      "description": "A focused editable starter library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers who need the core admin basics.",
-      "packageTier": "starter",
-      "priceCents": 24900,
-      "documentCount": 11,
-      "workbookCount": 1,
-      "pdfCount": 0,
-      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Beauty_Salons_and_Spas_Starter_Pack_v1",
-      "archiveName": "DokKit_Beauty_Salons_and_Spas_Starter_Pack_v1.zip",
-      "storagePath": "product-packs/beauty-salons-and-spas/starter/v1/DokKit_Beauty_Salons_and_Spas_Starter_Pack_v1.zip"
-    },
-    {
-      "slug": "beauty-salons-and-spas-professional",
-      "industrySlug": "beauty-salons-and-spas",
-      "name": "Beauty Salons and Spas Professional Package",
-      "description": "A stronger editable operating library for beauty businesses that quote often, record treatment details, manage staff worksheets, track stock, and collect customer feedback.",
-      "packageTier": "professional",
-      "priceCents": 59900,
-      "documentCount": 20,
-      "workbookCount": 1,
-      "pdfCount": 0,
-      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Beauty_Salons_and_Spas_Professional_Pack_v1",
-      "archiveName": "DokKit_Beauty_Salons_and_Spas_Professional_Pack_v1.zip",
-      "storagePath": "product-packs/beauty-salons-and-spas/professional/v1/DokKit_Beauty_Salons_and_Spas_Professional_Pack_v1.zip"
-    },
-    {
-      "slug": "beauty-salons-and-spas-complete",
-      "industrySlug": "beauty-salons-and-spas",
-      "name": "Beauty Salons and Spas Complete Package",
-      "description": "A full editable business document library for salons, spas, beauty therapists, nail technicians, lash artists, and wellness service providers.",
-      "packageTier": "complete",
-      "priceCents": 119900,
-      "documentCount": 34,
-      "workbookCount": 1,
-      "pdfCount": 0,
-      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1",
-      "archiveName": "DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1.zip",
-      "storagePath": "product-packs/beauty-salons-and-spas/complete/v1/DokKit_Beauty_Salons_and_Spas_Complete_Pack_v1.zip"
-    },
-    {
-      "slug": "catering-and-baking-starter",
-      "industrySlug": "catering-and-baking",
-      "name": "Catering and Baking Starter Package",
-      "description": "A focused editable starter library for caterers, bakers, cake makers, meal prep businesses, and event food service providers who need core order and admin templates.",
-      "packageTier": "starter",
-      "priceCents": 24900,
-      "documentCount": 11,
-      "workbookCount": 1,
-      "pdfCount": 0,
-      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Catering_and_Baking_Starter_Pack_v1",
-      "archiveName": "DokKit_Catering_and_Baking_Starter_Pack_v1.zip",
-      "storagePath": "product-packs/catering-and-baking/starter/v1/DokKit_Catering_and_Baking_Starter_Pack_v1.zip"
-    },
-    {
-      "slug": "catering-and-baking-professional",
-      "industrySlug": "catering-and-baking",
-      "name": "Catering and Baking Professional Package",
-      "description": "A stronger editable operating library for food businesses that quote events, capture allergens, manage staff worksheets, track stock, and collect customer feedback.",
-      "packageTier": "professional",
-      "priceCents": 59900,
-      "documentCount": 20,
-      "workbookCount": 1,
-      "pdfCount": 0,
-      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Catering_and_Baking_Professional_Pack_v1",
-      "archiveName": "DokKit_Catering_and_Baking_Professional_Pack_v1.zip",
-      "storagePath": "product-packs/catering-and-baking/professional/v1/DokKit_Catering_and_Baking_Professional_Pack_v1.zip"
-    },
-    {
-      "slug": "catering-and-baking-complete",
-      "industrySlug": "catering-and-baking",
-      "name": "Catering and Baking Complete Package",
-      "description": "A full editable business document library for caterers, bakers, cake makers, meal prep businesses, and event food service providers.",
-      "packageTier": "complete",
-      "priceCents": 119900,
-      "documentCount": 34,
-      "workbookCount": 1,
-      "pdfCount": 0,
-      "sourceDir": "C:/Business/TEMPLATES.ZIP/TIERED_READY/DokKit_Catering_and_Baking_Complete_Pack_v1",
-      "archiveName": "DokKit_Catering_and_Baking_Complete_Pack_v1.zip",
-      "storagePath": "product-packs/catering-and-baking/complete/v1/DokKit_Catering_and_Baking_Complete_Pack_v1.zip"
-    }
+    { "slug": "electrical-contractor-pack", "name": "Electrical Contractor Pack", "description": "Quote, record and invoice electrical work with editable documents and a practical administration workbook.", "priceCents": 24900, "documentCount": 4, "workbookCount": 1, "pdfCount": 5, "sourceArchive": "private/product-packs/DokKit_Electrical_Contractor_Pack_v1.0.3.zip", "archiveName": "DokKit_Electrical_Contractor_Pack_v1.0.3.zip", "storagePath": "product-packs/electrical-contractor/v1.0.3/DokKit_Electrical_Contractor_Pack_v1.0.3.zip" },
+    { "slug": "plumbing-contractor-pack", "name": "Plumbing Contractor Pack", "description": "A practical paperwork kit for quoting, recording plumbing jobs, supporting insurance claims and keeping the money side organised.", "priceCents": 24900, "documentCount": 5, "workbookCount": 1, "pdfCount": 6, "sourceArchive": "private/product-packs/DokKit_Plumbing_Contractor_Pack_v1.0.2.zip", "archiveName": "DokKit_Plumbing_Contractor_Pack_v1.0.2.zip", "storagePath": "product-packs/plumbing-contractor/v1.0.2/DokKit_Plumbing_Contractor_Pack_v1.0.2.zip" },
+    { "slug": "solar-installer-pack", "name": "Solar Installer Pack", "description": "Turn a solar enquiry into a documented installation with editable assessment, quotation and commissioning paperwork plus an admin workbook.", "priceCents": 24900, "documentCount": 5, "workbookCount": 1, "pdfCount": 6, "sourceArchive": "private/product-packs/DokKit_Solar_Installer_Pack_v1.3.zip", "archiveName": "DokKit_Solar_Installer_Pack_v1.3.zip", "storagePath": "product-packs/solar-installer/v1.3/DokKit_Solar_Installer_Pack_v1.3.zip" },
+    { "slug": "electric-fence-installer-pack", "name": "Electric Fence Installer Pack", "description": "Document electric-fence quotes, installation details, certification records and invoices with one trade-specific editable pack.", "priceCents": 24900, "documentCount": 5, "workbookCount": 1, "pdfCount": 6, "sourceArchive": "private/product-packs/DokKit_Electric_Fence_Installer_Pack_v1.0.1.zip", "archiveName": "DokKit_Electric_Fence_Installer_Pack_v1.0.1.zip", "storagePath": "product-packs/electric-fence-installer/v1.0.1/DokKit_Electric_Fence_Installer_Pack_v1.0.1.zip" }
   ]
 }
