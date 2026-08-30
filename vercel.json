@@ -1,3 +1,0 @@
-{
-  "buildCommand": "npm run packs:package && node tools/upload_template_packs.mjs --execute && npm run build"
-}
