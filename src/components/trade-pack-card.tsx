@@ -2,23 +2,52 @@ import { AddToCartButton } from "@/components/add-to-cart-button";
 import { ProductInformationBox } from "@/components/product-information-box";
 import { formatPrice, type TradePack } from "@/data/trade-packs";
 
+function FileTypeIcon({ type }: { type: "document" | "workbook" | "pdf" }) {
+  if (type === "workbook") {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-[18px] w-[18px]" focusable="false">
+        <rect x="3" y="4" width="18" height="16" rx="1" />
+        <path d="M3 10h18M9 4v16M15 4v16" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-[18px] w-[18px]" focusable="false">
+      <path d="M14 3.5H6.5A1.5 1.5 0 0 0 5 5v14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19V8.5z" />
+      <path d="M14 3.5v5h5" />
+      {type === "pdf" ? <path d="M8 16h8M8 13h5" /> : <><path d="M8 13h8M8 16h6" /></>}
+    </svg>
+  );
+}
+
+function FileStat({ type, count, label }: { type: "document" | "workbook" | "pdf"; count: number; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 text-[#111111]" aria-label={`${count} ${label}`}>
+      <span className="text-[#77777d]"><FileTypeIcon type={type} /></span>
+      <span className="text-sm font-medium">{count}</span>
+    </span>
+  );
+}
+
 export function TradePackCard({ pack, detailed = false }: { pack: TradePack; detailed?: boolean }) {
   return (
-    <article id={pack.slug} className="scroll-mt-24 overflow-hidden rounded-xl border border-black/10 bg-white shadow-sm">
-      <div className="border-b border-black/10 bg-[#fff4eb] p-5 sm:p-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#a63d00]">Trade starter pack · {pack.version}</p><h2 className="mt-2 text-2xl font-black text-[#111111]">{pack.name}</h2><p className="mt-3 max-w-2xl text-sm leading-6 text-[#5f5f66]">{pack.description}</p></div>
-          <p className="w-fit shrink-0 rounded-md bg-[#111111] px-4 py-2 text-lg font-black text-white">{formatPrice(pack.priceCents)}</p>
+    <article id={pack.slug} className="scroll-mt-24 rounded-xl border border-black/10 bg-white p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-[#a63d00]">Trade starter pack · {pack.version}</p>
+          <h2 className="mt-2 text-base font-medium text-[#111111]">{pack.name}</h2>
         </div>
+        <p className="shrink-0 rounded-md bg-[#0b0b0b] px-3 py-1 text-sm font-medium text-white">{formatPrice(pack.priceCents)}</p>
       </div>
-      <div className="grid gap-6 p-5 sm:p-6 lg:grid-cols-[1fr_auto]">
-        <div><p className="text-xs font-black uppercase tracking-[0.16em] text-[#a63d00]">What is included</p>
-          <ul className="mt-3 grid gap-2 text-sm leading-6 text-[#3f3f43] sm:grid-cols-2">{pack.editableDocuments.map((document) => <li key={document} className="flex gap-2"><span aria-hidden="true" className="font-black text-[#ff6a00]">✓</span><span>{document} <strong>(editable Word)</strong></span></li>)}<li className="flex gap-2"><span aria-hidden="true" className="font-black text-[#ff6a00]">✓</span><span>Administration Workbook <strong>(editable Excel)</strong></span></li><li className="flex gap-2"><span aria-hidden="true" className="font-black text-[#ff6a00]">✓</span><span>Read-me guide, PDF previews and single-business licence</span></li></ul>
-          {detailed ? <><p className="mt-5 text-sm font-black text-[#111111]">Workbook includes: {pack.workbookSheets.join(", ")}.</p><p className="mt-3 text-xs leading-5 text-[#5f5f66]">{pack.standardsNote}</p></> : null}
-        </div>
-        <div className="flex min-w-48 flex-col justify-between gap-4 rounded-lg bg-[#f6f4f1] p-4"><div className="text-xs font-bold leading-5 text-[#5f5f66]"><p>{pack.documentCount} editable Word document{pack.documentCount === 1 ? "" : "s"}</p><p>{pack.workbookCount} Excel admin workbook</p><p>PDF read-me and previews</p><p className="mt-2 font-black text-[#111111]">Pay once. No subscription.</p></div><AddToCartButton className="w-full" item={{ slug: pack.slug, name: pack.name, priceCents: pack.priceCents, category: "industry_package", description: pack.description }} /></div>
+      <p className="mt-4 text-[13px] leading-[1.5] text-[#5f5f66]">{pack.description}</p>
+      <div className="mt-6 flex items-center gap-4" aria-label="Included file counts">
+        <FileStat type="document" count={pack.documentCount} label="editable Word documents" />
+        <FileStat type="workbook" count={pack.workbookCount} label="Excel workbooks" />
+        <FileStat type="pdf" count={pack.pdfCount} label="PDF files" />
       </div>
-      {detailed ? <ProductInformationBox className="mx-5 mb-5 sm:mx-6 sm:mb-6" /> : null}
+      <AddToCartButton className="mt-6 w-full !rounded-lg !bg-[#ff6600] !px-4 !py-3 !text-sm !font-medium !shadow-none hover:!bg-[#e65a00]" item={{ slug: pack.slug, name: pack.name, priceCents: pack.priceCents, category: "industry_package", description: pack.description }} />
+      {detailed ? <ProductInformationBox className="mt-6" /> : null}
     </article>
   );
 }
