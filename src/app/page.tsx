@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { FileFormatIcon } from "@/components/file-format-icon";
 import { HomepageTrackedLink } from "@/components/homepage-tracked-link";
 import { ProductMockup } from "@/components/marketing/product-mockup";
+import { PayfastLogo } from "@/components/payfast-logo";
 import { TradePackCard } from "@/components/trade-pack-card";
 import { formatPrice, tradePacks } from "@/data/trade-packs";
 import type { HomepageEventName } from "@/lib/analytics";
@@ -142,7 +143,10 @@ export default function Home() {
           <p className="text-xs font-black uppercase tracking-[0.2em] text-[#ffb06f]">Built for practical business admin</p>
           <h2 className="mt-3 text-3xl font-black sm:text-4xl">Clear tools. Clear terms. No software subscription.</h2>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {["Built for South African trade businesses", "Editable Word & Excel files", "Once-off payment", "Secure PayFast checkout"].map((item) => <p key={item} className="rounded-md border border-white/15 bg-white/5 p-4 text-sm font-bold leading-6">{item}</p>)}
+            {["Built for South African trade businesses", "Editable Word & Excel files", "Once-off payment"].map((item) => <p key={item} className="rounded-md border border-white/15 bg-white/5 p-4 text-sm font-bold leading-6">{item}</p>)}
+            <div className="flex min-h-14 items-center rounded-md border border-white/15 bg-white p-4">
+              <PayfastLogo className="h-7 w-auto" />
+            </div>
           </div>
         </div>
       </section>
