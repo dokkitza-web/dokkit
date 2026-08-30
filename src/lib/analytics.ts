@@ -55,6 +55,12 @@ export type HomepageEventName =
   | "electric_fence_pack_click"
   | "final_cta_click";
 
+export type SamplePreviewEventName =
+  | "sample_preview_open"
+  | "sample_preview_close"
+  | "sample_preview_product"
+  | "sample_preview_add_to_cart";
+
 export function initialiseGoogleAnalytics(preferences: ConsentPreferences) {
   if (!GOOGLE_MEASUREMENT_ID) {
     return false;
@@ -460,6 +466,25 @@ export function trackHomepageEvent(name: HomepageEventName) {
   ) {
     window.gtag("event", name, {
       page_location: getSafePageLocation("/"),
+    });
+  }
+}
+
+export function trackSamplePreviewEvent(
+  name: SamplePreviewEventName,
+  { productId, sampleId }: { productId: string; sampleId: string },
+) {
+  const preferences = readConsentPreferences();
+
+  if (
+    preferences?.analytics &&
+    initialiseGoogleAnalytics(preferences) &&
+    window.gtag
+  ) {
+    window.gtag("event", name, {
+      product_id: productId,
+      sample_id: sampleId,
+      page_location: getSafePageLocation(),
     });
   }
 }

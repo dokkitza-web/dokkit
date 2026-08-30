@@ -27,6 +27,7 @@ export function TradePackCard({ pack, detailed = false }: { pack: TradePack; det
       </div>
       <div className="mt-auto pt-6">
         <Link href={`/packages/${pack.slug}`} className="inline-flex min-h-11 items-center text-sm font-black text-[#005f73] underline underline-offset-4 transition hover:text-[#a63d00]">View pack details <span aria-hidden="true" className="ml-1">→</span></Link>
+        <Link href={`/packages/${pack.slug}#preview-the-pack`} className="mt-1 inline-flex min-h-11 items-center text-sm font-bold text-[#005f73] underline underline-offset-4 transition hover:text-[#a63d00]">Preview samples <span aria-hidden="true" className="ml-1">→</span></Link>
         <AddToCartButton className="mt-3 w-full !rounded-lg !bg-[#ff6600] !px-4 !py-3 !text-sm !font-medium !shadow-none hover:!bg-[#e65a00]" item={{ slug: pack.slug, name: pack.name, priceCents: pack.priceCents, category: "industry_package", description: pack.description }} />
       </div>
       {detailed ? <ProductInformationBox className="mt-6" /> : null}
