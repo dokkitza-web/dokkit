@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" role="img" aria-labelledby="title">
+  <title id="title">PDF file</title>
+  <path fill="#F40F02" d="M5 2.5h9l5 5V21a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1z"/>
+  <path fill="#fff" d="M14 2.5v5h5z" opacity=".92"/>
+  <path fill="#fff" d="M7.1 12.2h1.48c1.1 0 1.8.54 1.8 1.49 0 .98-.72 1.52-1.85 1.52H8.1V17H7.1zm1 2.12h.4c.58 0 .91-.2.91-.63 0-.42-.3-.62-.86-.62H8.1zm3.2-2.12h1.55c1.48 0 2.38.9 2.38 2.39S14.33 17 12.84 17H11.3zm1 3.93h.45c.92 0 1.48-.56 1.48-1.54 0-.97-.55-1.53-1.48-1.53h-.45zm3.72-3.93h2.7v.87h-1.7v1.1h1.55v.85h-1.55V17h-1z"/>
+</svg>

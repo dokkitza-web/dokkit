@@ -11,6 +11,10 @@ const formatIcons = {
     label: "Microsoft Excel",
     src: "/brand/microsoft-excel.svg",
   },
+  pdf: {
+    label: "PDF",
+    src: "/brand/pdf-document.svg",
+  },
 } as const;
 
 function getFormatIcon(format: string) {
@@ -22,6 +26,10 @@ function getFormatIcon(format: string) {
 
   if (normalizedFormat === "EXCEL" || normalizedFormat === "XLSX") {
     return formatIcons.excel;
+  }
+
+  if (normalizedFormat === "PDF") {
+    return formatIcons.pdf;
   }
 
   return null;

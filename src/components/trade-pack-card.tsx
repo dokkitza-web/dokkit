@@ -1,30 +1,18 @@
+import Image from "next/image";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { ProductInformationBox } from "@/components/product-information-box";
 import { formatPrice, type TradePack } from "@/data/trade-packs";
 
-function FileTypeIcon({ type }: { type: "document" | "workbook" | "pdf" }) {
-  if (type === "workbook") {
-    return (
-      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-[18px] w-[18px]" focusable="false">
-        <rect x="3" y="4" width="18" height="16" rx="1" />
-        <path d="M3 10h18M9 4v16M15 4v16" />
-      </svg>
-    );
-  }
+const fileTypeIcons = {
+  document: "/brand/microsoft-word.svg",
+  workbook: "/brand/microsoft-excel.svg",
+  pdf: "/brand/pdf-document.svg",
+} as const;
 
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-[18px] w-[18px]" focusable="false">
-      <path d="M14 3.5H6.5A1.5 1.5 0 0 0 5 5v14a1.5 1.5 0 0 0 1.5 1.5h11A1.5 1.5 0 0 0 19 19V8.5z" />
-      <path d="M14 3.5v5h5" />
-      {type === "pdf" ? <path d="M8 16h8M8 13h5" /> : <><path d="M8 13h8M8 16h6" /></>}
-    </svg>
-  );
-}
-
-function FileStat({ type, count, label }: { type: "document" | "workbook" | "pdf"; count: number; label: string }) {
+function FileStat({ type, count, label }: { type: keyof typeof fileTypeIcons; count: number; label: string }) {
   return (
     <span className="inline-flex items-center gap-2 text-[#111111]" aria-label={`${count} ${label}`}>
-      <span className="text-[#77777d]"><FileTypeIcon type={type} /></span>
+      <Image aria-hidden="true" src={fileTypeIcons[type]} alt="" width={18} height={18} className="h-[18px] w-[18px]" />
       <span className="text-sm font-medium">{count}</span>
     </span>
   );
