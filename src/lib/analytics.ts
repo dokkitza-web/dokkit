@@ -46,6 +46,15 @@ export const GOOGLE_MEASUREMENT_ID =
 export const META_PIXEL_ID =
   process.env.NEXT_PUBLIC_META_PIXEL_ID?.trim() ?? "";
 
+export type HomepageEventName =
+  | "browse_trade_packs_click"
+  | "free_checklist_click"
+  | "electrical_pack_click"
+  | "plumbing_pack_click"
+  | "solar_pack_click"
+  | "electric_fence_pack_click"
+  | "final_cta_click";
+
 export function initialiseGoogleAnalytics(preferences: ConsentPreferences) {
   if (!GOOGLE_MEASUREMENT_ID) {
     return false;
@@ -438,6 +447,20 @@ export function trackCommerceEvent({
       },
     });
     markAsSent("meta", dedupeKey);
+  }
+}
+
+export function trackHomepageEvent(name: HomepageEventName) {
+  const preferences = readConsentPreferences();
+
+  if (
+    preferences?.analytics &&
+    initialiseGoogleAnalytics(preferences) &&
+    window.gtag
+  ) {
+    window.gtag("event", name, {
+      page_location: getSafePageLocation("/"),
+    });
   }
 }
 

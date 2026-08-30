@@ -8,6 +8,7 @@ export type TradePack = {
   idealFor: string;
   editableDocuments: string[];
   workbookSheets: string[];
+  workbookPurpose: string;
   standardsNote: string;
   archiveName: string;
   documentCount: number;
@@ -26,6 +27,7 @@ export const tradePacks: TradePack[] = [
     idealFor: "Electrical contractors who want clearer job records and customer paperwork.",
     editableDocuments: ["Quotation", "Job Record", "Invoice (not VAT registered)", "Tax Invoice (VAT registered)"],
     workbookSheets: ["Clients", "Jobs", "Invoices", "Expenses", "Dashboard"],
+    workbookPurpose: "Excel tracker for clients, jobs, invoices and expenses.",
     standardsNote: "Includes electrical-work record wording designed around COC and Electrical Installation Regulations workflows; adapt it to each job and your professional obligations.",
     archiveName: "DokKit_Electrical_Contractor_Pack_v1.0.0.zip", documentCount: 4, workbookCount: 1, pdfCount: 5, fileFormats: ["DOCX", "XLSX", "PDF"],
   },
@@ -35,6 +37,7 @@ export const tradePacks: TradePack[] = [
     idealFor: "Plumbers who need professional customer records from quote to invoice.",
     editableDocuments: ["Quotation", "Job Record", "Plumber’s Report for Insurance Claims", "Invoice (not VAT registered)", "Tax Invoice (VAT registered)"],
     workbookSheets: ["Clients", "Jobs", "Invoices", "Expenses", "Dashboard"],
+    workbookPurpose: "Excel tracker for clients, jobs, invoices and expenses.",
     standardsNote: "Includes PIRB, SANS 10252 and SANS 10254 references where relevant; confirm suitability for the specific installation and insurer requirements.",
     archiveName: "DokKit_Plumbing_Contractor_Pack_v1.0.0.zip", documentCount: 5, workbookCount: 1, pdfCount: 6, fileFormats: ["DOCX", "XLSX", "PDF"],
   },
@@ -44,6 +47,7 @@ export const tradePacks: TradePack[] = [
     idealFor: "Solar installers who need a consistent record from site assessment to handover.",
     editableDocuments: ["Site Assessment", "Quotation", "Installation and Commissioning Record", "Invoice (not VAT registered)", "Tax Invoice (VAT registered)"],
     workbookSheets: ["Clients", "Jobs", "Invoices", "Expenses", "Dashboard"],
+    workbookPurpose: "Excel tracker for clients, jobs, invoices and expenses.",
     standardsNote: "Covers practical SSEG, grid-registration, SANS 10142-1 and commissioning prompts; it is a working template, not a substitute for compliance review.",
     archiveName: "DokKit_Solar_Installer_Pack_v1.0.0.zip", documentCount: 5, workbookCount: 1, pdfCount: 6, fileFormats: ["DOCX", "XLSX", "PDF"],
   },
@@ -53,6 +57,7 @@ export const tradePacks: TradePack[] = [
     idealFor: "Electric-fence installers who need traceable job and certification paperwork.",
     editableDocuments: ["Quotation", "Installation Record", "Inspection and Certification Report", "Invoice (not VAT registered)", "Tax Invoice (VAT registered)"],
     workbookSheets: ["Clients", "Jobs", "Invoices", "Expenses", "Dashboard"],
+    workbookPurpose: "Excel tracker for clients, jobs, invoices and expenses.",
     standardsNote: "Includes SANS 10222-3, SANS 60335-2-76 and Regulation 12 workflow prompts; installers remain responsible for the required inspection and certification.",
     archiveName: "DokKit_Electric_Fence_Installer_Pack_v1.0.0.zip", documentCount: 5, workbookCount: 1, pdfCount: 6, fileFormats: ["DOCX", "XLSX", "PDF"],
   },
