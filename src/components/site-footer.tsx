@@ -5,6 +5,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/brand-logo";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
+import { PayfastLogo } from "@/components/payfast-logo";
 import { policyLinks, supplierIdentity } from "@/data/legal-policies";
 
 export function SiteFooter() {
@@ -46,6 +47,12 @@ export function SiteFooter() {
               <span className="mr-2 text-white/40">Telephone</span>
               {supplierIdentity.telephone}
             </Link>
+          </div>
+          <div className="mt-7 inline-flex items-center gap-3 rounded-md border border-white/15 bg-white px-4 py-3 shadow-sm">
+            <PayfastLogo className="h-7 w-auto" />
+            <span className="text-xs font-bold text-[#3f3f43]">
+              Secure payments
+            </span>
           </div>
         </div>
         <nav aria-label="Footer navigation">
