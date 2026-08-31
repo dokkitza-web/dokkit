@@ -42,5 +42,5 @@ test("sample previews use the accessible modal and never link to delivery assets
   assert.match(preview, /This is a watermarked sample/);
   assert.match(cards, /Preview samples/);
   assert.match(generator, /DOKKIT SAMPLE - NOT FOR USE/);
-  assert.match(generator, /Fictional demonstration layout/);
+  assert.match(generator, /actual protected trade-pack templates/);
 });

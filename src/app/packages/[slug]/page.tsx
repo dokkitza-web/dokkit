@@ -86,7 +86,7 @@ export default async function TradePackDetailsPage({ params }: PackPageProps) {
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#a63d00]">Preview the pack</p>
           <h2 className="mt-3 text-3xl font-black text-[#111111]">See representative layouts before you buy</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-[#5f5f66]">See sample pages before you buy. Preview files are watermarked and for evaluation only.</p>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-[#5f5f66]">See watermarked sample pages rendered from the actual included templates before you buy. Preview files are for evaluation only.</p>
           <TradePackSamplePreview pack={pack} />
           <p className="mt-6 text-sm leading-6 text-[#5f5f66]">DokKit sample previews are provided for evaluation only. Purchase is required to use or edit the full documents.</p>
         </div>
