@@ -85,8 +85,8 @@ export default async function TradePackDetailsPage({ params }: PackPageProps) {
       <section id="preview-the-pack" className="scroll-mt-24 bg-[#fff4eb] py-12 lg:py-16">
         <div className="mx-auto max-w-5xl px-5 sm:px-6 lg:px-8">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-[#a63d00]">Preview the pack</p>
-          <h2 className="mt-3 text-3xl font-black text-[#111111]">See representative layouts before you buy</h2>
-          <p className="mt-4 max-w-3xl text-base leading-7 text-[#5f5f66]">See watermarked sample pages rendered from the actual included templates before you buy. Preview files are for evaluation only.</p>
+          <h2 className="mt-3 text-3xl font-black text-[#111111]">Preview every original template before you buy</h2>
+          <p className="mt-4 max-w-3xl text-base leading-7 text-[#5f5f66]">Open a watermarked preview of every included Word document and the workbook’s Start Here sheet. Each image is rendered from the actual protected pack file and is for evaluation only.</p>
           <TradePackSamplePreview pack={pack} />
           <p className="mt-6 text-sm leading-6 text-[#5f5f66]">DokKit sample previews are provided for evaluation only. Purchase is required to use or edit the full documents.</p>
         </div>

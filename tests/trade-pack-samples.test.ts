@@ -21,11 +21,19 @@ test("trade pack cards use the approved file counts", () => {
   );
 });
 
-test("every live trade pack has four separate, watermarked preview images", () => {
+test("every live trade pack previews each original Word document and the workbook Start Here sheet", () => {
   assert.equal(tradePacks.length, 4);
 
   for (const pack of tradePacks) {
-    assert.equal(pack.samples.length, 4, `${pack.slug} needs four samples`);
+    assert.equal(
+      pack.samples.length,
+      pack.documentCount + pack.workbookCount,
+      `${pack.slug} needs a preview for every original template`,
+    );
+    const workbookSample = pack.samples.find((sample) => sample.id === "admin-workbook");
+    assert.ok(workbookSample, `${pack.slug} needs a workbook preview`);
+    assert.match(workbookSample.title, /Start Here/);
+    assert.match(workbookSample.description, /Start Here/);
     for (const sample of pack.samples) {
       assert.match(sample.previewImageSrc, /^\/samples\/trade-packs\//);
       assert.match(sample.previewImageSrc, /-sample\.png$/);
@@ -61,4 +69,6 @@ test("sample previews use the accessible modal and never link to delivery assets
   assert.match(detailPage, /TradePackSamplePreview/);
   assert.match(generator, /DOKKIT SAMPLE - NOT FOR USE/);
   assert.match(generator, /actual protected trade-pack templates/);
+  assert.match(generator, /private" \/ "product-packs/);
+  assert.match(detailPage, /Preview every original template before you buy/);
 });

@@ -139,7 +139,7 @@ export function TradePackSamplePreview({ pack }: { pack: SamplePack }) {
 
   return (
     <>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {pack.samples.map((sample) => (
           <article key={sample.id} className="flex flex-col rounded-xl border border-black/10 bg-white p-4 shadow-sm">
             <div className="relative overflow-hidden rounded-md border border-black/10 bg-[#f6f4f1]">

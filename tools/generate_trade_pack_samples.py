@@ -13,13 +13,52 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 ROOT = Path(__file__).resolve().parent.parent
-ARCHIVES = ROOT / ".localappdata" / "product-packs"
+ARCHIVES = ROOT / "private" / "product-packs"
 OUTPUT = ROOT / "public" / "samples" / "trade-packs"
 PACKS = {
-    "electrical-contractor-pack": ("DokKit_Electrical_Contractor_Pack_v1.0.0.zip", [("quotation", "01_Templates_to_edit/1_Quotation.docx"), ("job-record", "01_Templates_to_edit/2_Job_Record.docx"), ("invoice", "01_Templates_to_edit/3_Invoice_NOT_VAT_registered.docx"), ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx")]),
-    "plumbing-contractor-pack": ("DokKit_Plumbing_Contractor_Pack_v1.0.0.zip", [("quotation", "01_Templates_to_edit/1_Quotation.docx"), ("job-record", "01_Templates_to_edit/2_Job_Record.docx"), ("plumbers-report", "01_Templates_to_edit/3_Plumbers_Report_insurance_claims.docx"), ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx")]),
-    "solar-installer-pack": ("DokKit_Solar_Installer_Pack_v1.0.0.zip", [("site-assessment", "01_Templates_to_edit/1_Site_Assessment.docx"), ("quotation", "01_Templates_to_edit/2_Quotation.docx"), ("installation-commissioning", "01_Templates_to_edit/3_Installation_and_Commissioning_Record.docx"), ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx")]),
-    "electric-fence-installer-pack": ("DokKit_Electric_Fence_Installer_Pack_v1.0.0.zip", [("quotation", "01_Templates_to_edit/1_Quotation.docx"), ("installation-record", "01_Templates_to_edit/2_Installation_Record.docx"), ("inspection-certification-report", "01_Templates_to_edit/3_Inspection_and_Certification_Report.docx"), ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx")]),
+    "electrical-contractor-pack": (
+        "DokKit_Electrical_Contractor_Pack_v1.0.3.zip",
+        [
+            ("quotation", "01_Templates_to_edit/1_Quotation.docx"),
+            ("job-record", "01_Templates_to_edit/2_Job_Record.docx"),
+            ("invoice", "01_Templates_to_edit/3_Invoice_NOT_VAT_registered.docx"),
+            ("tax-invoice", "01_Templates_to_edit/4_Tax_Invoice_VAT_registered.docx"),
+            ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx"),
+        ],
+    ),
+    "plumbing-contractor-pack": (
+        "DokKit_Plumbing_Contractor_Pack_v1.0.2.zip",
+        [
+            ("quotation", "01_Templates_to_edit/1_Quotation.docx"),
+            ("job-record", "01_Templates_to_edit/2_Job_Record.docx"),
+            ("plumbers-report", "01_Templates_to_edit/3_Plumbers_Report_insurance_claims.docx"),
+            ("invoice", "01_Templates_to_edit/4_Invoice_NOT_VAT_registered.docx"),
+            ("tax-invoice", "01_Templates_to_edit/5_Tax_Invoice_VAT_registered.docx"),
+            ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx"),
+        ],
+    ),
+    "solar-installer-pack": (
+        "DokKit_Solar_Installer_Pack_v1.3.zip",
+        [
+            ("site-assessment", "01_Templates_to_edit/1_Site_Assessment.docx"),
+            ("quotation", "01_Templates_to_edit/2_Quotation.docx"),
+            ("installation-commissioning", "01_Templates_to_edit/3_Installation_and_Commissioning_Record.docx"),
+            ("invoice", "01_Templates_to_edit/4_Invoice_NOT_VAT_registered.docx"),
+            ("tax-invoice", "01_Templates_to_edit/5_Tax_Invoice_VAT_registered.docx"),
+            ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx"),
+        ],
+    ),
+    "electric-fence-installer-pack": (
+        "DokKit_Electric_Fence_Installer_Pack_v1.0.1.zip",
+        [
+            ("quotation", "01_Templates_to_edit/1_Quotation.docx"),
+            ("installation-record", "01_Templates_to_edit/2_Installation_Record.docx"),
+            ("inspection-certification-report", "01_Templates_to_edit/3_Inspection_and_Certification_Report.docx"),
+            ("invoice", "01_Templates_to_edit/4_Invoice_NOT_VAT_registered.docx"),
+            ("tax-invoice", "01_Templates_to_edit/5_Tax_Invoice_VAT_registered.docx"),
+            ("admin-workbook", "02_Admin_workbook/Admin_Workbook.xlsx"),
+        ],
+    ),
 }
 
 
@@ -70,6 +109,7 @@ def watermark(source: Path, destination: Path) -> None:
 
 
 def main() -> None:
+    generated_count = 0
     with tempfile.TemporaryDirectory(prefix="dokkit-trade-samples-") as temporary:
         temp = Path(temporary)
         for slug, (archive_name, samples) in PACKS.items():
@@ -88,7 +128,8 @@ def main() -> None:
                     source = work / Path(member_suffix).name
                     source.write_bytes(zip_file.read(member))
                     watermark(render_first_page(source, work), destination / f"{sample_id}-sample.png")
-    print("Generated 16 watermarked previews from the actual protected trade-pack templates.")
+                    generated_count += 1
+    print(f"Generated {generated_count} watermarked previews from the actual protected trade-pack templates.")
 
 
 if __name__ == "__main__":
