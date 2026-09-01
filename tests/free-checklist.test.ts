@@ -57,3 +57,22 @@ test("free checklist page uses the gated download form", async () => {
   assert.match(pageSource, /FreeChecklistDownloadForm/);
   assert.doesNotMatch(pageSource, /\/downloads\/free\//);
 });
+
+test("free checklist closing CTA points directly to the current trade-pack catalogue", async () => {
+  const pageSource = await readFile(
+    path.join(
+      projectRoot,
+      "src",
+      "app",
+      "free-business-admin-checklist",
+      "page.tsx",
+    ),
+    "utf8",
+  );
+
+  assert.match(pageSource, /href="\/packages"/);
+  assert.match(pageSource, /Browse trade packs/);
+  assert.doesNotMatch(pageSource, /Choose your industry/);
+  assert.doesNotMatch(pageSource, /Preview individual templates/);
+  assert.doesNotMatch(pageSource, /href="\/(industries|single-documents)"/);
+});

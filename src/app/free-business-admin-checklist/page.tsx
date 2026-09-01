@@ -200,21 +200,16 @@ export default function FreeBusinessAdminChecklistPage() {
             Ready to close the gaps the checklist finds?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base leading-7 text-[#5f5f66]">
-            Browse DokKit&apos;s editable Word templates and Excel workbooks
-            for practical South African small-business administration.
+            Browse DokKit&apos;s four trade admin packs for editable Word
+            documents and Excel tools built around practical South African
+            contractor workflows.
           </p>
-          <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-7 flex justify-center">
             <Link
-              href="/industries"
-              className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#111111] px-6 py-3 text-sm font-black text-white transition hover:bg-[#c24100]"
+              href="/packages"
+              className="inline-flex min-h-12 items-center justify-center rounded-md bg-[#c24100] px-6 py-3 text-sm font-black text-white shadow-lg transition hover:bg-[#9a3412] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#ff6600]"
             >
-              Choose your industry
-            </Link>
-            <Link
-              href="/single-documents"
-              className="inline-flex min-h-12 items-center justify-center rounded-md border border-black/20 bg-white px-6 py-3 text-sm font-black text-[#111111] transition hover:border-[#c24100] hover:text-[#a63d00]"
-            >
-              Preview individual templates
+              Browse trade packs
             </Link>
           </div>
         </div>
