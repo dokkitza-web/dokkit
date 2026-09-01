@@ -147,26 +147,38 @@ export function AnalyticsProvider({ children }: { children: ReactNode }) {
 
       {ready && !hasChoice && !isAdmin ? (
         <div
-          className="fixed inset-x-0 bottom-0 z-50 border-t border-[#d9d2ca] bg-white px-4 py-3 shadow-[0_-12px_30px_rgba(17,17,17,0.12)] sm:px-6 sm:py-4 lg:px-8"
+          className="fixed inset-x-0 bottom-0 z-50 border-t border-[#d9d2ca] bg-white px-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] pt-2 shadow-[0_-12px_30px_rgba(17,17,17,0.12)] sm:px-6 sm:py-4 lg:px-8"
           role="region"
           aria-label="Cookie consent"
         >
-          <div className="mx-auto flex max-w-7xl flex-col gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-5">
+          <div className="mx-auto flex max-w-7xl flex-col gap-2 sm:gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-5">
             <div className="max-w-3xl">
-              <p className="text-sm font-bold text-[#111111] sm:text-base">
-                Your privacy choices
-              </p>
-              <p className="mt-1 text-xs leading-5 text-[#5f5f66] sm:text-sm sm:leading-6">
-                DokKit uses essential storage for the cart and secure checkout.
-                With your permission, analytics helps us improve the shop and
-                marketing cookies help measure campaigns.{" "}
+              <p className="text-xs leading-4 text-[#5f5f66] sm:hidden">
+                Essential storage runs the cart and checkout. Analytics and
+                marketing only run with your permission.{" "}
                 <Link
                   href="/privacy"
                   className="font-semibold text-[#005f73] underline underline-offset-4"
                 >
-                  Privacy and cookies
+                  Privacy details
                 </Link>
               </p>
+              <div className="hidden sm:block">
+                <p className="text-base font-bold text-[#111111]">
+                  Your privacy choices
+                </p>
+                <p className="mt-1 text-sm leading-6 text-[#5f5f66]">
+                  DokKit uses essential storage for the cart and secure checkout.
+                  With your permission, analytics helps us improve the shop and
+                  marketing cookies help measure campaigns.{" "}
+                  <Link
+                    href="/privacy"
+                    className="font-semibold text-[#005f73] underline underline-offset-4"
+                  >
+                    Privacy and cookies
+                  </Link>
+                </p>
+              </div>
             </div>
             <div className="grid grid-cols-3 gap-2 sm:flex sm:flex-wrap sm:gap-3">
               <button
