@@ -105,7 +105,16 @@ test("product pages carry the approved purchase information box", () => {
   const informationBox = source("src/components/product-information-box.tsx");
 
   assert.match(packagesPage, /TradePackCard/);
+  assert.match(packagesPage, /md:grid-cols-2/);
   assert.match(tradePackCard, /ProductInformationBox/);
+  assert.match(tradePackCard, /IconFileText/);
+  assert.match(tradePackCard, /IconTable/);
+  assert.match(tradePackCard, /IconFileTypePdf/);
+  assert.match(tradePackCard, /pack\.documentCount/);
+  assert.match(tradePackCard, /pack\.workbookCount/);
+  assert.match(tradePackCard, /pack\.pdfCount/);
+  assert.doesNotMatch(tradePackCard, /Key documents/);
+  assert.doesNotMatch(tradePackCard, /workflowSummary/);
   assert.match(informationBox, /PRODUCT_INFORMATION_COPY/);
   assert.match(informationBox, /\/licence/);
   assert.match(informationBox, /\/digital-delivery/);

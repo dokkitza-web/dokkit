@@ -4,6 +4,23 @@ import { join } from "node:path";
 import test from "node:test";
 import { tradePacks } from "../src/data/trade-packs";
 
+test("trade pack cards use the approved file counts", () => {
+  assert.deepEqual(
+    Object.fromEntries(
+      tradePacks.map((pack) => [
+        pack.slug,
+        [pack.documentCount, pack.workbookCount, pack.pdfCount],
+      ]),
+    ),
+    {
+      "electrical-contractor-pack": [4, 1, 5],
+      "plumbing-contractor-pack": [5, 1, 6],
+      "solar-installer-pack": [5, 1, 6],
+      "electric-fence-installer-pack": [5, 1, 6],
+    },
+  );
+});
+
 test("every live trade pack has four separate, watermarked preview images", () => {
   assert.equal(tradePacks.length, 4);
 
@@ -27,8 +44,8 @@ test("sample previews use the accessible modal and never link to delivery assets
     join(process.cwd(), "src/components/trade-pack-sample-preview.tsx"),
     "utf8",
   );
-  const cards = readFileSync(
-    join(process.cwd(), "src/components/trade-pack-card.tsx"),
+  const detailPage = readFileSync(
+    join(process.cwd(), "src/app/packages/[slug]/page.tsx"),
     "utf8",
   );
   const generator = readFileSync(
@@ -40,7 +57,8 @@ test("sample previews use the accessible modal and never link to delivery assets
   assert.match(preview, /event\.key === "Escape"/);
   assert.match(preview, /aria-modal="true"/);
   assert.match(preview, /This is a watermarked sample/);
-  assert.match(cards, /Preview samples/);
+  assert.match(detailPage, /id="preview-the-pack"/);
+  assert.match(detailPage, /TradePackSamplePreview/);
   assert.match(generator, /DOKKIT SAMPLE - NOT FOR USE/);
   assert.match(generator, /actual protected trade-pack templates/);
 });

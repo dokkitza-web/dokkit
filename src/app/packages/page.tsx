@@ -16,7 +16,7 @@ export default function PackagesPage() {
           <h1 className="mt-3 text-4xl font-black text-[#111111] sm:text-5xl">Paperwork built for the work you actually do.</h1>
           <p className="mt-4 text-base leading-7 text-[#5f5f66] sm:text-lg sm:leading-8">Each pack gives one South African trade a ready starting point for quoting, job records, invoices and daily admin. Edit the Word and Excel files for your business, logo and workflow.</p>
         </div>
-        <div className="mt-8 grid gap-5 lg:mt-10 lg:grid-cols-2">
+        <div className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 lg:mt-10">
           {tradePacks.map((pack) => <TradePackCard key={pack.slug} pack={pack} />)}
         </div>
         <ProductInformationBox className="mt-8" />

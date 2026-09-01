@@ -9,6 +9,12 @@
   --brand-black: #111111;
   --brand-muted: #5f5f66;
   --brand-line: #ece7df;
+  --text-primary: var(--brand-black);
+  --text-secondary: var(--brand-muted);
+  --text-muted: #77777d;
+  --surface-2: #ffffff;
+  --border: rgba(17, 17, 17, 0.1);
+  --radius: 8px;
 }
 
 @theme inline {
