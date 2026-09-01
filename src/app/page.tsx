@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { FileFormatIcon } from "@/components/file-format-icon";
+import { HomepageTradePackPreviews } from "@/components/homepage-trade-pack-previews";
 import { HomepageTrackedLink } from "@/components/homepage-tracked-link";
 import { ProductMockup } from "@/components/marketing/product-mockup";
 import { PayfastLogo } from "@/components/payfast-logo";
@@ -33,6 +34,15 @@ const packEventNames: Record<string, HomepageEventName> = {
   "solar-installer-pack": "solar_pack_click",
   "electric-fence-installer-pack": "electric_fence_pack_click",
 };
+
+const homepagePreviewPacks = tradePacks.map(({ slug, name, trade, description, priceCents, samples }) => ({
+  slug,
+  name,
+  trade,
+  description,
+  priceCents,
+  samples,
+}));
 
 export default function Home() {
   return (
@@ -103,6 +113,18 @@ export default function Home() {
           <div className="mt-8 grid gap-5 lg:mt-10 lg:grid-cols-2">
             {tradePacks.map((pack) => <TradePackCard key={pack.slug} pack={pack} />)}
           </div>
+        </div>
+      </section>
+
+      <section id="real-file-previews" className="scroll-mt-24 border-y border-black/10 bg-[#f6f4f1] py-12 lg:py-20">
+        <div className="mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+          <div className="max-w-3xl">
+            <p className="text-xs font-black uppercase tracking-[0.2em] text-[#a63d00]">Real file previews</p>
+            <h2 className="mt-3 text-3xl font-black text-[#111111] sm:text-4xl">See exactly what you are buying.</h2>
+            <p className="mt-4 text-base leading-7 text-[#5f5f66]">These are not illustrative mockups. Every watermarked preview is rendered from an original Word document or the Start Here sheet in the Excel workbook included with that trade pack.</p>
+          </div>
+          <HomepageTradePackPreviews packs={homepagePreviewPacks} />
+          <p className="mt-6 text-sm font-bold leading-6 text-[#5f5f66]">Inspect the layout before purchasing. The editable source files are securely delivered after payment confirmation.</p>
         </div>
       </section>
 

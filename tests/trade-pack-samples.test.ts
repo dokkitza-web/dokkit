@@ -72,3 +72,22 @@ test("sample previews use the accessible modal and never link to delivery assets
   assert.match(generator, /private" \/ "product-packs/);
   assert.match(detailPage, /Preview every original template before you buy/);
 });
+
+test("the homepage exposes every trade pack through an accessible real-file preview selector", () => {
+  const homepage = readFileSync(join(process.cwd(), "src/app/page.tsx"), "utf8");
+  const homepagePreviews = readFileSync(
+    join(process.cwd(), "src/components/homepage-trade-pack-previews.tsx"),
+    "utf8",
+  );
+
+  assert.match(homepage, /id="real-file-previews"/);
+  assert.match(homepage, /See exactly what you are buying/);
+  assert.match(homepage, /HomepageTradePackPreviews packs=\{homepagePreviewPacks\}/);
+  assert.match(homepagePreviews, /role="tablist"/);
+  assert.match(homepagePreviews, /role="tab"/);
+  assert.match(homepagePreviews, /role="tabpanel"/);
+  assert.match(homepagePreviews, /event\.key === "ArrowRight"/);
+  assert.match(homepagePreviews, /tabIndex=\{isSelected \? 0 : -1\}/);
+  assert.match(homepagePreviews, /TradePackSamplePreview pack=\{selectedPack\}/);
+  assert.match(homepagePreviews, /selectedPack\.samples\.length/);
+});
